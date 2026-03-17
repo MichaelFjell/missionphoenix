@@ -356,8 +356,7 @@ export default function MissionPhoenix() {
             <h1 style={styles.heroTitle}>MISSION PHOENIX</h1>
             <div style={styles.heroLine} />
             <p style={styles.heroSubtitle}>
-              A pornography addiction assessment built by someone who lived it —
-              not someone who studied it.
+              A pornography addiction assessment built by someone who lived in the addiction for decades.
             </p>
             <p style={styles.heroDesc}>
               5 questions. No account needed. No data stored.<br />
