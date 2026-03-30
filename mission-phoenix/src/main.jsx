@@ -6,6 +6,7 @@ import Home from './Home.jsx';
 import Quiz from './Quiz.jsx';
 import Tracker from './Tracker.jsx';
 import Community from './Community.jsx';
+import Journal from './Journal.jsx';
 
 // Auth Context
 const AuthContext = createContext(null);
@@ -161,9 +162,10 @@ function App() {
               <Route path="/quiz" element={<Quiz />} />
               <Route path="/tracker" element={<Tracker />} />
               <Route path="/community" element={<Community />} />
+              <Route path="/journal" element={<Journal />} />
             </Routes>
           </div>
-          <div style={{ position: 'fixed', top: '14px', right: '16px', zIndex: 101, fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '3px', padding: '2px 10px', border: '1px solid #333', color: '#555', background: 'rgba(10,10,10,0.9)' }}>ALPHA</div>
+
         </div>
       </AuthProvider>
     </BrowserRouter>
