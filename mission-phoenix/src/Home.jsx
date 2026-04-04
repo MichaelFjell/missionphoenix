@@ -1,4 +1,93 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { supabase, isSupabaseConfigured } from './supabase.js';
+
+function NewsletterSignup() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState(null); // 'success', 'error', 'loading'
+  const [msg, setMsg] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus('loading');
+
+    // Save to Supabase
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .insert({ email: email.trim().toLowerCase() });
+
+      if (error) {
+        if (error.code === '23505') {
+          setStatus('success');
+          setMsg("You're already subscribed!");
+          return;
+        }
+        console.error('Newsletter signup error:', error);
+        setStatus('error');
+        setMsg('Something went wrong. Try again.');
+        return;
+      }
+    }
+
+    // Send to Buttondown if API key is set
+    const buttondownKey = import.meta.env.VITE_BUTTONDOWN_API_KEY;
+    if (buttondownKey) {
+      try {
+        await fetch('https://api.buttondown.com/v1/subscribers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Token ${buttondownKey}` },
+          body: JSON.stringify({ email: email.trim().toLowerCase() }),
+        });
+      } catch (err) {
+        console.error('Buttondown error:', err);
+      }
+    }
+
+    setStatus('success');
+    setMsg('You\'re in. Watch your inbox.');
+    setEmail('');
+  };
+
+  return (
+    <div style={ns.root}>
+      <div style={ns.label}>GET WEEKLY RECOVERY INSIGHTS</div>
+      <p style={ns.desc}>No spam. Just honest words about breaking free, delivered once a week.</p>
+      <p style={ns.note}>While some quotes, statistics etc will be copied from other sources, the words in the newsletter are handwritten and worked on by Michael. No copy paste AI slop, ever.</p>
+      {status === 'success' ? (
+        <div style={ns.successMsg}>{msg}</div>
+      ) : (
+        <form onSubmit={handleSubmit} style={ns.form}>
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="Your email"
+            required
+            style={ns.input}
+          />
+          <button type="submit" disabled={status === 'loading'} style={{ ...ns.btn, opacity: status === 'loading' ? 0.5 : 1 }}>
+            {status === 'loading' ? '...' : 'SUBSCRIBE'}
+          </button>
+        </form>
+      )}
+      {status === 'error' && <div style={ns.errorMsg}>{msg}</div>}
+    </div>
+  );
+}
+
+const ns = {
+  root: { textAlign: 'center', padding: '40px 0', borderTop: '1px solid #1a1a1a', marginBottom: '48px' },
+  label: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '4px', color: '#c45a2a', marginBottom: '8px' },
+  desc: { fontSize: '14px', color: '#555', marginBottom: '12px', lineHeight: 1.6 },
+  note: { fontSize: '12px', color: '#444', marginBottom: '20px', lineHeight: 1.7, maxWidth: '420px', marginLeft: 'auto', marginRight: 'auto' },
+  form: { display: 'flex', gap: '8px', maxWidth: '400px', margin: '0 auto' },
+  input: { flex: 1, fontFamily: "'EB Garamond', Georgia, serif", fontSize: '15px', padding: '12px 16px', background: 'rgba(15,15,15,0.8)', color: '#d4d0c8', border: '1px solid #2a2a2a', outline: 'none' },
+  btn: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', padding: '12px 20px', background: 'none', color: '#c45a2a', border: '1px solid #c45a2a', cursor: 'pointer', whiteSpace: 'nowrap' },
+  successMsg: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '2px', color: '#c45a2a', padding: '12px 0' },
+  errorMsg: { fontSize: '13px', color: '#b82030', marginTop: '8px' },
+};
 
 export default function Home() {
   return (
@@ -62,6 +151,8 @@ export default function Home() {
           </a>
           <p style={s.discordSub}>Free. Private. Men recovering together.</p>
         </div>
+
+        <NewsletterSignup />
 
         <div style={s.footer}>
           <p style={s.footerText}>
