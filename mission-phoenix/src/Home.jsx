@@ -38,7 +38,7 @@ function NewsletterSignup() {
         await fetch('https://api.buttondown.com/v1/subscribers', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Token ${buttondownKey}` },
-          body: JSON.stringify({ email: email.trim().toLowerCase() }),
+          body: JSON.stringify({ email_address: email.trim().toLowerCase() }),
         });
       } catch (err) {
         console.error('Buttondown error:', err);
