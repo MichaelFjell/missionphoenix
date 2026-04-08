@@ -46,7 +46,7 @@ function NewsletterSignup() {
     }
 
     setStatus('success');
-    setMsg('You\'re in. Watch your inbox.');
+    setMsg('Check your email and confirm your subscription to start receiving the newsletter.');
     setEmail('');
   };
 
