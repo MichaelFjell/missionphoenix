@@ -106,7 +106,7 @@ export default function Home() {
         <h1 style={s.title}>MISSION PHOENIX</h1>
         <div style={s.line} />
         <p style={s.subtitle}>
-          A pornography addiction assessment and recovery tracker built by someone who lived it.
+          A community and a life mission to spread awareness of the real cost of pornography. A beacon of light for those already in the darkness, and a commitment to helping steer the next generation away from it.
         </p>
 
         <div style={s.cards}>
