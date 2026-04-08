@@ -154,11 +154,6 @@ export default function Home() {
 
         <NewsletterSignup />
 
-        <div style={s.footer}>
-          <p style={s.footerText}>
-            Built by an addict, for addicts. Cold turkey since July 15, 2025.
-          </p>
-        </div>
       </div>
     </div>
   );
@@ -205,8 +200,4 @@ const s = {
     color: '#555', textDecoration: 'none', transition: 'color 0.2s',
   },
   discordSub: { fontSize: '13px', color: '#333', marginTop: '8px' },
-  footer: { textAlign: 'center' },
-  footerText: {
-    fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', color: '#333',
-  },
 };
