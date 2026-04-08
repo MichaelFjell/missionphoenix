@@ -144,12 +144,15 @@ export default function Home() {
         </div>
 
         <div style={s.community}>
-          <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer" style={s.discordLink}
-            onMouseEnter={e => { e.target.style.color = '#c45a2a'; }}
-            onMouseLeave={e => { e.target.style.color = '#555'; }}>
-            JOIN THE DISCORD COMMUNITY →
+          <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer" style={s.discordBlock}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#c45a2a'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; }}>
+            <svg width="28" height="22" viewBox="0 0 71 55" fill="none" style={{ marginBottom: '12px' }}>
+              <path d="M60.1 4.9A58.5 58.5 0 0045.4.2a.2.2 0 00-.2.1 40.8 40.8 0 00-1.8 3.7 54 54 0 00-16.2 0A26.5 26.5 0 0025.4.3a.2.2 0 00-.2-.1A58.4 58.4 0 0010.5 4.9a.2.2 0 00-.1.1C1.5 18.7-.9 32.2.3 45.5v.1a58.7 58.7 0 0017.7 9a.2.2 0 00.3-.1 42 42 0 003.6-5.9.2.2 0 00-.1-.3 38.7 38.7 0 01-5.5-2.6.2.2 0 01 0-.4l1.1-.9a.2.2 0 01.2 0 41.9 41.9 0 0035.6 0 .2.2 0 01.2 0l1.1.9a.2.2 0 010 .4 36.3 36.3 0 01-5.5 2.6.2.2 0 00-.1.3 47.2 47.2 0 003.6 5.9.2.2 0 00.3.1A58.5 58.5 0 0070.4 45.6v-.1c1.4-15-2.3-28.4-9.8-40.1a.2.2 0 00-.1-.1zM23.7 37.3c-3.5 0-6.3-3.2-6.3-7.1s2.8-7.1 6.3-7.1 6.4 3.2 6.3 7.1c0 3.9-2.8 7.1-6.3 7.1zm23.3 0c-3.5 0-6.3-3.2-6.3-7.1s2.8-7.1 6.3-7.1 6.4 3.2 6.3 7.1c0 3.9-2.8 7.1-6.3 7.1z" fill="#999"/>
+            </svg>
+            <div style={s.discordLabel}>JOIN THE DISCORD COMMUNITY</div>
+            <p style={s.discordSub}>Free. Private. Men recovering together.</p>
           </a>
-          <p style={s.discordSub}>Free. Private. Men recovering together.</p>
         </div>
 
         <NewsletterSignup />
@@ -195,9 +198,14 @@ const s = {
   },
   cardDesc: { fontSize: '15px', lineHeight: 1.7, color: '#777', margin: 0 },
   community: { textAlign: 'center', padding: '40px 0', borderTop: '1px solid #1a1a1a', marginBottom: '48px' },
-  discordLink: {
-    fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '4px',
-    color: '#555', textDecoration: 'none', transition: 'color 0.2s',
+  discordBlock: {
+    display: 'flex', flexDirection: 'column', alignItems: 'center',
+    textDecoration: 'none', padding: '28px', border: '1px solid #2a2a2a',
+    transition: 'border-color 0.3s', cursor: 'pointer',
   },
-  discordSub: { fontSize: '13px', color: '#333', marginTop: '8px' },
+  discordLabel: {
+    fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '4px',
+    color: '#999',
+  },
+  discordSub: { fontSize: '13px', color: '#666', marginTop: '8px' },
 };
