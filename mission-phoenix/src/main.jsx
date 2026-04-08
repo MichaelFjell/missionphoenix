@@ -119,7 +119,7 @@ const navStyles = {
     position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
     padding: '12px 24px',
-    background: 'rgba(10,10,10,0.95)',
+    background: 'rgba(26,21,18,0.95)',
     borderBottom: '1px solid #1a1a1a',
     backdropFilter: 'blur(8px)',
   },
@@ -154,7 +154,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#d4d0c8', fontFamily: "'EB Garamond', Georgia, serif" }}>
+        <div style={{ minHeight: '100vh', background: '#1a1512', color: '#d4d0c8', fontFamily: "'EB Garamond', Georgia, serif" }}>
           <Nav />
           <div style={{ paddingTop: '52px' }}>
             <Routes>
