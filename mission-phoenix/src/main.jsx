@@ -7,6 +7,8 @@ import Quiz from './Quiz.jsx';
 import Tracker from './Tracker.jsx';
 import Community from './Community.jsx';
 import Journal from './Journal.jsx';
+import About from './About.jsx';
+import Contact from './Contact.jsx';
 
 // Auth Context
 const AuthContext = createContext(null);
@@ -103,6 +105,8 @@ function Nav() {
         <Link to="/quiz" style={navStyles.link}>Assessment</Link>
         <Link to="/tracker" style={navStyles.link}>Tracker</Link>
         <Link to="/community" style={navStyles.link}>Community</Link>
+        <Link to="/about" style={navStyles.link}>About</Link>
+        <Link to="/contact" style={navStyles.link}>Contact</Link>
         {user && profile ? (
           <span style={navStyles.userArea}>
             <span style={navStyles.username}>{profile.username}</span>
@@ -163,6 +167,8 @@ function App() {
               <Route path="/tracker" element={<Tracker />} />
               <Route path="/community" element={<Community />} />
               <Route path="/journal" element={<Journal />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
             </Routes>
           </div>
 
