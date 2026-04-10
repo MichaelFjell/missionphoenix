@@ -95,12 +95,7 @@ export default function Home() {
       <div style={s.noise} />
       <div style={s.container}>
         <div style={s.brandMark}>
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <path d="M24 4 L28 18 L42 18 L30 26 L34 40 L24 32 L14 40 L18 26 L6 18 L20 18 Z"
-              fill="none" stroke="#c45a2a" strokeWidth="1.5" opacity="0.8" />
-            <circle cx="24" cy="24" r="6" fill="#c45a2a" opacity="0.3" />
-            <circle cx="24" cy="24" r="2" fill="#c45a2a" />
-          </svg>
+          <img src="/phoenix.png" alt="Mission Phoenix" style={s.phoenixImg} />
         </div>
 
         <h1 style={s.title}>MISSION PHOENIX</h1>
@@ -172,7 +167,8 @@ const s = {
     maxWidth: '680px', margin: '0 auto', padding: '80px 24px 60px',
     position: 'relative', zIndex: 1,
   },
-  brandMark: { marginBottom: '32px', opacity: 0.8 },
+  brandMark: { marginBottom: '32px' },
+  phoenixImg: { width: '80px', height: 'auto' },
   title: {
     fontFamily: "'Oswald', 'Impact', sans-serif", fontSize: 'clamp(36px, 8vw, 56px)',
     fontWeight: 400, letterSpacing: '8px', color: '#e8e4dc', margin: '0 0 16px 0', lineHeight: 1.1,
