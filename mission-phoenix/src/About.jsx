@@ -17,6 +17,9 @@ export default function About() {
 
         <section style={s.section}>
           <h2 style={s.heading}>WHO I AM</h2>
+          <div style={{ marginBottom: '24px' }}>
+            <img src="/me.png" alt="Michael" style={{ maxWidth: '280px', height: 'auto' }} />
+          </div>
           <p style={s.text}>
             My name is Michael. I'm 41 years old and was addicted to pornography since I was around 10. I still remember the first time I watched real internet porn on a dial-up modem. It took 5+ minutes to load a single image, and the rush was beyond anything I had ever experienced at that age. It was my first hit of that legal drug called pornography.
           </p>
