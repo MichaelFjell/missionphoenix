@@ -9,6 +9,7 @@ import Community from './Community.jsx';
 import Journal from './Journal.jsx';
 import About from './About.jsx';
 import Contact from './Contact.jsx';
+import Support from './Support.jsx';
 
 // Auth Context
 const AuthContext = createContext(null);
@@ -107,6 +108,7 @@ function Nav() {
         <Link to="/community" style={navStyles.link}>Community</Link>
         <Link to="/about" style={navStyles.link}>About</Link>
         <Link to="/contact" style={navStyles.link}>Contact</Link>
+        <Link to="/support" style={navStyles.link}>Support</Link>
         {user && profile ? (
           <span style={navStyles.userArea}>
             <span style={navStyles.username}>{profile.username}</span>
@@ -169,6 +171,7 @@ function App() {
               <Route path="/journal" element={<Journal />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/support" element={<Support />} />
             </Routes>
           </div>
 
