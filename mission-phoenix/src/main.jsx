@@ -108,7 +108,7 @@ function Nav() {
         <Link to="/community" style={navStyles.link}>Community</Link>
         <Link to="/about" style={navStyles.link}>About</Link>
         <Link to="/contact" style={navStyles.link}>Contact</Link>
-        <Link to="/support" style={navStyles.link}>Support</Link>
+        <Link to="/support" style={navStyles.link}>Donate</Link>
         {user && profile ? (
           <span style={navStyles.userArea}>
             <span style={navStyles.username}>{profile.username}</span>
