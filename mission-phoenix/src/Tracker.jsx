@@ -196,7 +196,7 @@ function TrackerDashboard() {
         <div><h1 style={st.title}>RECOVERY TRACKER</h1><p style={st.subtitle}>Check off each day. Build your streak. Write your story.</p></div>
         <button onClick={() => setShowSettings(!showSettings)} style={st.settingsBtn}>{showSettings ? 'CLOSE' : 'SETTINGS'}</button>
       </div>
-      <a href="/habit-tracker.pdf" download style={st.physicalTracker}>
+      <a href="/mission_phoenix_habit_journal_2026.pdf" download style={st.physicalTracker}>
         <div style={st.ptBadge}>RECOMMENDED</div>
         <div style={st.ptTitle}>PHYSICAL HABIT TRACKER</div>
         <p style={st.ptDesc}>Download and print a physical habit tracker. Many find that pen-and-paper tracking works best for building real accountability.</p>
