@@ -196,6 +196,12 @@ function TrackerDashboard() {
         <div><h1 style={st.title}>RECOVERY TRACKER</h1><p style={st.subtitle}>Check off each day. Build your streak. Write your story.</p></div>
         <button onClick={() => setShowSettings(!showSettings)} style={st.settingsBtn}>{showSettings ? 'CLOSE' : 'SETTINGS'}</button>
       </div>
+      <a href="/habit-tracker.pdf" download style={st.physicalTracker}>
+        <div style={st.ptBadge}>RECOMMENDED</div>
+        <div style={st.ptTitle}>PHYSICAL HABIT TRACKER</div>
+        <p style={st.ptDesc}>Download and print a physical habit tracker. Many find that pen-and-paper tracking works best for building real accountability.</p>
+        <div style={st.ptAction}>DOWNLOAD PDF</div>
+      </a>
       <button onClick={superDay} disabled={allCheckedToday} style={{ ...st.superDayBtn, opacity: allCheckedToday ? 0.3 : 1, borderColor: allCheckedToday ? '#222' : '#c45a2a', color: allCheckedToday ? '#444' : '#c45a2a' }}>
         {allCheckedToday ? '\u2713  ALL HABITS CHECKED TODAY' : '\u26A1  SUPER DAY \u2014 CHECK ALL HABITS'}
       </button>
@@ -277,6 +283,11 @@ const st = {
   title: { fontFamily: "'Oswald', sans-serif", fontSize: 'clamp(24px, 5vw, 36px)', letterSpacing: '6px', color: '#e8e4dc', fontWeight: 400, margin: '0 0 8px 0' },
   subtitle: { fontSize: '15px', color: '#666', margin: 0, lineHeight: 1.6 },
   settingsBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '3px', padding: '8px 16px', background: 'none', color: '#555', border: '1px solid #333', cursor: 'pointer' },
+  physicalTracker: { display: 'block', padding: '20px 24px', background: 'rgba(196,90,42,0.06)', border: '1px solid #c45a2a33', marginBottom: '20px', textDecoration: 'none', cursor: 'pointer', textAlign: 'center' },
+  ptBadge: { fontFamily: "'Oswald', sans-serif", fontSize: '9px', letterSpacing: '3px', color: '#c45a2a', background: 'rgba(196,90,42,0.15)', display: 'inline-block', padding: '3px 10px', marginBottom: '8px' },
+  ptTitle: { fontFamily: "'Oswald', sans-serif", fontSize: '14px', letterSpacing: '4px', color: '#e8e4dc', marginBottom: '6px' },
+  ptDesc: { fontSize: '13px', color: '#777', lineHeight: 1.6, margin: '0 0 10px 0', maxWidth: '500px', marginLeft: 'auto', marginRight: 'auto' },
+  ptAction: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', color: '#c45a2a' },
   superDayBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '3px', padding: '16px 24px', background: 'none', border: '1px solid #c45a2a', color: '#c45a2a', cursor: 'pointer', width: '100%', marginBottom: '32px', transition: 'all 0.2s' },
   settingsPanel: { padding: '28px', background: 'rgba(15,15,15,0.8)', border: '1px solid #1a1a1a', marginBottom: '32px' },
   settingsTitle: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '4px', color: '#666', fontWeight: 400, marginBottom: '20px' },
