@@ -150,6 +150,22 @@ export default function Home() {
           </a>
         </div>
 
+        <div style={s.toolRec}>
+          <div style={s.toolRecLabel}>RECOMMENDED TOOL</div>
+          <a href="https://getcoldturkey.com/" target="_blank" rel="noopener noreferrer" style={s.toolRecLink}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#c45a2a'; e.currentTarget.style.background = 'rgba(196,90,42,0.06)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.background = 'transparent'; }}>
+            <div style={s.toolRecTitleRow}>
+              <img src="/coldturkey.png" alt="Cold Turkey Blocker" style={s.toolRecIcon} />
+              <div style={s.toolRecTitle}>COLD TURKEY BLOCKER</div>
+            </div>
+            <p style={s.toolRecDesc}>
+              Block porn sites, social media, or anything that pulls you into doomscrolling. Set a random password you never write down so you can't disable it in a moment of weakness. The free version is enough. Think of it like removing alcohol from the fridge. You can still go to the store and buy it, but the friction makes you think twice.
+            </p>
+            <div style={s.toolRecAction}>VISIT GETCOLDTURKEY.COM</div>
+          </a>
+        </div>
+
         <NewsletterSignup />
 
       </div>
@@ -204,4 +220,15 @@ const s = {
     color: '#999',
   },
   discordSub: { fontSize: '13px', color: '#666', marginTop: '8px' },
+  toolRec: { textAlign: 'center', padding: '40px 0', borderTop: '1px solid #1a1a1a', marginBottom: '48px' },
+  toolRecLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '4px', color: '#555', marginBottom: '16px' },
+  toolRecLink: {
+    display: 'block', textDecoration: 'none', padding: '28px', border: '1px solid #2a2a2a',
+    transition: 'all 0.3s ease', cursor: 'pointer', textAlign: 'center',
+  },
+  toolRecTitleRow: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '14px' },
+  toolRecIcon: { width: '32px', height: '32px' },
+  toolRecTitle: { fontFamily: "'Oswald', sans-serif", fontSize: '15px', letterSpacing: '4px', color: '#c45a2a' },
+  toolRecDesc: { fontSize: '15px', lineHeight: 1.8, color: '#888', margin: '0 0 18px 0', maxWidth: '520px', marginLeft: 'auto', marginRight: 'auto' },
+  toolRecAction: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', color: '#c45a2a', opacity: 0.7 },
 };
