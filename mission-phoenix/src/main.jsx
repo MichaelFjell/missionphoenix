@@ -10,6 +10,7 @@ import Journal from './Journal.jsx';
 import About from './About.jsx';
 import Contact from './Contact.jsx';
 import Support from './Support.jsx';
+import Archive from './Archive.jsx';
 
 // Auth Context
 const AuthContext = createContext(null);
@@ -106,6 +107,7 @@ function Nav() {
         <Link to="/quiz" style={navStyles.link}>Assessment</Link>
         <Link to="/tracker" style={navStyles.link}>Tracker</Link>
         <Link to="/community" style={navStyles.link}>Community</Link>
+        <Link to="/archive" style={navStyles.link}>Archive</Link>
         <Link to="/about" style={navStyles.link}>About</Link>
         <Link to="/contact" style={navStyles.link}>Contact</Link>
         <Link to="/support" style={navStyles.link}>Donate</Link>
@@ -169,6 +171,7 @@ function App() {
               <Route path="/tracker" element={<Tracker />} />
               <Route path="/community" element={<Community />} />
               <Route path="/journal" element={<Journal />} />
+              <Route path="/archive" element={<Archive />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/support" element={<Support />} />
