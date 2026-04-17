@@ -80,48 +80,69 @@ const MILESTONES = [
 
 function ds(date) { return date.toISOString().slice(0, 10); }
 
-// Mini calendar: shows the last 6 weeks ending today, aligned to weekdays.
+// Mini calendar: one month at a time with prev/next navigation.
 // Click a past unchecked day to backfill it. Click a past checked day to unmark.
 // Today is a direct check-in (same as the big button). Future days are disabled.
 function MiniCalendar({ checkedDates, onToggleDate }) {
-  const todayStr = ds(new Date());
+  const today = useMemo(() => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; }, []);
+  const todayStr = ds(today);
   const checkedSet = useMemo(() => new Set(checkedDates), [checkedDates]);
 
-  // Build a 6x7 grid ending on today (bottom-right), laid out Mon..Sun.
-  const { grid, monthLabel } = useMemo(() => {
-    const today = new Date();
-    today.setHours(12, 0, 0, 0);
+  // Viewed month state
+  const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
+
+  const monthName = new Date(view.year, view.month, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }).toUpperCase();
+
+  // Build the cells for this month, Monday-first.
+  const { cells, leadingBlanks, trailingBlanks } = useMemo(() => {
+    const firstOfMonth = new Date(view.year, view.month, 1);
+    const lastOfMonth = new Date(view.year, view.month + 1, 0);
+    const daysInMonth = lastOfMonth.getDate();
     // JS getDay(): 0=Sun..6=Sat. We want Mon=0..Sun=6.
-    const jsDow = today.getDay();
-    const mondayIdx = (jsDow + 6) % 7; // 0..6 where 0 means today is Monday
-    // Number of trailing empty slots after today in the last row = 6 - mondayIdx
-    const trailing = 6 - mondayIdx;
-    const totalCells = 42;
-    const startOffset = totalCells - 1 - trailing; // days before today
-    const cells = [];
-    for (let i = startOffset; i >= -trailing; i--) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      cells.push(d);
+    const leadingBlanks = (firstOfMonth.getDay() + 6) % 7;
+    const arr = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+      arr.push(new Date(view.year, view.month, day, 12, 0, 0));
     }
-    // Figure out which months are covered, for a simple label
-    const months = Array.from(new Set(cells.map(d => d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase())));
-    return { grid: cells, monthLabel: months.join(' \u00B7 ') };
-  }, [todayStr]);
+    const totalUsed = leadingBlanks + daysInMonth;
+    const trailingBlanks = (7 - (totalUsed % 7)) % 7;
+    return { cells: arr, leadingBlanks, trailingBlanks };
+  }, [view]);
+
+  const isCurrentMonth = view.year === today.getFullYear() && view.month === today.getMonth();
+  // Don't let you navigate past the current month (nothing to show)
+  const canNext = !isCurrentMonth;
+
+  const goPrev = () => {
+    const d = new Date(view.year, view.month - 1, 1);
+    setView({ year: d.getFullYear(), month: d.getMonth() });
+  };
+  const goNext = () => {
+    if (!canNext) return;
+    const d = new Date(view.year, view.month + 1, 1);
+    setView({ year: d.getFullYear(), month: d.getMonth() });
+  };
+  const goToday = () => setView({ year: today.getFullYear(), month: today.getMonth() });
 
   const weekdays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
   return (
     <div style={cal.wrap}>
       <div style={cal.header}>
-        <span style={cal.monthLabel}>{monthLabel}</span>
-        <span style={cal.hint}>Tap a past day to backfill or unmark</span>
+        <button onClick={goPrev} style={cal.navBtn} aria-label="Previous month">&lsaquo;</button>
+        <div style={cal.monthCenter}>
+          <span style={cal.monthLabel}>{monthName}</span>
+          {!isCurrentMonth && <button onClick={goToday} style={cal.todayBtn}>TODAY</button>}
+        </div>
+        <button onClick={goNext} disabled={!canNext} style={{ ...cal.navBtn, opacity: canNext ? 1 : 0.25, cursor: canNext ? 'pointer' : 'default' }} aria-label="Next month">&rsaquo;</button>
       </div>
+      <div style={cal.hint}>Tap a past day to backfill or unmark</div>
       <div style={cal.weekdays}>
         {weekdays.map((w, i) => <div key={i} style={cal.weekday}>{w}</div>)}
       </div>
       <div style={cal.grid}>
-        {grid.map((d, i) => {
+        {Array.from({ length: leadingBlanks }).map((_, i) => <div key={'lb' + i} style={cal.blank} />)}
+        {cells.map((d, i) => {
           const s = ds(d);
           const isFuture = s > todayStr;
           const isToday = s === todayStr;
@@ -138,7 +159,7 @@ function MiniCalendar({ checkedDates, onToggleDate }) {
             bg = 'rgba(20,20,20,0.6)'; color = '#555'; border = '1px solid #222';
           }
           if (isToday) {
-            border = `1px solid ${isChecked ? '#e8e4dc' : '#c45a2a'}`;
+            border = `2px solid ${isChecked ? '#e8e4dc' : '#c45a2a'}`;
           }
           return (
             <button
@@ -152,6 +173,7 @@ function MiniCalendar({ checkedDates, onToggleDate }) {
             </button>
           );
         })}
+        {Array.from({ length: trailingBlanks }).map((_, i) => <div key={'tb' + i} style={cal.blank} />)}
       </div>
       <div style={cal.legend}>
         <span style={cal.legendItem}><span style={{ ...cal.legendSwatch, background: '#c45a2a', borderColor: '#c45a2a' }} /> Logged</span>
@@ -164,14 +186,18 @@ function MiniCalendar({ checkedDates, onToggleDate }) {
 
 const cal = {
   wrap: { marginTop: '4px' },
-  header: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' },
-  monthLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '3px', color: '#c45a2a' },
-  hint: { fontFamily: "'EB Garamond', Georgia, serif", fontSize: '13px', color: '#555', fontStyle: 'italic' },
+  header: { display: 'grid', gridTemplateColumns: '40px 1fr 40px', alignItems: 'center', marginBottom: '4px' },
+  navBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '22px', background: 'transparent', color: '#c45a2a', border: '1px solid #2a2a2a', cursor: 'pointer', padding: '4px 0', lineHeight: 1 },
+  monthCenter: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' },
+  monthLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '4px', color: '#c45a2a' },
+  todayBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '9px', letterSpacing: '2px', background: 'transparent', color: '#888', border: '1px solid #333', cursor: 'pointer', padding: '3px 8px' },
+  hint: { fontFamily: "'EB Garamond', Georgia, serif", fontSize: '13px', color: '#555', fontStyle: 'italic', textAlign: 'center', marginBottom: '14px' },
   weekdays: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px', marginBottom: '6px' },
   weekday: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', color: '#444', textAlign: 'center' },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' },
+  blank: { aspectRatio: '1 / 1' },
   cell: { aspectRatio: '1 / 1', fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '1px', padding: 0, outline: 'none', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  legend: { display: 'flex', gap: '18px', marginTop: '14px', flexWrap: 'wrap', fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', color: '#666' },
+  legend: { display: 'flex', gap: '18px', marginTop: '14px', flexWrap: 'wrap', fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', color: '#666', justifyContent: 'center' },
   legendItem: { display: 'inline-flex', alignItems: 'center', gap: '6px' },
   legendSwatch: { display: 'inline-block', width: '10px', height: '10px', border: '1px solid' },
 };

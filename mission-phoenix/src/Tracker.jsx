@@ -72,6 +72,8 @@ function TrackerDashboard() {
   const [showSettings, setShowSettings] = useState(false);
   const [message, setMessage] = useState(profile?.motivational_message || '');
   const [error, setError] = useState('');
+  const [streakInput, setStreakInput] = useState('');
+  const [streakBusy, setStreakBusy] = useState(false);
 
   const today = ds(new Date());
 
@@ -220,6 +222,42 @@ function TrackerDashboard() {
     }
   };
 
+  // Bulk-fill N consecutive days ending today. Used by people who already have
+  // an existing streak when they sign up. Skips dates already logged.
+  const handleSetStreak = async () => {
+    const n = parseInt(streakInput, 10);
+    if (!primaryHabit || !n || n < 1) { setError('Enter a number of days (1 or more).'); return; }
+    if (n > 5000) { setError('That\u2019s a lot. Max 5000.'); return; }
+    setStreakBusy(true);
+    setError('');
+    try {
+      const existing = new Set(checkedDates);
+      const rows = [];
+      const d = new Date();
+      for (let i = 0; i < n; i++) {
+        const s = ds(d);
+        if (!existing.has(s)) {
+          rows.push({ habit_id: primaryHabit.id, user_id: user.id, check_date: s });
+        }
+        d.setDate(d.getDate() - 1);
+      }
+      if (rows.length > 0) {
+        // Batch inserts to stay well under any row-limit
+        const chunk = 500;
+        for (let i = 0; i < rows.length; i += chunk) {
+          const { error: err } = await supabase.from('daily_checks').insert(rows.slice(i, i + chunk));
+          if (err) throw err;
+        }
+      }
+      setStreakInput('');
+      await loadData();
+    } catch (e) {
+      console.error(e);
+      setError('Could not set streak: ' + (e.message || 'unknown error'));
+    }
+    setStreakBusy(false);
+  };
+
   const toggleProfileField = async (field) => { await updateProfile({ [field]: !profile[field] }); };
   const saveSettings = async () => { await updateProfile({ motivational_message: message }); };
 
@@ -240,9 +278,46 @@ function TrackerDashboard() {
             {showSettings ? 'CLOSE SETTINGS' : 'SETTINGS'}
           </button>
         </div>
+        {/* Prominent streak-import for fresh users */}
+        {checkedDates.length === 0 && (
+          <div style={st.streakCard}>
+            <div style={st.streakLabel}>ALREADY ON A STREAK?</div>
+            <p style={st.streakDesc}>If you already have clean days behind you, enter how many and we&rsquo;ll fill the calendar for you.</p>
+            <div style={st.streakRow}>
+              <input
+                type="number"
+                min="1"
+                max="5000"
+                value={streakInput}
+                onChange={e => setStreakInput(e.target.value)}
+                placeholder="e.g. 365"
+                style={st.streakInput}
+              />
+              <button onClick={handleSetStreak} disabled={streakBusy || !streakInput} style={{ ...st.streakBtn, opacity: streakBusy || !streakInput ? 0.4 : 1 }}>
+                {streakBusy ? 'SETTING...' : 'SET STREAK'}
+              </button>
+            </div>
+          </div>
+        )}
         {showSettings && (
           <div style={st.settingsPanel}>
-            <h3 style={st.settingsTitle}>PROFILE PRIVACY</h3>
+            <h3 style={st.settingsTitle}>SET YOUR DAY COUNT</h3>
+            <p style={st.settingsHelp}>Enter how many days clean you are. This fills in past days ending today. Existing logged days are kept.</p>
+            <div style={st.streakRow}>
+              <input
+                type="number"
+                min="1"
+                max="5000"
+                value={streakInput}
+                onChange={e => setStreakInput(e.target.value)}
+                placeholder="e.g. 365"
+                style={st.streakInput}
+              />
+              <button onClick={handleSetStreak} disabled={streakBusy || !streakInput} style={{ ...st.streakBtn, opacity: streakBusy || !streakInput ? 0.4 : 1 }}>
+                {streakBusy ? 'SETTING...' : 'SET STREAK'}
+              </button>
+            </div>
+            <h3 style={{ ...st.settingsTitle, marginTop: '32px' }}>PROFILE PRIVACY</h3>
             {[['is_public','Public profile'],['show_streak','Show streak'],['show_total_days','Show total days'],['show_message','Show message']].map(([f,l]) => (
               <div key={f} style={st.settingsRowItem}>
                 <span style={st.settingsLabel}>{l}</span>
@@ -295,6 +370,13 @@ const st = {
   textarea: { width: '100%', fontFamily: "'EB Garamond', Georgia, serif", fontSize: '15px', padding: '12px', background: 'rgba(10,10,10,0.8)', color: '#d4d0c8', border: '1px solid #2a2a2a', outline: 'none', resize: 'vertical', minHeight: '60px', marginTop: '4px', boxSizing: 'border-box' },
   saveBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', padding: '10px 20px', background: 'none', color: '#c45a2a', border: '1px solid #c45a2a', cursor: 'pointer', marginTop: '12px' },
   error: { fontSize: '13px', color: '#b82030', marginTop: '12px', padding: '10px 14px', border: '1px solid #b8203044', background: 'rgba(184,32,48,0.06)' },
+  streakCard: { padding: '24px', background: 'rgba(196,90,42,0.05)', border: '1px solid #c45a2a33', marginBottom: '20px' },
+  streakLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '4px', color: '#c45a2a', marginBottom: '10px' },
+  streakDesc: { fontSize: '14px', color: '#888', lineHeight: 1.6, margin: '0 0 16px 0', fontFamily: "'EB Garamond', Georgia, serif" },
+  streakRow: { display: 'flex', gap: '10px', flexWrap: 'wrap' },
+  streakInput: { flex: 1, minWidth: '140px', fontFamily: "'Oswald', sans-serif", fontSize: '16px', letterSpacing: '2px', padding: '12px 14px', background: 'rgba(10,10,10,0.8)', color: '#e8e4dc', border: '1px solid #2a2a2a', outline: 'none' },
+  streakBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', padding: '12px 20px', background: 'transparent', color: '#c45a2a', border: '1px solid #c45a2a', cursor: 'pointer' },
+  settingsHelp: { fontSize: '13px', color: '#666', lineHeight: 1.6, margin: '0 0 14px 0', fontFamily: "'EB Garamond', Georgia, serif" },
   loading: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '3px', color: '#555', textAlign: 'center', padding: '100px 24px' },
 };
 
