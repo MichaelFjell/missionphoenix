@@ -318,10 +318,24 @@ function TrackerDashboard() {
               </button>
             </div>
             <h3 style={{ ...st.settingsTitle, marginTop: '32px' }}>PROFILE PRIVACY</h3>
-            {[['is_public','Public profile'],['show_streak','Show streak'],['show_total_days','Show total days'],['show_message','Show message']].map(([f,l]) => (
+            <p style={st.settingsHelp}>Control what other members see on your public profile.</p>
+            {[
+              ['is_public', 'Profile visible to others', 'When private, nothing below is shown at all.'],
+              ['show_streak', 'Current streak (days clean)', 'Shows your current consecutive-day count.'],
+              ['show_total_days', 'Total days logged', 'Lifetime count across all check-ins.'],
+              ['show_message', 'Your reason / message', 'The short note below.'],
+            ].map(([f, l, sub]) => (
               <div key={f} style={st.settingsRowItem}>
-                <span style={st.settingsLabel}>{l}</span>
-                <button onClick={() => toggleProfileField(f)} style={{ ...st.toggleBtn, background: profile[f] ? '#c45a2a' : '#222' }}>{profile[f] ? 'ON' : 'OFF'}</button>
+                <div style={{ flex: 1 }}>
+                  <div style={st.settingsLabel}>{l}</div>
+                  <div style={st.settingsSub}>{sub}</div>
+                </div>
+                <button
+                  onClick={() => toggleProfileField(f)}
+                  style={{ ...st.toggleBtn, background: profile[f] ? '#c45a2a' : 'transparent', color: profile[f] ? '#0a0a0a' : '#888', border: `1px solid ${profile[f] ? '#c45a2a' : '#333'}` }}
+                >
+                  {profile[f] ? 'PUBLIC' : 'PRIVATE'}
+                </button>
               </div>
             ))}
             <div style={{ marginTop: '20px' }}>
@@ -364,9 +378,10 @@ const st = {
   settingsBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '3px', padding: '8px 16px', background: 'none', color: '#555', border: '1px solid #333', cursor: 'pointer' },
   settingsPanel: { padding: '28px', background: 'rgba(15,15,15,0.8)', border: '1px solid #1a1a1a', marginBottom: '24px' },
   settingsTitle: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '4px', color: '#666', fontWeight: 400, marginBottom: '20px' },
-  settingsRowItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #141414' },
-  settingsLabel: { fontSize: '14px', color: '#888', display: 'block', marginBottom: '6px' },
-  toggleBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', padding: '4px 14px', color: '#e8e4dc', border: 'none', cursor: 'pointer', minWidth: '50px' },
+  settingsRowItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '14px', padding: '14px 0', borderBottom: '1px solid #141414' },
+  settingsLabel: { fontSize: '14px', color: '#c8c3ba', marginBottom: '3px' },
+  settingsSub: { fontSize: '12px', color: '#666', fontStyle: 'italic', fontFamily: "'EB Garamond', Georgia, serif" },
+  toggleBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', padding: '6px 14px', cursor: 'pointer', minWidth: '82px' },
   textarea: { width: '100%', fontFamily: "'EB Garamond', Georgia, serif", fontSize: '15px', padding: '12px', background: 'rgba(10,10,10,0.8)', color: '#d4d0c8', border: '1px solid #2a2a2a', outline: 'none', resize: 'vertical', minHeight: '60px', marginTop: '4px', boxSizing: 'border-box' },
   saveBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', padding: '10px 20px', background: 'none', color: '#c45a2a', border: '1px solid #c45a2a', cursor: 'pointer', marginTop: '12px' },
   error: { fontSize: '13px', color: '#b82030', marginTop: '12px', padding: '10px 14px', border: '1px solid #b8203044', background: 'rgba(184,32,48,0.06)' },
