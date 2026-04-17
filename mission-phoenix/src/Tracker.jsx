@@ -191,6 +191,35 @@ function TrackerDashboard() {
 
   const handleSkipNote = () => setShowNotePrompt(false);
 
+  // Backfill or unmark any past day from the mini calendar.
+  // Today uses the same insert path as LOG TODAY so the quote/note flow triggers;
+  // past days are a silent correction, no quote.
+  const handleToggleDate = async (dateStr, isCurrentlyChecked) => {
+    if (!primaryHabit) return;
+    if (dateStr > today) return; // no future logging
+    if (dateStr === today && !isCurrentlyChecked) {
+      // Route through the normal flow so the user still gets the quote reward
+      handleCheckToday();
+      return;
+    }
+    if (isCurrentlyChecked) {
+      const { error: err } = await supabase
+        .from('daily_checks')
+        .delete()
+        .eq('habit_id', primaryHabit.id)
+        .eq('user_id', user.id)
+        .eq('check_date', dateStr);
+      if (err) { console.error(err); setError('Could not unmark that day.'); return; }
+      setCheckedDates(checkedDates.filter(d => d !== dateStr));
+    } else {
+      const { error: err } = await supabase
+        .from('daily_checks')
+        .insert({ habit_id: primaryHabit.id, user_id: user.id, check_date: dateStr });
+      if (err) { console.error(err); setError('Could not log that day.'); return; }
+      setCheckedDates([dateStr, ...checkedDates]);
+    }
+  };
+
   const toggleProfileField = async (field) => { await updateProfile({ [field]: !profile[field] }); };
   const saveSettings = async () => { await updateProfile({ motivational_message: message }); };
 
@@ -242,6 +271,7 @@ function TrackerDashboard() {
         onSaveNote={handleSaveNote}
         onSkipNote={handleSkipNote}
         recentNotes={recentNotes}
+        onToggleDate={handleToggleDate}
       />
     </div>
   );

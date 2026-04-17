@@ -11,6 +11,10 @@ export default function JourneyPreview() {
   const [showQuote, setShowQuote] = useState(false);
   const [todayQuote, setTodayQuote] = useState(null);
   const [showNotePrompt, setShowNotePrompt] = useState(false);
+  // Let the preview scrub around missed days: store real checked dates so the
+  // mini calendar renders gaps you can click.
+  const [extraChecks, setExtraChecks] = useState(new Set());
+  const [removedChecks, setRemovedChecks] = useState(new Set());
 
   const [recentNotes, setRecentNotes] = useState([
     { date: '15 APR', text: 'Slept badly last night. Felt restless but walked it off. Training in the evening helped a lot.', isPublic: true },
@@ -18,11 +22,27 @@ export default function JourneyPreview() {
     { date: '11 APR', text: "Great day. Met with Erik for coffee, had a real conversation about the mission. Feeling anchored.", isPublic: false },
   ]);
 
-  const checkedDates = Array.from({ length: daysClean }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    return d.toISOString().slice(0, 10);
-  });
+  const checkedDates = (() => {
+    const base = Array.from({ length: daysClean }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      return d.toISOString().slice(0, 10);
+    });
+    const set = new Set(base);
+    extraChecks.forEach(d => set.add(d));
+    removedChecks.forEach(d => set.delete(d));
+    return Array.from(set);
+  })();
+
+  const handleToggleDate = (dateStr, isChecked) => {
+    if (isChecked) {
+      setRemovedChecks(new Set([...removedChecks, dateStr]));
+      setExtraChecks(new Set([...extraChecks].filter(d => d !== dateStr)));
+    } else {
+      setExtraChecks(new Set([...extraChecks, dateStr]));
+      setRemovedChecks(new Set([...removedChecks].filter(d => d !== dateStr)));
+    }
+  };
 
   const handleCheckToday = () => {
     setIsTodayChecked(true);
@@ -82,6 +102,7 @@ export default function JourneyPreview() {
         onSaveNote={handleSaveNote}
         onSkipNote={handleSkipNote}
         recentNotes={recentNotes}
+        onToggleDate={handleToggleDate}
       />
     </div>
   );

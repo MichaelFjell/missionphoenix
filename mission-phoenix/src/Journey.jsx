@@ -78,6 +78,104 @@ const MILESTONES = [
   { day: 730, label: 'Two years' },
 ];
 
+function ds(date) { return date.toISOString().slice(0, 10); }
+
+// Mini calendar: shows the last 6 weeks ending today, aligned to weekdays.
+// Click a past unchecked day to backfill it. Click a past checked day to unmark.
+// Today is a direct check-in (same as the big button). Future days are disabled.
+function MiniCalendar({ checkedDates, onToggleDate }) {
+  const todayStr = ds(new Date());
+  const checkedSet = useMemo(() => new Set(checkedDates), [checkedDates]);
+
+  // Build a 6x7 grid ending on today (bottom-right), laid out Mon..Sun.
+  const { grid, monthLabel } = useMemo(() => {
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+    // JS getDay(): 0=Sun..6=Sat. We want Mon=0..Sun=6.
+    const jsDow = today.getDay();
+    const mondayIdx = (jsDow + 6) % 7; // 0..6 where 0 means today is Monday
+    // Number of trailing empty slots after today in the last row = 6 - mondayIdx
+    const trailing = 6 - mondayIdx;
+    const totalCells = 42;
+    const startOffset = totalCells - 1 - trailing; // days before today
+    const cells = [];
+    for (let i = startOffset; i >= -trailing; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      cells.push(d);
+    }
+    // Figure out which months are covered, for a simple label
+    const months = Array.from(new Set(cells.map(d => d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase())));
+    return { grid: cells, monthLabel: months.join(' \u00B7 ') };
+  }, [todayStr]);
+
+  const weekdays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+  return (
+    <div style={cal.wrap}>
+      <div style={cal.header}>
+        <span style={cal.monthLabel}>{monthLabel}</span>
+        <span style={cal.hint}>Tap a past day to backfill or unmark</span>
+      </div>
+      <div style={cal.weekdays}>
+        {weekdays.map((w, i) => <div key={i} style={cal.weekday}>{w}</div>)}
+      </div>
+      <div style={cal.grid}>
+        {grid.map((d, i) => {
+          const s = ds(d);
+          const isFuture = s > todayStr;
+          const isToday = s === todayStr;
+          const isChecked = checkedSet.has(s);
+          const dayNum = d.getDate();
+          let bg = 'transparent';
+          let color = '#3a3a3a';
+          let border = '1px solid #1a1a1a';
+          if (isFuture) {
+            bg = 'transparent'; color = '#242424'; border = '1px dashed #1a1a1a';
+          } else if (isChecked) {
+            bg = '#c45a2a'; color = '#0a0a0a'; border = '1px solid #c45a2a';
+          } else {
+            bg = 'rgba(20,20,20,0.6)'; color = '#555'; border = '1px solid #222';
+          }
+          if (isToday) {
+            border = `1px solid ${isChecked ? '#e8e4dc' : '#c45a2a'}`;
+          }
+          return (
+            <button
+              key={i}
+              onClick={() => !isFuture && onToggleDate && onToggleDate(s, isChecked)}
+              disabled={isFuture}
+              title={d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + (isChecked ? ' \u2014 logged' : '')}
+              style={{ ...cal.cell, background: bg, color, border, cursor: isFuture ? 'default' : 'pointer' }}
+            >
+              {dayNum}
+            </button>
+          );
+        })}
+      </div>
+      <div style={cal.legend}>
+        <span style={cal.legendItem}><span style={{ ...cal.legendSwatch, background: '#c45a2a', borderColor: '#c45a2a' }} /> Logged</span>
+        <span style={cal.legendItem}><span style={{ ...cal.legendSwatch, background: 'rgba(20,20,20,0.6)', borderColor: '#222' }} /> Missed</span>
+        <span style={cal.legendItem}><span style={{ ...cal.legendSwatch, background: 'transparent', borderColor: '#c45a2a' }} /> Today</span>
+      </div>
+    </div>
+  );
+}
+
+const cal = {
+  wrap: { marginTop: '4px' },
+  header: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' },
+  monthLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '3px', color: '#c45a2a' },
+  hint: { fontFamily: "'EB Garamond', Georgia, serif", fontSize: '13px', color: '#555', fontStyle: 'italic' },
+  weekdays: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px', marginBottom: '6px' },
+  weekday: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', color: '#444', textAlign: 'center' },
+  grid: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' },
+  cell: { aspectRatio: '1 / 1', fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '1px', padding: 0, outline: 'none', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  legend: { display: 'flex', gap: '18px', marginTop: '14px', flexWrap: 'wrap', fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', color: '#666' },
+  legendItem: { display: 'inline-flex', alignItems: 'center', gap: '6px' },
+  legendSwatch: { display: 'inline-block', width: '10px', height: '10px', border: '1px solid' },
+};
+
 function QuoteCard({ quote, onClose }) {
   return (
     <div style={qs.overlay} onClick={onClose}>
@@ -162,6 +260,7 @@ export default function Journey({
   onSaveNote,
   onSkipNote,
   recentNotes = [],
+  onToggleDate,
 }) {
   const tier = useMemo(() => getTier(daysClean), [daysClean]);
   const nextTier = useMemo(() => getNextTier(daysClean), [daysClean]);
@@ -200,6 +299,12 @@ export default function Journey({
         </button>
         {!isTodayChecked && <p style={js.checkinHint}>A new anchor awaits.</p>}
       </div>
+
+      {/* Mini calendar: last 6 weeks, with backfill */}
+      <section style={js.section}>
+        <div style={js.sectionLabel}>RECENT DAYS</div>
+        <MiniCalendar checkedDates={checkedDates} onToggleDate={onToggleDate} />
+      </section>
 
       {/* Brain narrative */}
       <section style={js.section}>
