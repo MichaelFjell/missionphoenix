@@ -11,6 +11,7 @@ import About from './About.jsx';
 import Contact from './Contact.jsx';
 import Support from './Support.jsx';
 import Archive from './Archive.jsx';
+import JourneyPreview from './JourneyPreview.jsx';
 
 // Auth Context
 const AuthContext = createContext(null);
@@ -172,6 +173,7 @@ function App() {
               <Route path="/community" element={<Community />} />
               <Route path="/journal" element={<Journal />} />
               <Route path="/archive" element={<Archive />} />
+              <Route path="/journey-preview" element={<JourneyPreview />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/support" element={<Support />} />
