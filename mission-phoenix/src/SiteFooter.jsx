@@ -33,7 +33,6 @@ export default function SiteFooter() {
       </div>
       <div className="foot-bottom">
         <span>© 2026 Mission Phoenix</span>
-        <span>No ads. No tracking. No upsells.</span>
       </div>
     </footer>
   );

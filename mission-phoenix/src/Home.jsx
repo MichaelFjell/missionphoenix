@@ -91,6 +91,8 @@ export default function Home() {
         .side-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;position:relative;overflow:hidden;}
         .side-card.nl::before{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--copper-soft),transparent 70%);}
         .side-card .sec-title{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--copper);margin-bottom:14px;display:flex;align-items:center;gap:10px;position:relative;}
+        .side-card .sec-title::before{display:none;}
+        main.home-page > .sec-title::before{display:none;}
         .side-card h2{font-size:22px;font-weight:800;letter-spacing:-0.015em;line-height:1.2;margin-bottom:8px;position:relative;}
         .side-card p.sm{font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:16px;position:relative;}
         .nl-form{display:flex;gap:8px;position:relative;}
@@ -145,7 +147,7 @@ export default function Home() {
               <h2>Honest words about breaking free.</h2>
               <p className="sm">Hand-written by Michael, once a week. No AI-slop. No drip campaigns. Unsubscribe any time.</p>
               <NewsletterSignup />
-              <div className="note">One email per week. <Link to="/archive">Read past issues →</Link></div>
+              <div className="note">One email per week. <Link to="/archive">Read past newsletters →</Link></div>
             </div>
 
             <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer" className="side-card discord-row">
