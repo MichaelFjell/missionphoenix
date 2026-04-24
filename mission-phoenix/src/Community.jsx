@@ -38,7 +38,6 @@ export default function Community() {
   };
 
   const loadCommunity = async () => {
-    // Get public profiles
     const { data: profiles } = await supabase
       .from('profiles')
       .select('*')
@@ -47,7 +46,6 @@ export default function Community() {
 
     if (!profiles || profiles.length === 0) { setLoading(false); return; }
 
-    // Get habits and checks for public users
     const userIds = profiles.map(p => p.id);
 
     const { data: habits } = await supabase
@@ -60,12 +58,10 @@ export default function Community() {
       .select('*')
       .in('user_id', userIds);
 
-    // Compute streaks and totals
     const enriched = profiles.map(profile => {
       const userHabits = (habits || []).filter(h => h.user_id === profile.id);
       const userChecks = (checks || []).filter(c => c.user_id === profile.id);
 
-      // Calculate best streak across all habits
       let bestStreak = 0;
       let totalDays = 0;
 
@@ -73,7 +69,6 @@ export default function Community() {
         const habitChecks = userChecks.filter(c => c.habit_id === habit.id);
         totalDays += habitChecks.length;
 
-        // Calculate current streak
         let streak = 0;
         const d = new Date();
         while (true) {
@@ -98,64 +93,84 @@ export default function Community() {
 
   if (!isSupabaseConfigured()) {
     return (
-      <div style={{ maxWidth: '500px', margin: '0 auto', padding: '100px 24px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: "'Oswald', sans-serif", fontSize: '18px', letterSpacing: '4px', color: '#e8e4dc', fontWeight: 400, marginBottom: '16px' }}>
-          COMMUNITY COMING SOON
-        </h2>
-        <p style={{ fontSize: '15px', color: '#666', lineHeight: 1.7 }}>
-          See who's fighting the same battle. Public profiles will appear here.
-        </p>
-      </div>
+      <main className="page narrow">
+        <h1 className="cm-title">Community coming soon</h1>
+        <p className="cm-sub">See who's fighting the same battle. Public profiles will appear here.</p>
+      </main>
     );
   }
 
   return (
-    <div style={s.root}>
-      <div style={s.container}>
-        <h1 style={s.title}>COMMUNITY</h1>
-        <p style={s.subtitle}>
-          People in recovery. No ranking. No competition. Just proof that you're not alone.
-        </p>
+    <>
+      <style>{`
+        .cm-title{font-size:clamp(26px,4vw,34px);font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+        .cm-sub{font-size:15px;color:var(--ink-3);margin-bottom:32px;line-height:1.7;}
+        .cm-tabs{display:flex;gap:0;margin-bottom:32px;border-bottom:1px solid var(--line);}
+        .cm-tab{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;padding:14px 18px;color:var(--ink-3);font-family:inherit;transition:all .15s;white-space:nowrap;}
+        .cm-tab:hover{color:var(--ink-2);}
+        .cm-tab.on{color:var(--copper);border-bottom-color:var(--copper);}
+        .cm-empty{text-align:center;padding:80px 24px;border:1px dashed var(--line);border-radius:14px;}
+        .cm-empty p{color:var(--ink-3);font-style:italic;font-size:15px;line-height:1.7;max-width:440px;margin:0 auto;}
+        .cm-list{display:flex;flex-direction:column;gap:14px;margin-bottom:48px;}
+        .cm-mcard{padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:14px;}
+        .cm-mhead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:16px;flex-wrap:wrap;}
+        .cm-mname{font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--ink);line-height:1.3;min-width:0;flex:1;}
+        .cm-streak{font-size:13px;color:var(--ink-2);white-space:nowrap;flex-shrink:0;}
+        .cm-streak b{font-size:22px;font-weight:800;color:var(--copper);margin-right:4px;}
+        .cm-mstat{font-size:13px;color:var(--ink-3);margin-bottom:8px;}
+        .cm-habits{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+        .cm-tag{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-3);white-space:nowrap;}
+        .cm-mmsg{font-size:14px;color:var(--ink-2);font-style:italic;margin-top:12px;line-height:1.6;}
+        .cm-ncard{padding:20px 24px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--copper);border-radius:0 14px 14px 0;}
+        .cm-nmeta{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+        .cm-ndate{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--ink-3);}
+        .cm-nsep{color:var(--line-2);}
+        .cm-nhabit{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-3);white-space:nowrap;}
+        .cm-ntext{font-size:15px;line-height:1.75;color:var(--ink-2);margin:0 0 10px 0;font-style:italic;}
+        .cm-nauthor{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--copper);}
+        .cm-foot{text-align:center;padding:32px 0;border-top:1px solid var(--line);margin-top:24px;}
+        .cm-foot a{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--copper);}
+        .cm-foot a:hover{text-decoration:underline;}
+        .cm-loading{font-size:13px;letter-spacing:2px;color:var(--ink-3);text-align:center;padding:60px;}
+      `}</style>
+      <main className="page narrow">
+        <h1 className="cm-title">Community</h1>
+        <p className="cm-sub">People in recovery. No ranking. No competition. Just proof that you're not alone.</p>
 
-        <div style={s.tabs}>
-          <button onClick={() => setTab('members')} style={{ ...s.tabBtn, color: tab === 'members' ? '#c45a2a' : '#555', borderBottomColor: tab === 'members' ? '#c45a2a' : 'transparent' }}>MEMBERS</button>
-          <button onClick={() => setTab('notes')} style={{ ...s.tabBtn, color: tab === 'notes' ? '#c45a2a' : '#555', borderBottomColor: tab === 'notes' ? '#c45a2a' : 'transparent' }}>PUBLIC NOTES</button>
+        <div className="cm-tabs">
+          <button onClick={() => setTab('members')} className={`cm-tab ${tab === 'members' ? 'on' : ''}`}>Members</button>
+          <button onClick={() => setTab('notes')} className={`cm-tab ${tab === 'notes' ? 'on' : ''}`}>Public Notes</button>
         </div>
 
         {tab === 'members' && (
           loading ? (
-            <div style={s.loading}>Loading...</div>
+            <div className="cm-loading">Loading...</div>
           ) : users.length === 0 ? (
-            <div style={s.empty}>
-              <p style={s.emptyText}>No public profiles yet. Be the first.</p>
+            <div className="cm-empty">
+              <p>No public profiles yet. Be the first.</p>
             </div>
           ) : (
-            <div style={s.list}>
+            <div className="cm-list">
               {users.map(u => (
-                <div key={u.id} style={s.card}>
-                  <div style={s.cardHeader}>
-                    <span style={s.username}>{u.username}</span>
+                <div key={u.id} className="cm-mcard">
+                  <div className="cm-mhead">
+                    <div className="cm-mname">{u.username}</div>
                     {u.show_streak && (
-                      <span style={s.streakBadge}>
-                        <span style={s.streakNum}>{u.bestStreak}</span> day streak
-                      </span>
+                      <div className="cm-streak"><b>{u.bestStreak}</b>day streak</div>
                     )}
                   </div>
-
                   {u.show_total_days && (
-                    <div style={s.stat}>{u.totalDays} total days tracked</div>
+                    <div className="cm-mstat">{u.totalDays} total days tracked</div>
                   )}
-
                   {u.show_habits && u.habits.length > 0 && (
-                    <div style={s.habits}>
+                    <div className="cm-habits">
                       {u.habits.map(h => (
-                        <span key={h.id} style={s.habitTag}>{h.name}</span>
+                        <span key={h.id} className="cm-tag">{h.name}</span>
                       ))}
                     </div>
                   )}
-
                   {u.show_message && u.motivational_message && (
-                    <p style={s.message}>"{u.motivational_message}"</p>
+                    <p className="cm-mmsg">"{u.motivational_message}"</p>
                   )}
                 </div>
               ))}
@@ -165,70 +180,32 @@ export default function Community() {
 
         {tab === 'notes' && (
           notes.length === 0 ? (
-            <div style={s.empty}>
-              <p style={s.emptyText}>No public notes yet.</p>
-              <p style={s.emptyHint}>When tracking your habits, toggle a note to "PUBLIC" to share it here.</p>
+            <div className="cm-empty">
+              <p>No public notes yet. When tracking your habits, toggle a note to "PUBLIC" to share it here.</p>
             </div>
           ) : (
-            <div style={s.notesList}>
+            <div className="cm-list">
               {notes.map(n => (
-                <div key={n.id} style={s.noteCard}>
-                  <div style={s.noteMeta}>
-                    <span style={s.noteDate}>{formatNoteDate(n.note_date)}</span>
-                    <span style={s.noteSep}>—</span>
-                    {n.habits?.name && <span style={s.noteHabit}>{n.habits.name}</span>}
+                <div key={n.id} className="cm-ncard">
+                  <div className="cm-nmeta">
+                    <span className="cm-ndate">{formatNoteDate(n.note_date)}</span>
+                    <span className="cm-nsep">—</span>
+                    {n.habits?.name && <span className="cm-nhabit">{n.habits.name}</span>}
                   </div>
-                  <p style={s.noteText}>{n.note_text}</p>
-                  <span style={s.noteAuthor}>— {n.profiles?.username || 'Anonymous'}</span>
+                  <p className="cm-ntext">{n.note_text}</p>
+                  <span className="cm-nauthor">— {n.profiles?.username || 'Anonymous'}</span>
                 </div>
               ))}
             </div>
           )
         )}
 
-        <div style={s.footer}>
-          <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer" style={s.discordLink}>
-            JOIN THE DISCORD FOR DEEPER SUPPORT →
+        <div className="cm-foot">
+          <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer">
+            Join the Discord for deeper support →
           </a>
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }
-
-const s = {
-  root: { minHeight: '100vh' },
-  container: { maxWidth: '680px', margin: '0 auto', padding: '40px 24px 80px' },
-  title: { fontFamily: "'Oswald', sans-serif", fontSize: 'clamp(24px, 5vw, 36px)', letterSpacing: '6px', color: '#e8e4dc', fontWeight: 400, margin: '0 0 8px 0' },
-  subtitle: { fontSize: '15px', color: '#666', margin: '0 0 32px 0', lineHeight: 1.7 },
-  loading: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '3px', color: '#555', textAlign: 'center', padding: '60px' },
-  empty: { textAlign: 'center', padding: '60px 0' },
-  emptyText: { fontSize: '15px', color: '#555', fontStyle: 'italic', marginBottom: '8px' },
-  emptyHint: { fontSize: '13px', color: '#333', lineHeight: 1.6 },
-
-  tabs: { display: 'flex', gap: '0', marginBottom: '32px', borderBottom: '1px solid #1a1a1a' },
-  tabBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '4px', background: 'none', border: 'none', borderBottom: '2px solid transparent', cursor: 'pointer', padding: '12px 20px', transition: 'all 0.2s' },
-
-  list: { display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '48px' },
-  card: { padding: '24px', background: 'rgba(15,15,15,0.6)', border: '1px solid #1a1a1a' },
-  cardHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' },
-  username: { fontFamily: "'Oswald', sans-serif", fontSize: '15px', letterSpacing: '3px', color: '#e8e4dc' },
-  streakBadge: { fontSize: '13px', color: '#888' },
-  streakNum: { fontFamily: "'Oswald', sans-serif", fontSize: '22px', color: '#c45a2a', marginRight: '4px' },
-  stat: { fontSize: '13px', color: '#555', marginBottom: '8px' },
-  habits: { display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' },
-  habitTag: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', padding: '4px 10px', border: '1px solid #222', color: '#777' },
-  message: { fontSize: '14px', color: '#777', fontStyle: 'italic', marginTop: '12px', lineHeight: 1.6 },
-
-  notesList: { display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '48px' },
-  noteCard: { padding: '20px 24px', background: 'rgba(15,15,15,0.6)', borderLeft: '2px solid #c45a2a22', borderTop: 'none', borderRight: 'none', borderBottom: '1px solid #141414' },
-  noteMeta: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' },
-  noteDate: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '2px', color: '#666' },
-  noteSep: { color: '#333', fontSize: '12px' },
-  noteHabit: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', padding: '2px 10px', border: '1px solid #222', color: '#888' },
-  noteText: { fontSize: '15px', lineHeight: 1.8, color: '#999', margin: '0 0 10px 0', fontStyle: 'italic' },
-  noteAuthor: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', color: '#c45a2a' },
-
-  footer: { textAlign: 'center', padding: '32px 0', borderTop: '1px solid #1a1a1a' },
-  discordLink: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '4px', color: '#555', textDecoration: 'none' },
-};

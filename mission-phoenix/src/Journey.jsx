@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react';
 import { pickDeterministicQuote, pickRandomQuote } from './quotes.js';
 
 // ==== TIERS ====
-// Each tier: {days, name, brain description}
 const TIERS = [
   {
     min: 0, max: 2, name: 'KINDLING',
@@ -65,7 +64,6 @@ function getNextTier(days) {
   return TIERS[idx + 1] || null;
 }
 
-// Milestones are the tier boundaries plus a couple extras.
 const MILESTONES = [
   { day: 1, label: 'First day' },
   { day: 7, label: 'One week' },
@@ -80,25 +78,19 @@ const MILESTONES = [
 
 function ds(date) { return date.toISOString().slice(0, 10); }
 
-// Mini calendar: one month at a time with prev/next navigation.
-// Click a past unchecked day to backfill it. Click a past checked day to unmark.
-// Today is a direct check-in (same as the big button). Future days are disabled.
 function MiniCalendar({ checkedDates, onToggleDate }) {
   const today = useMemo(() => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; }, []);
   const todayStr = ds(today);
   const checkedSet = useMemo(() => new Set(checkedDates), [checkedDates]);
 
-  // Viewed month state
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
 
-  const monthName = new Date(view.year, view.month, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }).toUpperCase();
+  const monthName = new Date(view.year, view.month, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 
-  // Build the cells for this month, Monday-first.
   const { cells, leadingBlanks, trailingBlanks } = useMemo(() => {
     const firstOfMonth = new Date(view.year, view.month, 1);
     const lastOfMonth = new Date(view.year, view.month + 1, 0);
     const daysInMonth = lastOfMonth.getDate();
-    // JS getDay(): 0=Sun..6=Sat. We want Mon=0..Sun=6.
     const leadingBlanks = (firstOfMonth.getDay() + 6) % 7;
     const arr = [];
     for (let day = 1; day <= daysInMonth; day++) {
@@ -110,7 +102,6 @@ function MiniCalendar({ checkedDates, onToggleDate }) {
   }, [view]);
 
   const isCurrentMonth = view.year === today.getFullYear() && view.month === today.getMonth();
-  // Don't let you navigate past the current month (nothing to show)
   const canNext = !isCurrentMonth;
 
   const goPrev = () => {
@@ -127,89 +118,62 @@ function MiniCalendar({ checkedDates, onToggleDate }) {
   const weekdays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
   return (
-    <div style={cal.wrap}>
-      <div style={cal.header}>
-        <button onClick={goPrev} style={cal.navBtn} aria-label="Previous month">&lsaquo;</button>
-        <div style={cal.monthCenter}>
-          <span style={cal.monthLabel}>{monthName}</span>
-          {!isCurrentMonth && <button onClick={goToday} style={cal.todayBtn}>TODAY</button>}
+    <div className="jc-wrap">
+      <div className="jc-header">
+        <button onClick={goPrev} className="jc-nav" aria-label="Previous month">‹</button>
+        <div className="jc-mcenter">
+          <span className="jc-mlab">{monthName}</span>
+          {!isCurrentMonth && <button onClick={goToday} className="jc-today">Today</button>}
         </div>
-        <button onClick={goNext} disabled={!canNext} style={{ ...cal.navBtn, opacity: canNext ? 1 : 0.25, cursor: canNext ? 'pointer' : 'default' }} aria-label="Next month">&rsaquo;</button>
+        <button onClick={goNext} disabled={!canNext} className="jc-nav" aria-label="Next month">›</button>
       </div>
-      <div style={cal.hint}>Tap a past day to backfill or unmark</div>
-      <div style={cal.weekdays}>
-        {weekdays.map((w, i) => <div key={i} style={cal.weekday}>{w}</div>)}
+      <div className="jc-hint">Tap a past day to backfill or unmark</div>
+      <div className="jc-weekdays">
+        {weekdays.map((w, i) => <div key={i} className="jc-wd">{w}</div>)}
       </div>
-      <div style={cal.grid}>
-        {Array.from({ length: leadingBlanks }).map((_, i) => <div key={'lb' + i} style={cal.blank} />)}
+      <div className="jc-grid">
+        {Array.from({ length: leadingBlanks }).map((_, i) => <div key={'lb' + i} className="jc-blank" />)}
         {cells.map((d, i) => {
           const s = ds(d);
           const isFuture = s > todayStr;
           const isToday = s === todayStr;
           const isChecked = checkedSet.has(s);
           const dayNum = d.getDate();
-          let bg = 'transparent';
-          let color = '#3a3a3a';
-          let border = '1px solid #1a1a1a';
-          if (isFuture) {
-            bg = 'transparent'; color = '#242424'; border = '1px dashed #1a1a1a';
-          } else if (isChecked) {
-            bg = '#c45a2a'; color = '#0a0a0a'; border = '1px solid #c45a2a';
-          } else {
-            bg = 'rgba(20,20,20,0.6)'; color = '#555'; border = '1px solid #222';
-          }
-          if (isToday) {
-            border = `2px solid ${isChecked ? '#e8e4dc' : '#c45a2a'}`;
-          }
+          const cls = ['jc-cell'];
+          if (isChecked) cls.push('on');
+          if (isFuture) cls.push('future');
+          if (isToday) cls.push('today');
           return (
             <button
               key={i}
               onClick={() => !isFuture && onToggleDate && onToggleDate(s, isChecked)}
               disabled={isFuture}
-              title={d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + (isChecked ? ' \u2014 logged' : '')}
-              style={{ ...cal.cell, background: bg, color, border, cursor: isFuture ? 'default' : 'pointer' }}
+              title={d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + (isChecked ? ' — logged' : '')}
+              className={cls.join(' ')}
             >
               {dayNum}
             </button>
           );
         })}
-        {Array.from({ length: trailingBlanks }).map((_, i) => <div key={'tb' + i} style={cal.blank} />)}
+        {Array.from({ length: trailingBlanks }).map((_, i) => <div key={'tb' + i} className="jc-blank" />)}
       </div>
-      <div style={cal.legend}>
-        <span style={cal.legendItem}><span style={{ ...cal.legendSwatch, background: '#c45a2a', borderColor: '#c45a2a' }} /> Logged</span>
-        <span style={cal.legendItem}><span style={{ ...cal.legendSwatch, background: 'rgba(20,20,20,0.6)', borderColor: '#222' }} /> Missed</span>
-        <span style={cal.legendItem}><span style={{ ...cal.legendSwatch, background: 'transparent', borderColor: '#c45a2a' }} /> Today</span>
+      <div className="jc-legend">
+        <span><span className="jc-sw on" /> Logged</span>
+        <span><span className="jc-sw" /> Missed</span>
+        <span><span className="jc-sw ring" /> Today</span>
       </div>
     </div>
   );
 }
 
-const cal = {
-  wrap: { marginTop: '4px' },
-  header: { display: 'grid', gridTemplateColumns: '40px 1fr 40px', alignItems: 'center', marginBottom: '4px' },
-  navBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '22px', background: 'transparent', color: '#c45a2a', border: '1px solid #2a2a2a', cursor: 'pointer', padding: '4px 0', lineHeight: 1 },
-  monthCenter: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' },
-  monthLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '4px', color: '#c45a2a' },
-  todayBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '9px', letterSpacing: '2px', background: 'transparent', color: '#888', border: '1px solid #333', cursor: 'pointer', padding: '3px 8px' },
-  hint: { fontFamily: "'EB Garamond', Georgia, serif", fontSize: '13px', color: '#555', fontStyle: 'italic', textAlign: 'center', marginBottom: '14px' },
-  weekdays: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px', marginBottom: '6px' },
-  weekday: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', color: '#444', textAlign: 'center' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' },
-  blank: { aspectRatio: '1 / 1' },
-  cell: { aspectRatio: '1 / 1', fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '1px', padding: 0, outline: 'none', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  legend: { display: 'flex', gap: '18px', marginTop: '14px', flexWrap: 'wrap', fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', color: '#666', justifyContent: 'center' },
-  legendItem: { display: 'inline-flex', alignItems: 'center', gap: '6px' },
-  legendSwatch: { display: 'inline-block', width: '10px', height: '10px', border: '1px solid' },
-};
-
 function QuoteCard({ quote, onClose }) {
   return (
-    <div style={qs.overlay} onClick={onClose}>
-      <div style={qs.card} onClick={e => e.stopPropagation()}>
-        <div style={qs.mark}>TODAY'S ANCHOR</div>
-        <blockquote style={qs.text}>&ldquo;{quote.text}&rdquo;</blockquote>
-        {quote.source ? <div style={qs.source}>{quote.source}</div> : <div style={qs.sourceBlank} />}
-        <button onClick={onClose} style={qs.close}>CONTINUE</button>
+    <div className="jq-overlay" onClick={onClose}>
+      <div className="jq-box" onClick={e => e.stopPropagation()}>
+        <div className="jq-lab">For today</div>
+        <blockquote className="jq-text">&ldquo;{quote.text}&rdquo;</blockquote>
+        {quote.source && <div className="jq-src">— {quote.source}</div>}
+        <button onClick={onClose} className="jq-dismiss">Continue</button>
       </div>
     </div>
   );
@@ -219,60 +183,32 @@ function NotePrompt({ onSave, onSkip }) {
   const [text, setText] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   return (
-    <div style={ns.overlay} onClick={onSkip}>
-      <div style={ns.card} onClick={e => e.stopPropagation()}>
-        <div style={ns.mark}>TODAY'S ENTRY</div>
-        <p style={ns.prompt}>How did today feel? Any urges? Anything else you want to record.</p>
+    <div className="jn-overlay" onClick={onSkip}>
+      <div className="jn-box" onClick={e => e.stopPropagation()}>
+        <div className="jn-title">Add a note for today?</div>
+        <p className="jn-desc">Write a quick reflection — what triggered you, how you got through it, a win. Optional, and you can mark it public to share in the community feed.</p>
         <textarea
           value={text}
           onChange={e => setText(e.target.value)}
-          placeholder="Write as much or as little as you want. It is your entry."
-          style={ns.textarea}
+          placeholder="What's on your mind today?"
+          className="jn-ta input"
           maxLength={1000}
           autoFocus
         />
-        <div style={ns.charCount}>{text.length}/1000</div>
-        <div style={ns.shareRow}>
-          <button onClick={() => setIsPublic(!isPublic)} style={{ ...ns.toggle, background: isPublic ? '#c45a2a' : '#222', color: isPublic ? '#0a0a0a' : '#888' }}>
-            {isPublic ? 'PUBLIC' : 'PRIVATE'}
-          </button>
-          <span style={ns.shareLabel}>
-            {isPublic ? 'Shared anonymously in the community journal' : 'Only visible to you'}
-          </span>
+        <div className="jn-charcount">{text.length}/1000</div>
+        <div className="jn-row">
+          <label>
+            <input type="checkbox" checked={isPublic} onChange={e => setIsPublic(e.target.checked)} /> Share publicly in community
+          </label>
         </div>
-        <div style={ns.actions}>
-          <button onClick={() => onSave(text, isPublic)} disabled={!text.trim()} style={{ ...ns.save, opacity: text.trim() ? 1 : 0.3, cursor: text.trim() ? 'pointer' : 'default' }}>SAVE ENTRY</button>
-          <button onClick={onSkip} style={ns.skip}>SKIP</button>
+        <div className="jn-actions">
+          <button onClick={() => onSave(text, isPublic)} disabled={!text.trim()} className="jn-save">Save note</button>
+          <button onClick={onSkip} className="jn-skip">Skip</button>
         </div>
       </div>
     </div>
   );
 }
-
-const qs = {
-  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', animation: 'fadeIn 0.3s ease' },
-  card: { maxWidth: '560px', width: '100%', background: 'linear-gradient(180deg, rgba(30,22,18,0.98), rgba(20,15,12,0.98))', border: '1px solid #c45a2a55', padding: '48px 40px 40px', textAlign: 'center', boxShadow: '0 0 60px rgba(196,90,42,0.15)' },
-  mark: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '5px', color: '#c45a2a', marginBottom: '28px' },
-  text: { fontFamily: "'EB Garamond', Georgia, serif", fontSize: '22px', lineHeight: 1.6, color: '#e8e4dc', margin: '0 0 20px 0', fontStyle: 'italic' },
-  source: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '3px', color: '#888', marginBottom: '36px' },
-  sourceBlank: { marginBottom: '36px' },
-  close: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '4px', padding: '12px 32px', background: 'transparent', color: '#c45a2a', border: '1px solid #c45a2a', cursor: 'pointer' },
-};
-
-const ns = {
-  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' },
-  card: { maxWidth: '560px', width: '100%', background: 'linear-gradient(180deg, rgba(30,22,18,0.98), rgba(20,15,12,0.98))', border: '1px solid #c45a2a55', padding: '40px' },
-  mark: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '5px', color: '#c45a2a', marginBottom: '16px', textAlign: 'center' },
-  prompt: { fontFamily: "'EB Garamond', Georgia, serif", fontSize: '17px', lineHeight: 1.6, color: '#b8b3ab', margin: '0 0 20px 0', fontStyle: 'italic', textAlign: 'center' },
-  textarea: { width: '100%', fontFamily: "'EB Garamond', Georgia, serif", fontSize: '16px', padding: '16px', background: 'rgba(10,10,10,0.6)', color: '#d4d0c8', border: '1px solid #2a2a2a', outline: 'none', resize: 'vertical', minHeight: '140px', lineHeight: 1.6, boxSizing: 'border-box' },
-  charCount: { fontSize: '11px', color: '#333', textAlign: 'right', marginTop: '4px', marginBottom: '16px' },
-  shareRow: { display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' },
-  toggle: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', padding: '6px 14px', border: 'none', cursor: 'pointer', minWidth: '80px', fontWeight: 500 },
-  shareLabel: { fontSize: '12px', color: '#666' },
-  actions: { display: 'flex', gap: '10px' },
-  save: { flex: 1, fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '4px', padding: '13px 24px', background: 'transparent', color: '#c45a2a', border: '1px solid #c45a2a' },
-  skip: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', padding: '13px 20px', background: 'transparent', color: '#555', border: '1px solid #2a2a2a', cursor: 'pointer' },
-};
 
 export default function Journey({
   daysClean,
@@ -292,200 +228,240 @@ export default function Journey({
   const nextTier = useMemo(() => getNextTier(daysClean), [daysClean]);
   const tierIdx = TIERS.indexOf(tier);
   const tierProgress = tier.max === 99999 ? 1 : (daysClean - tier.min) / (tier.max - tier.min + 1);
-
-  // Phoenix growth: a value 0..1 mapping tier progression to visual intensity
   const phoenixGrowth = Math.min(1, (tierIdx + tierProgress) / TIERS.length);
 
   return (
-    <div style={js.root}>
-      {showQuote && todayQuote && <QuoteCard quote={todayQuote} onClose={dismissQuote} />}
-      {showNotePrompt && <NotePrompt onSave={onSaveNote} onSkip={onSkipNote} />}
+    <>
+      <style>{`
+        .j-root{margin-top:8px;padding-bottom:40px;}
+        .j-header{text-align:center;padding:40px 0 32px;border-top:1px solid var(--line);margin-top:32px;}
+        .j-phx{position:relative;width:120px;height:120px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;}
+        .j-phx-glow{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle, var(--copper) 0%, transparent 70%);filter:blur(30px);}
+        .j-phx img{width:100px;height:auto;position:relative;z-index:1;transition:all .6s ease;filter:brightness(0) saturate(100%) invert(29%) sepia(50%) saturate(2180%) hue-rotate(357deg) brightness(90%) contrast(95%);}
+        .j-days{font-size:clamp(72px,15vw,120px);font-weight:800;color:var(--copper);line-height:1;letter-spacing:-0.04em;margin-bottom:12px;}
+        .j-days-label{font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--ink-3);margin-bottom:28px;}
+        .j-tier-line{width:40px;height:2px;background:var(--copper);margin:20px auto;border-radius:2px;}
+        .j-tier-name{font-size:18px;font-weight:800;letter-spacing:6px;color:var(--copper);text-transform:uppercase;}
+        .j-tier-brief{font-size:15.5px;font-style:italic;color:var(--ink-2);margin:12px auto 0;max-width:440px;line-height:1.6;}
 
-      {/* Hero: phoenix + day count + tier */}
-      <div style={js.hero}>
-        <div style={js.phoenixWrap}>
-          <div style={{ ...js.phoenixGlow, opacity: 0.15 + phoenixGrowth * 0.45 }} />
-          <img src="/phoenix.png" alt="" style={{ ...js.phoenixImg, opacity: 0.4 + phoenixGrowth * 0.6, filter: `brightness(${0.7 + phoenixGrowth * 0.6}) saturate(${0.6 + phoenixGrowth})` }} />
+        .j-checkwrap{text-align:center;padding:8px 0 32px;}
+        .j-check{display:inline-block;font-size:13px;font-weight:700;letter-spacing:3px;padding:16px 40px;background:var(--copper);color:var(--card);border:none;border-radius:999px;cursor:pointer;text-transform:uppercase;font-family:inherit;transition:all .2s;}
+        .j-check:hover:not(:disabled){background:var(--copper-2,#8a3a1a);transform:translateY(-1px);}
+        .j-check:disabled{background:transparent;color:var(--copper);border:1px solid var(--copper);cursor:default;opacity:0.7;}
+        .j-check-hint{font-size:13px;color:var(--ink-3);margin-top:14px;font-style:italic;}
+
+        .j-section{padding:36px 0;border-top:1px solid var(--line);}
+        .j-slab{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--ink-3);margin-bottom:20px;}
+        .j-brain{font-size:16.5px;line-height:1.8;color:var(--ink-2);margin:0;}
+
+        .j-stats{display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:16px;}
+        .j-stat{text-align:center;padding:24px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;}
+        .j-stat-num{font-size:36px;font-weight:800;color:var(--copper);line-height:1;}
+        .j-stat-label{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--ink-3);text-transform:uppercase;margin-top:10px;}
+
+        .j-pw{display:flex;flex-direction:column;gap:14px;margin-bottom:18px;}
+        .j-pw-row{display:grid;grid-template-columns:120px 1fr 180px;gap:14px;align-items:center;}
+        .j-pw-label{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--ink-2);text-transform:uppercase;}
+        .j-pw-bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;}
+        .j-pw-fill{height:100%;transition:width .8s ease;border-radius:4px;}
+        .j-pw-hint{font-size:12px;color:var(--ink-3);font-style:italic;}
+        .j-pw-cap{font-size:14px;color:var(--ink-2);line-height:1.7;margin:0;}
+        @media (max-width:640px){ .j-pw-row{grid-template-columns:1fr;gap:4px;} .j-pw-hint{text-align:left;} }
+
+        .j-ms{display:flex;flex-direction:column;gap:4px;}
+        .j-ms-item{display:flex;align-items:center;gap:18px;padding:10px 0;}
+        .j-ms-dot{width:14px;height:14px;border-radius:50%;border:1px solid;flex-shrink:0;transition:all .3s;}
+        .j-ms-text{display:flex;gap:20px;align-items:baseline;flex-wrap:wrap;}
+        .j-ms-day{font-size:12px;font-weight:700;letter-spacing:3px;min-width:80px;text-transform:uppercase;}
+        .j-ms-label{font-size:15px;}
+        .j-next{font-size:14px;color:var(--ink-3);margin-top:20px;font-style:italic;}
+        .j-next b{color:var(--copper);letter-spacing:3px;font-size:13px;text-transform:uppercase;font-weight:800;font-style:normal;}
+
+        .j-jhead{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px;}
+        .j-jcount{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--ink-3);text-transform:uppercase;}
+        .j-jempty{font-size:15px;color:var(--ink-3);font-style:italic;line-height:1.7;margin:0;}
+        .j-jlist{display:flex;flex-direction:column;gap:12px;}
+        .j-jentry{padding:18px 22px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--copper);border-radius:0 12px 12px 0;}
+        .j-jehead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px;flex-wrap:wrap;}
+        .j-jdate{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--copper);text-transform:uppercase;}
+        .j-jbadge{font-size:9.5px;font-weight:700;letter-spacing:2px;padding:3px 10px;border-radius:999px;text-transform:uppercase;}
+        .j-jbadge.pub{background:var(--copper);color:var(--card);}
+        .j-jbadge.priv{background:transparent;color:var(--ink-3);border:1px solid var(--line-2);}
+        .j-jtext{font-size:14.5px;line-height:1.7;color:var(--ink-2);margin:0;font-style:italic;white-space:pre-wrap;}
+
+        /* Calendar */
+        .jc-wrap{margin-top:4px;}
+        .jc-header{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;margin-bottom:6px;}
+        .jc-nav{font-size:20px;background:transparent;color:var(--copper);border:1px solid var(--line);border-radius:8px;cursor:pointer;padding:4px 0;line-height:1;font-family:inherit;}
+        .jc-nav:disabled{opacity:0.25;cursor:default;}
+        .jc-nav:hover:not(:disabled){background:var(--copper-soft);}
+        .jc-mcenter{display:flex;align-items:center;justify-content:center;gap:12px;}
+        .jc-mlab{font-size:13px;font-weight:700;letter-spacing:3px;color:var(--copper);text-transform:uppercase;}
+        .jc-today{font-size:10px;font-weight:700;letter-spacing:2px;background:transparent;color:var(--ink-3);border:1px solid var(--line-2);border-radius:999px;cursor:pointer;padding:3px 10px;text-transform:uppercase;font-family:inherit;}
+        .jc-hint{font-size:13px;color:var(--ink-3);font-style:italic;text-align:center;margin-bottom:12px;}
+        .jc-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px;}
+        .jc-wd{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--ink-3);text-align:center;}
+        .jc-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+        .jc-blank{aspect-ratio:1/1;}
+        .jc-cell{aspect-ratio:1/1;font-size:12px;font-weight:600;padding:0;outline:none;transition:all .15s;display:flex;align-items:center;justify-content:center;background:var(--line);color:var(--ink-2);border:1px solid transparent;border-radius:6px;cursor:pointer;font-family:inherit;}
+        .jc-cell:hover:not(:disabled){transform:scale(1.08);border-color:var(--copper);}
+        .jc-cell.on{background:var(--copper);color:var(--card);border-color:var(--copper);}
+        .jc-cell.future{opacity:0.3;cursor:default;background:transparent;border:1px dashed var(--line-2);color:var(--ink-3);}
+        .jc-cell.today{box-shadow:0 0 0 2px var(--copper);}
+        .jc-legend{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;font-size:11px;color:var(--ink-3);justify-content:center;}
+        .jc-legend > span{display:inline-flex;align-items:center;gap:6px;}
+        .jc-sw{width:12px;height:12px;border-radius:3px;display:inline-block;background:var(--line);}
+        .jc-sw.on{background:var(--copper);}
+        .jc-sw.ring{background:var(--card);box-shadow:0 0 0 2px var(--copper);}
+
+        /* Quote overlay */
+        .jq-overlay{position:fixed;inset:0;background:rgba(29,25,21,0.75);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:100;padding:24px;}
+        .jq-box{max-width:560px;width:100%;background:var(--card);border:1px solid var(--copper);border-radius:20px;padding:48px 40px;text-align:center;}
+        .jq-lab{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--copper);margin-bottom:20px;}
+        .jq-text{font-size:20px;line-height:1.55;font-weight:500;font-style:italic;color:var(--ink);margin:0 0 16px 0;}
+        .jq-src{font-size:13px;color:var(--ink-3);margin-bottom:24px;letter-spacing:2px;}
+        .jq-dismiss{font-size:12px;font-weight:700;letter-spacing:3px;padding:12px 32px;background:var(--copper);color:var(--card);border:none;border-radius:999px;cursor:pointer;text-transform:uppercase;font-family:inherit;}
+
+        /* Note prompt overlay */
+        .jn-overlay{position:fixed;inset:0;background:rgba(29,25,21,0.75);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:100;padding:24px;}
+        .jn-box{max-width:560px;width:100%;background:var(--card);border:1px solid var(--copper);border-radius:14px;padding:32px;}
+        .jn-title{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--copper);margin-bottom:12px;text-align:center;}
+        .jn-desc{font-size:14.5px;color:var(--ink-2);line-height:1.65;margin-bottom:14px;text-align:center;}
+        .jn-ta{width:100%;min-height:140px;resize:vertical;}
+        .jn-charcount{font-size:11px;color:var(--ink-3);text-align:right;margin-top:4px;margin-bottom:12px;}
+        .jn-row{margin:12px 0;}
+        .jn-row label{font-size:13px;color:var(--ink-2);display:flex;align-items:center;gap:8px;cursor:pointer;}
+        .jn-actions{display:flex;gap:10px;margin-top:14px;}
+        .jn-save{flex:1;font-size:12px;font-weight:700;letter-spacing:3px;padding:12px;background:var(--copper);color:var(--card);border:none;border-radius:8px;cursor:pointer;text-transform:uppercase;font-family:inherit;}
+        .jn-save:disabled{opacity:0.3;cursor:default;}
+        .jn-skip{font-size:12px;font-weight:700;letter-spacing:3px;padding:12px 20px;background:none;color:var(--ink-3);border:1px solid var(--line-2);border-radius:8px;cursor:pointer;text-transform:uppercase;font-family:inherit;}
+      `}</style>
+      <div className="j-root">
+        {showQuote && todayQuote && <QuoteCard quote={todayQuote} onClose={dismissQuote} />}
+        {showNotePrompt && <NotePrompt onSave={onSaveNote} onSkip={onSkipNote} />}
+
+        <div className="j-header">
+          <div className="j-phx">
+            <div className="j-phx-glow" style={{ opacity: 0.15 + phoenixGrowth * 0.45 }} />
+            <img src="/phoenix.png" alt="" style={{ opacity: 0.4 + phoenixGrowth * 0.6 }} />
+          </div>
+          <div className="j-days">{daysClean}</div>
+          <div className="j-days-label">{daysClean === 1 ? 'Day clean' : 'Days clean'}</div>
+          <div className="j-tier-line" />
+          <div className="j-tier-name">{tier.name}</div>
+          <p className="j-tier-brief">{tier.brief}</p>
         </div>
-        <div style={js.dayNum}>{daysClean}</div>
-        <div style={js.daysLabel}>{daysClean === 1 ? 'DAY CLEAN' : 'DAYS CLEAN'}</div>
-        <div style={js.tierLine} />
-        <div style={js.tierName}>{tier.name}</div>
-        <p style={js.tierBrief}>{tier.brief}</p>
-      </div>
 
-      {/* Check-in */}
-      <div style={js.checkinWrap}>
-        <button
-          onClick={onCheckToday}
-          disabled={isTodayChecked}
-          style={{ ...js.checkinBtn, opacity: isTodayChecked ? 0.4 : 1, cursor: isTodayChecked ? 'default' : 'pointer' }}
-        >
-          {isTodayChecked ? "\u2713  TODAY LOGGED" : 'LOG TODAY'}
-        </button>
-        {!isTodayChecked && <p style={js.checkinHint}>A new anchor awaits.</p>}
-      </div>
-
-      {/* Mini calendar: last 6 weeks, with backfill */}
-      <section style={js.section}>
-        <div style={js.sectionLabel}>RECENT DAYS</div>
-        <MiniCalendar checkedDates={checkedDates} onToggleDate={onToggleDate} />
-      </section>
-
-      {/* Brain narrative */}
-      <section style={js.section}>
-        <div style={js.sectionLabel}>WHAT IS HAPPENING IN YOUR BRAIN</div>
-        <p style={js.brainText}>{tier.brain}</p>
-      </section>
-
-      {/* Neural pathways visual */}
-      <section style={js.section}>
-        <div style={js.sectionLabel}>THE PATHWAYS</div>
-        <div style={js.pathways}>
-          <div style={js.pathwayRow}>
-            <div style={js.pathwayLabel}>Old circuit</div>
-            <div style={js.pathwayBarWrap}>
-              <div style={{ ...js.pathwayBarFill, width: `${Math.max(5, 100 - phoenixGrowth * 90)}%`, background: '#554035', opacity: 0.5 }} />
-            </div>
-            <div style={js.pathwayHint}>Fading with disuse</div>
-          </div>
-          <div style={js.pathwayRow}>
-            <div style={js.pathwayLabel}>New circuit</div>
-            <div style={js.pathwayBarWrap}>
-              <div style={{ ...js.pathwayBarFill, width: `${10 + phoenixGrowth * 85}%`, background: '#c45a2a' }} />
-            </div>
-            <div style={js.pathwayHint}>Strengthening through action</div>
-          </div>
+        <div className="j-checkwrap">
+          <button onClick={onCheckToday} disabled={isTodayChecked} className="j-check">
+            {isTodayChecked ? '✓ Logged today' : 'Log today'}
+          </button>
+          {!isTodayChecked && <p className="j-check-hint">A new anchor awaits.</p>}
         </div>
-        <p style={js.pathwayCaption}>
-          Every day clean is a day the old neural pattern goes unused. Every real activity, training, honest conversation, creative work, real bonding, is a signal to your brain that a different pattern is now who you are.
-        </p>
-      </section>
 
-      {/* Stats */}
-      <section style={js.section}>
-        <div style={js.sectionLabel}>WHAT YOU HAVE BUILT</div>
-        <div style={js.stats}>
-          <div style={js.stat}>
-            <div style={js.statNum}>{daysClean}</div>
-            <div style={js.statLabel}>days clean</div>
-          </div>
-          <div style={js.stat}>
-            <div style={js.statNum}>{checkedDates.length}</div>
-            <div style={js.statLabel}>check-ins logged</div>
-          </div>
-        </div>
-      </section>
+        <section className="j-section">
+          <div className="j-slab">Recent days</div>
+          <MiniCalendar checkedDates={checkedDates} onToggleDate={onToggleDate} />
+        </section>
 
-      {/* Milestone timeline */}
-      <section style={js.section}>
-        <div style={js.sectionLabel}>MILESTONES</div>
-        <div style={js.milestones}>
-          {MILESTONES.map((m, i) => {
-            const reached = daysClean >= m.day;
-            const current = daysClean < m.day && (i === 0 || daysClean >= MILESTONES[i - 1].day);
-            return (
-              <div key={m.day} style={js.milestone}>
-                <div style={{ ...js.milestoneDot, background: reached ? '#c45a2a' : current ? '#2a2a2a' : '#141414', borderColor: reached ? '#c45a2a' : current ? '#c45a2a88' : '#222', boxShadow: current ? '0 0 0 3px rgba(196,90,42,0.2)' : 'none' }} />
-                <div style={js.milestoneText}>
-                  <div style={{ ...js.milestoneDay, color: reached ? '#c45a2a' : current ? '#c45a2a' : '#444' }}>Day {m.day}</div>
-                  <div style={{ ...js.milestoneLabel, color: reached ? '#e8e4dc' : current ? '#888' : '#444' }}>{m.label}</div>
-                </div>
+        <section className="j-section">
+          <div className="j-slab">What is happening in your brain</div>
+          <p className="j-brain">{tier.brain}</p>
+        </section>
+
+        <section className="j-section">
+          <div className="j-slab">The pathways</div>
+          <div className="j-pw">
+            <div className="j-pw-row">
+              <div className="j-pw-label">Old circuit</div>
+              <div className="j-pw-bar">
+                <div className="j-pw-fill" style={{ width: `${Math.max(5, 100 - phoenixGrowth * 90)}%`, background: 'var(--line-2)', opacity: 0.6 }} />
               </div>
-            );
-          })}
-        </div>
-        {nextTier && (
-          <p style={js.nextTierText}>
-            Next tier: <span style={{ color: '#c45a2a', letterSpacing: '3px', fontFamily: "'Oswald', sans-serif", fontSize: '13px' }}>{nextTier.name}</span> at day {nextTier.min}.
-          </p>
-        )}
-      </section>
-
-      {/* Journal */}
-      <section style={js.section}>
-        <div style={js.journalHeader}>
-          <div style={js.sectionLabel}>YOUR JOURNAL</div>
-          <span style={js.journalCount}>{recentNotes.length} {recentNotes.length === 1 ? 'entry' : 'entries'}</span>
-        </div>
-        {recentNotes.length === 0 ? (
-          <p style={js.journalEmpty}>
-            No entries yet. When you log a day, you can choose to write about it, and optionally share it with the community.
-          </p>
-        ) : (
-          <div style={js.journalList}>
-            {recentNotes.map((n, i) => (
-              <div key={i} style={js.journalEntry}>
-                <div style={js.journalEntryHeader}>
-                  <span style={js.journalDate}>{n.date}</span>
-                  <span style={{ ...js.journalBadge, background: n.isPublic ? '#c45a2a' : 'transparent', color: n.isPublic ? '#0a0a0a' : '#555', border: n.isPublic ? 'none' : '1px solid #2a2a2a' }}>
-                    {n.isPublic ? 'PUBLIC' : 'PRIVATE'}
-                  </span>
-                </div>
-                <p style={js.journalText}>{n.text}</p>
+              <div className="j-pw-hint">Fading with disuse</div>
+            </div>
+            <div className="j-pw-row">
+              <div className="j-pw-label">New circuit</div>
+              <div className="j-pw-bar">
+                <div className="j-pw-fill" style={{ width: `${10 + phoenixGrowth * 85}%`, background: 'var(--copper)' }} />
               </div>
-            ))}
+              <div className="j-pw-hint">Strengthening through action</div>
+            </div>
           </div>
-        )}
-      </section>
-    </div>
+          <p className="j-pw-cap">
+            Every day clean is a day the old neural pattern goes unused. Every real activity, training, honest conversation, creative work, real bonding, is a signal to your brain that a different pattern is now who you are.
+          </p>
+        </section>
+
+        <section className="j-section">
+          <div className="j-slab">What you have built</div>
+          <div className="j-stats">
+            <div className="j-stat">
+              <div className="j-stat-num">{daysClean}</div>
+              <div className="j-stat-label">Days clean</div>
+            </div>
+            <div className="j-stat">
+              <div className="j-stat-num">{checkedDates.length}</div>
+              <div className="j-stat-label">Check-ins logged</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="j-section">
+          <div className="j-slab">Milestones</div>
+          <div className="j-ms">
+            {MILESTONES.map((m, i) => {
+              const reached = daysClean >= m.day;
+              const current = daysClean < m.day && (i === 0 || daysClean >= MILESTONES[i - 1].day);
+              return (
+                <div key={m.day} className="j-ms-item">
+                  <div className="j-ms-dot" style={{
+                    background: reached ? 'var(--copper)' : current ? 'var(--card)' : 'var(--line)',
+                    borderColor: reached ? 'var(--copper)' : current ? 'var(--copper)' : 'var(--line-2)',
+                    boxShadow: current ? '0 0 0 3px rgba(163,70,32,0.2)' : 'none',
+                  }} />
+                  <div className="j-ms-text">
+                    <div className="j-ms-day" style={{ color: reached || current ? 'var(--copper)' : 'var(--ink-3)' }}>Day {m.day}</div>
+                    <div className="j-ms-label" style={{ color: reached ? 'var(--ink)' : current ? 'var(--ink-2)' : 'var(--ink-3)', fontWeight: reached ? 600 : 400 }}>{m.label}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {nextTier && (
+            <p className="j-next">
+              Next tier: <b>{nextTier.name}</b> at day {nextTier.min}.
+            </p>
+          )}
+        </section>
+
+        <section className="j-section">
+          <div className="j-jhead">
+            <div className="j-slab" style={{ marginBottom: 0 }}>Your journal</div>
+            <span className="j-jcount">{recentNotes.length} {recentNotes.length === 1 ? 'entry' : 'entries'}</span>
+          </div>
+          {recentNotes.length === 0 ? (
+            <p className="j-jempty">
+              No entries yet. When you log a day, you can choose to write about it, and optionally share it with the community.
+            </p>
+          ) : (
+            <div className="j-jlist">
+              {recentNotes.map((n, i) => (
+                <div key={i} className="j-jentry">
+                  <div className="j-jehead">
+                    <span className="j-jdate">{n.date}</span>
+                    <span className={`j-jbadge ${n.isPublic ? 'pub' : 'priv'}`}>
+                      {n.isPublic ? 'Public' : 'Private'}
+                    </span>
+                  </div>
+                  <p className="j-jtext">{n.text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+    </>
   );
 }
 
-const js = {
-  root: { maxWidth: '720px', margin: '0 auto', padding: '40px 24px 80px' },
-
-  hero: { textAlign: 'center', padding: '40px 0 24px', position: 'relative' },
-  phoenixWrap: { position: 'relative', width: '120px', height: '120px', margin: '0 auto 24px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  phoenixGlow: { position: 'absolute', inset: 0, borderRadius: '50%', background: 'radial-gradient(circle, #c45a2a 0%, transparent 70%)', filter: 'blur(30px)' },
-  phoenixImg: { width: '100px', height: 'auto', position: 'relative', zIndex: 1, transition: 'all 0.6s ease' },
-
-  dayNum: { fontFamily: "'Oswald', sans-serif", fontSize: 'clamp(72px, 14vw, 120px)', fontWeight: 300, color: '#e8e4dc', lineHeight: 1, letterSpacing: '-2px' },
-  daysLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '6px', color: '#888', marginTop: '8px' },
-  tierLine: { width: '40px', height: '1px', background: '#c45a2a', margin: '28px auto 20px' },
-  tierName: { fontFamily: "'Oswald', sans-serif", fontSize: '18px', letterSpacing: '8px', color: '#c45a2a', fontWeight: 400 },
-  tierBrief: { fontFamily: "'EB Garamond', Georgia, serif", fontSize: '16px', fontStyle: 'italic', color: '#888', margin: '12px 0 0 0', maxWidth: '440px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 },
-
-  checkinWrap: { textAlign: 'center', padding: '36px 0' },
-  checkinBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '5px', padding: '18px 56px', background: 'transparent', color: '#c45a2a', border: '1px solid #c45a2a', transition: 'all 0.3s' },
-  checkinHint: { fontSize: '13px', color: '#555', marginTop: '14px', fontStyle: 'italic' },
-
-  section: { padding: '40px 0', borderTop: '1px solid #1a1a1a' },
-  sectionLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '5px', color: '#666', marginBottom: '24px' },
-
-  brainText: { fontSize: '17px', lineHeight: 1.8, color: '#b8b3ab', margin: 0, fontFamily: "'EB Garamond', Georgia, serif" },
-
-  pathways: { display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' },
-  pathwayRow: { display: 'grid', gridTemplateColumns: '120px 1fr 180px', gap: '16px', alignItems: 'center' },
-  pathwayLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', color: '#999' },
-  pathwayBarWrap: { height: '8px', background: 'rgba(20,20,20,0.8)', border: '1px solid #1a1a1a', overflow: 'hidden', position: 'relative' },
-  pathwayBarFill: { height: '100%', transition: 'width 0.8s ease' },
-  pathwayHint: { fontSize: '12px', color: '#555', fontStyle: 'italic' },
-  pathwayCaption: { fontSize: '14px', color: '#777', lineHeight: 1.7, margin: 0, fontFamily: "'EB Garamond', Georgia, serif" },
-
-  stats: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '20px' },
-  stat: { textAlign: 'center', padding: '24px 16px', border: '1px solid #1a1a1a', background: 'rgba(15,15,15,0.4)' },
-  statNum: { fontFamily: "'Oswald', sans-serif", fontSize: '36px', fontWeight: 300, color: '#c45a2a', lineHeight: 1 },
-  statLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '3px', color: '#777', marginTop: '10px' },
-
-  milestones: { display: 'flex', flexDirection: 'column', gap: '4px' },
-  milestone: { display: 'flex', alignItems: 'center', gap: '20px', padding: '10px 0' },
-  milestoneDot: { width: '14px', height: '14px', borderRadius: '50%', border: '1px solid', flexShrink: 0, transition: 'all 0.3s' },
-  milestoneText: { display: 'flex', gap: '20px', alignItems: 'baseline' },
-  milestoneDay: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '3px', minWidth: '80px' },
-  milestoneLabel: { fontFamily: "'EB Garamond', Georgia, serif", fontSize: '15px' },
-  nextTierText: { fontSize: '14px', color: '#666', marginTop: '20px', fontFamily: "'EB Garamond', Georgia, serif", fontStyle: 'italic' },
-
-  journalHeader: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '24px' },
-  journalCount: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '2px', color: '#555' },
-  journalEmpty: { fontSize: '15px', color: '#666', fontStyle: 'italic', fontFamily: "'EB Garamond', Georgia, serif", lineHeight: 1.7, margin: 0 },
-  journalList: { display: 'flex', flexDirection: 'column', gap: '14px' },
-  journalEntry: { padding: '20px 22px', background: 'rgba(15,15,15,0.4)', borderLeft: '2px solid #c45a2a33' },
-  journalEntryHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' },
-  journalDate: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', color: '#c45a2a' },
-  journalBadge: { fontFamily: "'Oswald', sans-serif", fontSize: '9px', letterSpacing: '2px', padding: '3px 10px' },
-  journalText: { fontSize: '15px', lineHeight: 1.7, color: '#b8b3ab', margin: 0, fontFamily: "'EB Garamond', Georgia, serif", whiteSpace: 'pre-wrap' },
-};
-
-// Export helpers for the main Tracker to wire into real Supabase data
 export { getTier, getNextTier, TIERS, MILESTONES, pickDeterministicQuote, pickRandomQuote };

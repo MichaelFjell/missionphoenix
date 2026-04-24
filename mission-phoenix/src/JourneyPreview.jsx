@@ -3,16 +3,13 @@ import Journey from './Journey.jsx';
 import { pickDeterministicQuote } from './quotes.js';
 
 // Preview wrapper. Simulates a user with fake data so the Journey view can
-// be viewed without Supabase auth. The slider at top lets you scrub
-// through different day counts to see how the view evolves.
+// be viewed without Supabase auth.
 export default function JourneyPreview() {
   const [daysClean, setDaysClean] = useState(47);
   const [isTodayChecked, setIsTodayChecked] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
   const [todayQuote, setTodayQuote] = useState(null);
   const [showNotePrompt, setShowNotePrompt] = useState(false);
-  // Let the preview scrub around missed days: store real checked dates so the
-  // mini calendar renders gaps you can click.
   const [extraChecks, setExtraChecks] = useState(new Set());
   const [removedChecks, setRemovedChecks] = useState(new Set());
 
@@ -74,44 +71,47 @@ export default function JourneyPreview() {
   };
 
   return (
-    <div>
-      {/* Preview controls */}
-      <div style={c.bar}>
-        <div style={c.label}>PREVIEW SCRUB</div>
-        <input
-          type="range"
-          min="0"
-          max="800"
-          value={daysClean}
-          onChange={e => { setDaysClean(parseInt(e.target.value)); setIsTodayChecked(false); }}
-          style={c.slider}
-        />
-        <div style={c.dayDisplay}>Day {daysClean}</div>
-        <button onClick={reset} style={c.resetBtn}>RESET STATE</button>
-      </div>
+    <>
+      <style>{`
+        .jp-bar{position:sticky;top:64px;z-index:15;background:rgba(251,245,232,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+        .jp-label{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--copper);text-transform:uppercase;}
+        .jp-slider{flex:1;min-width:200px;accent-color:var(--copper);}
+        .jp-day{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--ink);min-width:80px;text-transform:uppercase;}
+        .jp-reset{font-size:10px;font-weight:700;letter-spacing:2px;background:transparent;color:var(--ink-3);border:1px solid var(--line-2);border-radius:999px;padding:6px 12px;cursor:pointer;font-family:inherit;text-transform:uppercase;}
+        .jp-reset:hover{border-color:var(--copper);color:var(--copper);}
+      `}</style>
+      <div>
+        <div className="jp-bar">
+          <div className="jp-label">Preview scrub</div>
+          <input
+            type="range"
+            min="0"
+            max="800"
+            value={daysClean}
+            onChange={e => { setDaysClean(parseInt(e.target.value)); setIsTodayChecked(false); }}
+            className="jp-slider"
+          />
+          <div className="jp-day">Day {daysClean}</div>
+          <button onClick={reset} className="jp-reset">Reset state</button>
+        </div>
 
-      <Journey
-        daysClean={daysClean}
-        checkedDates={checkedDates}
-        onCheckToday={handleCheckToday}
-        isTodayChecked={isTodayChecked}
-        showQuote={showQuote}
-        dismissQuote={dismissQuote}
-        todayQuote={todayQuote}
-        showNotePrompt={showNotePrompt}
-        onSaveNote={handleSaveNote}
-        onSkipNote={handleSkipNote}
-        recentNotes={recentNotes}
-        onToggleDate={handleToggleDate}
-      />
-    </div>
+        <main className="page narrow" style={{ maxWidth: '760px' }}>
+          <Journey
+            daysClean={daysClean}
+            checkedDates={checkedDates}
+            onCheckToday={handleCheckToday}
+            isTodayChecked={isTodayChecked}
+            showQuote={showQuote}
+            dismissQuote={dismissQuote}
+            todayQuote={todayQuote}
+            showNotePrompt={showNotePrompt}
+            onSaveNote={handleSaveNote}
+            onSkipNote={handleSkipNote}
+            recentNotes={recentNotes}
+            onToggleDate={handleToggleDate}
+          />
+        </main>
+      </div>
+    </>
   );
 }
-
-const c = {
-  bar: { position: 'sticky', top: '52px', zIndex: 50, background: 'rgba(26,21,18,0.95)', borderBottom: '1px solid #2a2a2a', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' },
-  label: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '3px', color: '#c45a2a' },
-  slider: { flex: 1, minWidth: '200px', accentColor: '#c45a2a' },
-  dayDisplay: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '2px', color: '#e8e4dc', minWidth: '80px' },
-  resetBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', background: 'transparent', color: '#888', border: '1px solid #333', padding: '6px 12px', cursor: 'pointer' },
-};

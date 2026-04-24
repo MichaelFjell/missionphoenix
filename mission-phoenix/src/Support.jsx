@@ -1,46 +1,27 @@
 export default function Support() {
   return (
-    <div style={s.root}>
-      <div style={s.container}>
-        <h1 style={s.title}>SUPPORT MISSION PHOENIX</h1>
-        <div style={s.line} />
-
-        <p style={s.text}>
-          Mission Phoenix is a one-man operation built on passion, not profit. Every donation, no matter how small, helps keep this mission alive and growing.
-        </p>
-
-        <p style={s.text}>
-          Your support goes directly towards spreading awareness of the real cost of pornography, maintaining this platform, and building resources to help the next generation avoid the darkness of addiction.
-        </p>
-
-        <a href="https://ko-fi.com/missionphoenix" target="_blank" rel="noopener noreferrer" style={s.donateBlock}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = '#c45a2a'; e.currentTarget.style.background = 'rgba(196,90,42,0.08)'; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.background = 'transparent'; }}>
-          <div style={s.donateLabel}>DONATE VIA KO-FI</div>
-          <div style={s.donateUrl}>ko-fi.com/missionphoenix</div>
+    <>
+      <style>{`
+        .sp-title{font-size:clamp(26px,4vw,34px);font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+        .sp-sep{width:60px;height:2px;background:var(--copper);margin-bottom:40px;border-radius:2px;}
+        .sp-lead{font-size:17px;line-height:1.9;color:var(--ink-2);margin-bottom:24px;}
+        .sp-donate{display:block;text-align:center;padding:40px 32px;background:var(--card);border:1px solid var(--line);border-radius:18px;margin:32px 0;transition:all .2s;}
+        .sp-donate:hover{border-color:var(--copper);background:var(--copper-soft);}
+        .sp-lab{font-size:15px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--copper);margin-bottom:10px;}
+        .sp-url{font-size:15px;color:var(--ink-3);}
+        .sp-thanks{font-size:16px;line-height:1.9;color:var(--ink-2);font-style:italic;}
+      `}</style>
+      <main className="page narrow">
+        <h1 className="sp-title">Support Mission Phoenix</h1>
+        <div className="sp-sep"></div>
+        <p className="sp-lead">Mission Phoenix is a one-man operation built on passion, not profit. Every donation, no matter how small, helps keep this mission alive and growing.</p>
+        <p className="sp-lead">Your support goes directly towards spreading awareness of the real cost of pornography, maintaining this platform, and building resources to help the next generation avoid the darkness of addiction.</p>
+        <a href="https://ko-fi.com/missionphoenix" target="_blank" rel="noopener noreferrer" className="sp-donate">
+          <div className="sp-lab">Donate via Ko-Fi</div>
+          <div className="sp-url">ko-fi.com/missionphoenix</div>
         </a>
-
-        <p style={s.thanks}>
-          Any amount is greatly appreciated and helpful. Thank you for being part of this mission.
-        </p>
-
-      </div>
-    </div>
+        <p className="sp-thanks">Any amount is greatly appreciated and helpful. Thank you for being part of this mission.</p>
+      </main>
+    </>
   );
 }
-
-const s = {
-  root: { minHeight: '100vh' },
-  container: { maxWidth: '680px', margin: '0 auto', padding: '40px 24px 80px' },
-  title: { fontFamily: "'Oswald', sans-serif", fontSize: 'clamp(24px, 5vw, 36px)', letterSpacing: '6px', color: '#e8e4dc', fontWeight: 400, margin: '0 0 16px 0' },
-  line: { width: '60px', height: '1px', background: '#c45a2a', marginBottom: '48px' },
-  text: { fontSize: '16px', lineHeight: 1.9, color: '#999', marginBottom: '24px' },
-  donateBlock: {
-    display: 'block', textAlign: 'center', textDecoration: 'none',
-    padding: '32px', border: '1px solid #2a2a2a', marginBottom: '32px',
-    transition: 'all 0.3s', cursor: 'pointer',
-  },
-  donateLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '15px', letterSpacing: '4px', color: '#c45a2a', marginBottom: '8px' },
-  donateUrl: { fontSize: '14px', color: '#666' },
-  thanks: { fontSize: '15px', lineHeight: 1.9, color: '#777', fontStyle: 'italic' },
-};

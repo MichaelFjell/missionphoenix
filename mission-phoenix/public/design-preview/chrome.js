@@ -3,10 +3,6 @@
 
 (function(){
   const active = document.body.dataset.active || '';
-  const backHTML = `
-    <a href="demo.html" id="back-to-demo" style="position:fixed;top:14px;left:14px;z-index:200;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;background:#a34620;color:#fbf5e8;border-radius:999px;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.3px;text-decoration:none;box-shadow:0 6px 18px -6px rgba(163,70,32,0.6);transition:transform .15s;">
-      ← Back to demo
-    </a>`;
   const navHTML = `
     <nav class="site">
       <div class="nav-inner">
@@ -49,7 +45,6 @@
           <a href="about.html">About Michael</a>
           <a href="contact.html">Contact</a>
           <a href="donate.html">Donate</a>
-          <a href="archive.html">Writings</a>
         </div>
         <div class="foot-col">
           <h4>Account</h4>
@@ -59,7 +54,7 @@
         </div>
       </div>
       <div class="foot-bottom">
-        <span>© 2026 Mission Phoenix · v0.2-alpha · Built by someone who lived it</span>
+        <span>© 2026 Mission Phoenix</span>
         <span>No ads. No tracking. No upsells.</span>
       </div>
     </footer>`;
@@ -72,9 +67,5 @@
   } else {
     document.body.insertAdjacentHTML('afterbegin', navHTML);
     document.body.insertAdjacentHTML('beforeend', footHTML);
-  }
-  // Floating "back to demo" button — only when we arrived from the demo page
-  if (!document.body.dataset.hideBack) {
-    document.body.insertAdjacentHTML('afterbegin', backHTML);
   }
 })();

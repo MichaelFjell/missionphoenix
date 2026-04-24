@@ -13,49 +13,32 @@ export default function Archive() {
   ];
 
   return (
-    <div style={s.root}>
-      <div style={s.container}>
-        <h1 style={s.title}>NEWSLETTER ARCHIVE</h1>
-        <div style={s.line} />
-        <p style={s.desc}>
-          This is the archive of all the sent out newsletters, linked with dates. Click any entry to read it in full.
-        </p>
-
-        <div style={s.list}>
+    <>
+      <style>{`
+        .arc-title{font-size:clamp(26px,4vw,34px);font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+        .arc-sep{width:60px;height:2px;background:var(--copper);margin-bottom:24px;border-radius:2px;}
+        .arc-desc{font-size:16px;line-height:1.7;color:var(--ink-2);margin-bottom:40px;max-width:600px;}
+        .arc-list{display:flex;flex-direction:column;gap:12px;}
+        .arc-entry{display:flex;align-items:center;gap:24px;padding:22px 26px;background:var(--card);border:1px solid var(--line);border-radius:14px;transition:all .2s;}
+        .arc-entry:hover{border-color:var(--copper);background:var(--copper-soft);}
+        .arc-date{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--copper);white-space:nowrap;min-width:100px;}
+        .arc-etitle{font-size:16px;line-height:1.5;font-weight:600;color:var(--ink);flex:1;}
+        .arc-arrow{color:var(--copper);font-weight:700;font-size:18px;}
+      `}</style>
+      <main className="page narrow">
+        <h1 className="arc-title">Newsletter Archive</h1>
+        <div className="arc-sep"></div>
+        <p className="arc-desc">This is the archive of all the sent out newsletters, linked with dates. Click any entry to read it in full.</p>
+        <div className="arc-list">
           {newsletters.map((n, i) => (
-            <a key={i} href={n.url} target="_blank" rel="noopener noreferrer" style={s.entry}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#c45a2a'; e.currentTarget.style.background = 'rgba(196,90,42,0.06)'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.background = 'transparent'; }}>
-              <div style={s.entryDate}>{n.date}</div>
-              <div style={s.entryTitle}>{n.title}</div>
+            <a key={i} href={n.url} target="_blank" rel="noopener noreferrer" className="arc-entry">
+              <div className="arc-date">{n.date}</div>
+              <div className="arc-etitle">{n.title}</div>
+              <div className="arc-arrow">↗</div>
             </a>
           ))}
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }
-
-const s = {
-  root: { minHeight: '100vh', position: 'relative' },
-  container: { maxWidth: '680px', margin: '0 auto', padding: '80px 24px 60px' },
-  title: {
-    fontFamily: "'Oswald', 'Impact', sans-serif", fontSize: '24px',
-    fontWeight: 400, letterSpacing: '6px', color: '#e8e4dc', margin: '0 0 16px 0',
-  },
-  line: { width: '60px', height: '1px', background: '#c45a2a', margin: '0 0 24px 0' },
-  desc: { fontSize: '16px', lineHeight: 1.7, color: '#888', margin: '0 0 48px 0' },
-  list: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  entry: {
-    display: 'flex', alignItems: 'center', gap: '20px', padding: '20px 24px',
-    border: '1px solid #2a2a2a', textDecoration: 'none', cursor: 'pointer',
-    transition: 'all 0.3s ease',
-  },
-  entryDate: {
-    fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '2px',
-    color: '#c45a2a', whiteSpace: 'nowrap', minWidth: '90px',
-  },
-  entryTitle: {
-    fontSize: '16px', lineHeight: 1.5, color: '#d4d0c8',
-  },
-};

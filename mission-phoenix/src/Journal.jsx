@@ -68,55 +68,74 @@ export default function Journal() {
 
   if (!isSupabaseConfigured()) {
     return (
-      <div style={{ maxWidth: '500px', margin: '0 auto', padding: '100px 24px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: "'Oswald', sans-serif", fontSize: '18px', letterSpacing: '4px', color: '#e8e4dc', fontWeight: 400, marginBottom: '16px' }}>JOURNAL COMING SOON</h2>
-      </div>
+      <main className="page narrow">
+        <h2 style={{ fontSize: '18px', letterSpacing: '4px', fontWeight: 800, textTransform: 'uppercase', textAlign: 'center', marginTop: '60px' }}>Journal coming soon</h2>
+      </main>
     );
   }
 
   const groups = groupByDate(entries);
 
   return (
-    <div style={s.root}>
-      <div style={s.container}>
-        <div style={s.headerRow}>
+    <>
+      <style>{`
+        .jl-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:36px;gap:16px;flex-wrap:wrap;}
+        .jl-title{font-size:clamp(26px,4vw,34px);font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+        .jl-sub{font-size:15px;color:var(--ink-3);margin:0;line-height:1.7;max-width:520px;}
+        .jl-refresh{font-size:16px;background:transparent;color:var(--ink-3);border:1px solid var(--line-2);border-radius:999px;cursor:pointer;padding:8px 14px;flex-shrink:0;font-family:inherit;}
+        .jl-refresh:hover{border-color:var(--copper);color:var(--copper);}
+        .jl-err{font-size:13px;color:#b82030;margin-bottom:24px;padding:12px 16px;border:1px solid rgba(184,32,48,0.3);background:rgba(184,32,48,0.06);border-radius:8px;line-height:1.6;}
+        .jl-loading{font-size:13px;letter-spacing:3px;color:var(--ink-3);text-align:center;padding:60px;}
+        .jl-empty{text-align:center;padding:60px 0;border:1px dashed var(--line);border-radius:14px;}
+        .jl-empty .t{font-size:16px;color:var(--ink-2);font-style:italic;margin-bottom:8px;}
+        .jl-empty .h{font-size:14px;color:var(--ink-3);line-height:1.6;}
+        .jl-divider{display:flex;align-items:center;gap:12px;padding:24px 0 12px;border-bottom:1px solid var(--line);margin-bottom:14px;}
+        .jl-divider .d{font-size:12px;font-weight:700;letter-spacing:3px;color:var(--copper);text-transform:uppercase;}
+        .jl-divider .a{font-size:12px;color:var(--ink-3);}
+        .jl-entry{padding:18px 22px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--copper);border-radius:0 12px 12px 0;margin-bottom:10px;}
+        .jl-etop{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
+        .jl-user{font-size:12px;font-weight:700;letter-spacing:3px;color:var(--copper);text-transform:uppercase;}
+        .jl-habit{font-size:10px;font-weight:700;letter-spacing:2px;padding:3px 10px;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-3);text-transform:uppercase;}
+        .jl-text{font-size:15px;line-height:1.75;color:var(--ink-2);margin:0;font-style:italic;}
+        .jl-foot{text-align:center;padding:32px 0;border-top:1px solid var(--line);margin-top:32px;}
+        .jl-foot a{font-size:12px;font-weight:700;letter-spacing:3px;color:var(--copper);text-transform:uppercase;}
+        .jl-foot a:hover{text-decoration:underline;}
+      `}</style>
+      <main className="page narrow">
+        <div className="jl-head">
           <div>
-            <h1 style={s.title}>COMMUNITY JOURNAL</h1>
-            <p style={s.subtitle}>
-              Real words from real people in recovery. Wins, struggles, and everything in between.
-            </p>
+            <h1 className="jl-title">Community Journal</h1>
+            <p className="jl-sub">Real words from real people in recovery. Wins, struggles, and everything in between.</p>
           </div>
-          <button onClick={loadJournal} style={s.refreshBtn} title="Refresh" disabled={loading}>
+          <button onClick={loadJournal} className="jl-refresh" title="Refresh" disabled={loading}>
             {loading ? '...' : '↻'}
           </button>
         </div>
 
-        {error && (
-          <div style={s.error}>{error}</div>
-        )}
+        {error && <div className="jl-err">{error}</div>}
 
         {loading ? (
-          <div style={s.loading}>Loading...</div>
+          <div className="jl-loading">Loading...</div>
         ) : entries.length === 0 ? (
-          <div style={s.empty}>
-            <p style={s.emptyText}>No public journal entries yet.</p>
-            <p style={s.emptyHint}>When tracking your habits, you can add notes and choose to share them here.</p>
+          <div className="jl-empty">
+            <p className="t">No public journal entries yet.</p>
+            <p className="h">When tracking your habits, you can add notes and choose to share them here.</p>
           </div>
         ) : (
-          <div style={s.entries}>
+          <div>
             {groups.map(group => (
               <div key={group.date}>
-                <div style={s.dateDivider}>
-                  <span style={s.dateDividerText}>{formatDate(group.date)}</span>
-                  <span style={s.dateDividerAgo}>{timeAgo(group.date)}</span>
+                <div className="jl-divider">
+                  <span className="d">{formatDate(group.date)}</span>
+                  <span className="a">{timeAgo(group.date)}</span>
                 </div>
                 {group.entries.map(entry => (
-                  <div key={entry.id} style={s.entry}>
-                    <div style={s.entryTop}>
-                      <span style={s.entryUser}>{entry.profiles?.username || 'Anonymous'}</span>
-                      {entry.habits?.name && <span style={s.entryHabit}>{entry.habits.name}</span>}
+                  <div key={entry.id} className="jl-entry">
+                    <div className="jl-etop">
+                      <span className="jl-user">{entry.profiles?.username || 'Anonymous'}</span>
+                      {entry.habits?.name && <span className="jl-habit">{entry.habits.name}</span>}
                     </div>
-                    <p style={s.entryText}>{entry.note_text}</p>
+                    <p className="jl-text">{entry.note_text}</p>
                   </div>
                 ))}
               </div>
@@ -124,37 +143,12 @@ export default function Journal() {
           </div>
         )}
 
-        <div style={s.footer}>
-          <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer" style={s.discordLink}>
-            WANT DEEPER CONVERSATIONS? JOIN DISCORD →
+        <div className="jl-foot">
+          <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer">
+            Want deeper conversations? Join Discord →
           </a>
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }
-
-const s = {
-  root: { minHeight: '100vh' },
-  container: { maxWidth: '680px', margin: '0 auto', padding: '40px 24px 80px' },
-  headerRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '48px', gap: '16px' },
-  title: { fontFamily: "'Oswald', sans-serif", fontSize: 'clamp(24px, 5vw, 36px)', letterSpacing: '6px', color: '#e8e4dc', fontWeight: 400, margin: '0 0 8px 0' },
-  subtitle: { fontSize: '15px', color: '#666', margin: 0, lineHeight: 1.7 },
-  refreshBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '18px', background: 'none', color: '#555', border: '1px solid #2a2a2a', cursor: 'pointer', padding: '6px 12px', flexShrink: 0, marginTop: '4px', lineHeight: 1 },
-  error: { fontSize: '13px', color: '#b82030', marginBottom: '24px', padding: '12px 16px', border: '1px solid #b8203044', background: 'rgba(184,32,48,0.06)', lineHeight: 1.6 },
-  loading: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '3px', color: '#555', textAlign: 'center', padding: '60px' },
-  empty: { textAlign: 'center', padding: '60px 0' },
-  emptyText: { fontSize: '16px', color: '#555', fontStyle: 'italic', marginBottom: '8px' },
-  emptyHint: { fontSize: '14px', color: '#333', lineHeight: 1.6 },
-  entries: { display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '48px' },
-  dateDivider: { display: 'flex', alignItems: 'center', gap: '12px', padding: '20px 0 12px', borderBottom: '1px solid #1a1a1a', marginBottom: '12px' },
-  dateDividerText: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '3px', color: '#888', whiteSpace: 'nowrap' },
-  dateDividerAgo: { fontSize: '12px', color: '#444', whiteSpace: 'nowrap' },
-  entry: { padding: '16px 20px', background: 'rgba(15,15,15,0.6)', borderLeft: '2px solid #1a1a1a', marginBottom: '8px', marginLeft: '4px' },
-  entryTop: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', flexWrap: 'wrap' },
-  entryUser: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '3px', color: '#c45a2a' },
-  entryHabit: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', padding: '2px 8px', border: '1px solid #222', color: '#555', lineHeight: '16px' },
-  entryText: { fontSize: '15px', lineHeight: 1.8, color: '#999', margin: 0, fontStyle: 'italic' },
-  footer: { textAlign: 'center', padding: '32px 0', borderTop: '1px solid #1a1a1a' },
-  discordLink: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '4px', color: '#555', textDecoration: 'none' },
-};

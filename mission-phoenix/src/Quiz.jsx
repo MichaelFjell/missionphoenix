@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useRef, useMemo } from "react";
 
 // ─── QUIZ QUESTIONS ─────────────────────────────────────────
 const QUESTIONS = [
@@ -171,7 +171,7 @@ const SEVERITY_LEVELS = [
     message: "You're showing clear signs of habitual use. Your brain's dopamine baseline has likely shifted — you may already notice that real intimacy, motivation, or focus feels dulled. This doesn't stay at this level. It escalates.",
   },
   {
-    threshold: 11, level: "Severe", color: "#c45a2a", key: "severe",
+    threshold: 11, level: "Severe", color: "#a34620", key: "severe",
     message: "You are deep in an addiction cycle. The combination of frequency, session length, and escalating content means your dopamine system is significantly compromised. You may be experiencing erectile dysfunction, social withdrawal, brain fog, or emotional numbness. This is not a habit — it's a dependency.",
   },
   {
@@ -218,13 +218,11 @@ export default function Quiz() {
   const [factFading, setFactFading] = useState(false);
   const resultsRef = useRef(null);
 
-  // Pre-shuffle facts for quiz — one per question, stable across re-renders
   const quizFacts = useMemo(() => {
     const shuffled = shuffleArray(QUIZ_FACTS);
     return QUESTIONS.map((_, i) => shuffled[i % shuffled.length]);
   }, []);
 
-  // Pick severity-appropriate result facts
   const resultFacts = useMemo(() => {
     const severity = getSeverity(score);
     const pool = SEVERITY_FACTS[severity.key] || SEVERITY_FACTS.low;
@@ -330,856 +328,279 @@ export default function Quiz() {
   const currentFact = quizFacts[currentQ];
 
   return (
-    <div style={styles.root}>
-      <div style={styles.noise} />
+    <>
+      <style>{`
+        .qz-wrap{max-width:720px;margin:0 auto;}
+        .qz-intro{text-align:center;padding:40px 0 20px;transition:opacity .4s ease, transform .4s ease;}
+        .qz-mark{width:64px;height:64px;margin:0 auto 24px;}
+        .qz-mark img{width:64px;height:64px;filter:brightness(0) saturate(100%) invert(29%) sepia(50%) saturate(2180%) hue-rotate(357deg) brightness(90%) contrast(95%);}
+        .qz-h1{font-size:clamp(32px,5vw,44px);font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+        .qz-sep{width:60px;height:2px;background:var(--copper);margin:0 auto 24px;border-radius:2px;}
+        .qz-sub{font-size:19px;line-height:1.7;color:var(--ink-2);font-style:italic;max-width:520px;margin:0 auto 16px;}
+        .qz-desc{font-size:15px;line-height:1.8;color:var(--ink-3);margin-bottom:40px;}
+        .qz-begin{font-size:14px;font-weight:700;letter-spacing:3px;padding:16px 40px;background:transparent;color:var(--copper);border:1px solid var(--copper);cursor:pointer;font-family:inherit;text-transform:uppercase;transition:all .2s;}
+        .qz-begin:hover{background:var(--copper);color:var(--card);}
+        .qz-disclaim{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--ink-3);text-transform:uppercase;margin-top:28px;}
 
-      <div style={styles.container}>
+        .qz-quiz{padding:20px 0;}
+        .qz-progress{height:2px;background:var(--line);margin-bottom:12px;overflow:hidden;border-radius:2px;}
+        .qz-progress > div{height:100%;background:var(--copper);transition:width .5s ease;}
+        .qz-count{font-size:12px;font-weight:700;letter-spacing:3px;color:var(--ink-3);margin-bottom:40px;}
+        .qz-card{transition:opacity .35s ease, transform .35s ease;}
+        .qz-q{font-size:clamp(22px,4vw,28px);font-weight:700;line-height:1.35;color:var(--ink);margin-bottom:8px;letter-spacing:-0.01em;}
+        .qz-qsub{font-size:15px;color:var(--ink-3);font-style:italic;margin-bottom:28px;line-height:1.6;}
+        .qz-opts{display:flex;flex-direction:column;gap:10px;}
+        .qz-opt{font-size:16px;padding:18px 22px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;cursor:pointer;text-align:left;transition:all .15s;font-family:inherit;}
+        .qz-opt:hover{border-color:var(--copper);background:var(--copper-soft);}
+        .qz-opt.on{border-color:var(--copper);background:var(--copper-soft);color:var(--copper);font-weight:600;}
+        .qz-continue{margin-top:24px;font-size:13px;font-weight:700;letter-spacing:3px;padding:14px 32px;background:transparent;color:var(--copper);border:1px solid var(--copper);cursor:pointer;font-family:inherit;text-transform:uppercase;}
+        .qz-continue:disabled{opacity:0.3;cursor:default;}
 
-        {/* ─── INTRO ─────────────────────────────────── */}
-        {phase === "intro" && (
-          <div style={{
-            ...styles.fadeContainer,
-            opacity: animating ? 0 : 1,
-            transform: animating ? "translateY(20px)" : "translateY(0)",
-          }}>
-            <div style={styles.brandMark}>
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                <path d="M24 4 L28 18 L42 18 L30 26 L34 40 L24 32 L14 40 L18 26 L6 18 L20 18 Z"
-                  fill="none" stroke="#c45a2a" strokeWidth="1.5" opacity="0.8" />
-                <circle cx="24" cy="24" r="6" fill="#c45a2a" opacity="0.3" />
-                <circle cx="24" cy="24" r="2" fill="#c45a2a" />
-              </svg>
-            </div>
-            <h1 style={styles.heroTitle}>MISSION PHOENIX</h1>
-            <div style={styles.heroLine} />
-            <p style={styles.heroSubtitle}>
-              A pornography addiction assessment built by someone who lived it.
-            </p>
-            <p style={styles.heroDesc}>
-              5 questions. No account needed. No data stored.<br />
-              Just honesty with yourself.
-            </p>
-            <button style={styles.startButton} onClick={handleStart}
-              onMouseEnter={e => { e.target.style.background = "#c45a2a"; e.target.style.color = "#0a0a0a"; }}
-              onMouseLeave={e => { e.target.style.background = "transparent"; e.target.style.color = "#c45a2a"; }}>
-              BEGIN ASSESSMENT
-            </button>
-            <p style={styles.disclaimer}>
-              This is not a clinical diagnostic tool. It is a wake-up call.
-            </p>
-          </div>
-        )}
+        .qz-fact{margin-top:48px;padding-top:28px;border-top:1px solid var(--line);transition:opacity .4s ease, transform .4s ease;}
+        .qz-fact-lab{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--copper);margin-bottom:10px;}
+        .qz-fact-text{font-size:14px;line-height:1.75;color:var(--ink-2);font-style:italic;margin-bottom:8px;}
+        .qz-fact-source{font-size:11px;color:var(--ink-3);}
 
-        {/* ─── QUIZ ──────────────────────────────────── */}
-        {phase === "quiz" && (
-          <div style={styles.quizContainer}>
-            <div style={styles.progressBar}>
-              <div style={{ ...styles.progressFill, width: `${progress}%` }} />
+        .qz-results{padding-top:20px;}
+        .qz-rsection{margin-bottom:56px;transition:opacity .6s ease, transform .6s ease;}
+        .qz-sev-label{font-size:11px;font-weight:700;letter-spacing:4px;color:var(--ink-3);text-transform:uppercase;margin-bottom:12px;}
+        .qz-sev-level{font-size:clamp(40px,10vw,64px);font-weight:800;letter-spacing:3px;margin-bottom:24px;line-height:1;text-transform:uppercase;}
+        .qz-score-bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:8px;}
+        .qz-score-fill{height:100%;background:linear-gradient(90deg,#6b9e6b,#c4a035,#a34620,#b82030);transition:width 1.5s ease;border-radius:3px;}
+        .qz-score-labs{display:flex;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
+        .qz-sev-msg{font-size:17px;line-height:1.8;color:var(--ink-2);}
+
+        .qz-rtitle{font-size:13px;font-weight:700;letter-spacing:4px;color:var(--copper);text-transform:uppercase;margin-bottom:24px;}
+        .qz-rfacts{display:flex;flex-direction:column;gap:16px;}
+        .qz-rfact{display:flex;gap:20px;padding:22px;background:var(--card);border:1px solid var(--line);border-radius:14px;transition:opacity .5s ease, transform .5s ease;}
+        .qz-rfact .n{font-size:24px;font-weight:800;color:var(--copper);opacity:0.5;flex-shrink:0;}
+        .qz-rfact p{font-size:15.5px;line-height:1.7;color:var(--ink-2);margin:0;}
+
+        .qz-mech{padding:32px;background:var(--copper-soft);border-left:3px solid var(--copper);border-radius:0 14px 14px 0;}
+        .qz-mech h3{font-size:14px;font-weight:700;letter-spacing:4px;color:var(--copper);text-transform:uppercase;margin-bottom:18px;}
+        .qz-mech p{font-size:16px;line-height:1.8;color:var(--ink-2);margin-bottom:14px;}
+        .qz-mech p.strong{color:var(--ink);font-weight:700;}
+
+        .qz-esc p.intro-p{font-size:16px;line-height:1.8;color:var(--ink-2);margin-bottom:24px;}
+        .qz-esc-item{display:flex;gap:14px;margin-bottom:16px;padding-left:8px;}
+        .qz-esc-item .d{color:var(--copper);font-weight:800;flex-shrink:0;}
+        .qz-esc-item p{font-size:15px;line-height:1.7;color:var(--ink-2);margin:0;}
+        .qz-esc-warn{margin-top:24px;padding-left:16px;border-left:2px solid var(--line-2);font-size:16px;line-height:1.8;color:var(--ink-2);font-style:italic;}
+
+        .qz-timeline{padding-left:16px;}
+        .qz-tl-item{position:relative;padding-left:32px;padding-bottom:32px;border-left:1px solid var(--line);margin-left:6px;}
+        .qz-tl-dot{position:absolute;left:-7px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--copper);display:flex;align-items:center;justify-content:center;}
+        .qz-tl-dot::after{content:"";width:4px;height:4px;border-radius:50%;background:var(--copper);}
+        .qz-tl-time{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--copper);margin-bottom:6px;text-transform:uppercase;}
+        .qz-tl-title{font-size:20px;font-weight:700;margin-bottom:8px;letter-spacing:-0.01em;}
+        .qz-tl-desc{font-size:15px;line-height:1.7;color:var(--ink-2);}
+
+        .qz-cta{text-align:center;padding:40px 0;border-top:1px solid var(--line);}
+        .qz-cta h3{font-size:clamp(18px,3vw,22px);font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;}
+        .qz-cta p.it{font-size:16px;line-height:1.8;color:var(--ink-2);font-style:italic;max-width:520px;margin:0 auto 20px;}
+        .qz-cta .author{font-size:14px;color:var(--ink-3);line-height:1.6;margin-bottom:36px;}
+        .qz-cta .primary-cta{display:inline-block;font-size:14px;font-weight:700;letter-spacing:3px;padding:16px 40px;background:transparent;color:var(--copper);border:1px solid var(--copper);text-decoration:none;transition:all .2s;text-transform:uppercase;margin-bottom:12px;font-family:inherit;cursor:pointer;}
+        .qz-cta .primary-cta:hover{background:var(--copper);color:var(--card);}
+        .qz-cta .sub{font-size:13px;color:var(--ink-3);line-height:1.6;margin-bottom:20px;}
+        .qz-cta .restart{font-size:14px;background:none;border:none;color:var(--ink-3);cursor:pointer;padding:8px;font-family:inherit;}
+
+        .qz-foot{text-align:center;padding:40px 0 0;border-top:1px solid var(--line);margin-top:24px;}
+        .qz-foot .line{width:40px;height:1px;background:var(--line-2);margin:0 auto 20px;}
+        .qz-foot .t{font-size:11px;font-weight:700;letter-spacing:4px;color:var(--ink-3);margin-bottom:12px;}
+        .qz-foot .s{font-size:11px;color:var(--ink-3);line-height:1.6;max-width:500px;margin:0 auto 14px;}
+        .qz-foot .d{font-size:12px;color:var(--ink-3);line-height:1.6;max-width:400px;margin:0 auto 10px;}
+        .qz-foot .p{font-size:11px;color:var(--ink-3);line-height:1.6;max-width:400px;margin:0 auto;font-style:italic;}
+      `}</style>
+
+      <main className="page narrow">
+        <div className="qz-wrap">
+
+          {phase === "intro" && (
+            <div className="qz-intro" style={{
+              opacity: animating ? 0 : 1,
+              transform: animating ? "translateY(20px)" : "translateY(0)",
+            }}>
+              <div className="qz-mark"><img src="/phoenix.png" alt="" /></div>
+              <h1 className="qz-h1">Mission Phoenix</h1>
+              <div className="qz-sep"></div>
+              <p className="qz-sub">A pornography addiction assessment built by someone who lived it.</p>
+              <p className="qz-desc">5 questions. No account needed. No data stored.<br />Just honesty with yourself.</p>
+              <button className="qz-begin" onClick={handleStart}>Begin Assessment</button>
+              <p className="qz-disclaim">This is not a clinical diagnostic tool. It is a wake-up call.</p>
             </div>
-            <div style={styles.questionCount}>
-              {currentQ + 1} / {QUESTIONS.length}
-            </div>
-            <div
-              key={currentQ}
-              style={{
-                ...styles.questionCard,
+          )}
+
+          {phase === "quiz" && (
+            <div className="qz-quiz">
+              <div className="qz-progress"><div style={{ width: `${progress}%` }} /></div>
+              <div className="qz-count">{currentQ + 1} / {QUESTIONS.length}</div>
+              <div key={currentQ} className="qz-card" style={{
                 opacity: animating ? 0 : 1,
                 transform: animating ? "translateX(40px)" : "translateX(0)",
-              }}
-            >
-              <h2 style={styles.questionText}>{question.question}</h2>
-              {question.subtitle && (
-                <p style={styles.questionSubtitle}>{question.subtitle}</p>
-              )}
-              <div style={styles.optionsGrid}>
-                {question.options.map((opt) => {
-                  const isMulti = question.multi;
-                  const isSelected = isMulti
-                    ? multiSelections.includes(opt.value)
-                    : answers[question.id]?.value === opt.value;
-
-                  return (
-                    <button
-                      key={opt.value}
-                      onClick={() => handleAnswer(question, opt)}
-                      style={{
-                        ...styles.optionButton,
-                        borderColor: isSelected ? "#c45a2a" : "#2a2a2a",
-                        background: isSelected ? "rgba(196,90,42,0.12)" : "rgba(15,15,15,0.8)",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isSelected) {
-                          e.target.style.borderColor = "#555";
-                          e.target.style.background = "rgba(40,40,40,0.8)";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isSelected) {
-                          e.target.style.borderColor = "#2a2a2a";
-                          e.target.style.background = "rgba(15,15,15,0.8)";
-                        }
-                      }}
-                    >
-                      {opt.label}
-                    </button>
-                  );
-                })}
-              </div>
-              {question.multi && (
-                <button
-                  onClick={handleMultiSubmit}
-                  disabled={multiSelections.length === 0}
-                  style={{
-                    ...styles.continueButton,
-                    opacity: multiSelections.length === 0 ? 0.3 : 1,
-                    cursor: multiSelections.length === 0 ? "default" : "pointer",
-                  }}
-                >
-                  CONTINUE →
-                </button>
-              )}
-            </div>
-
-            {/* ─── RANDOM FACT DURING QUIZ ─── */}
-            <div style={{
-              ...styles.quizFact,
-              opacity: factFading ? 0 : 1,
-              transform: factFading ? "translateY(10px)" : "translateY(0)",
-            }}>
-              <div style={styles.quizFactLabel}>DID YOU KNOW</div>
-              <p style={styles.quizFactText}>{currentFact.text}</p>
-              {currentFact.source && (
-                <p style={styles.quizFactSource}>{currentFact.source}</p>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ─── RESULTS ───────────────────────────────── */}
-        {phase === "results" && (
-          <div ref={resultsRef} style={styles.resultsContainer}>
-
-            {/* Severity Assessment */}
-            <div style={{
-              ...styles.resultSection,
-              opacity: resultsRevealed >= 1 ? 1 : 0,
-              transform: resultsRevealed >= 1 ? "translateY(0)" : "translateY(30px)",
-            }}>
-              <div style={styles.severityLabel}>YOUR ASSESSMENT</div>
-              <div style={{
-                ...styles.severityLevel,
-                color: severity.color,
-                textShadow: `0 0 40px ${severity.color}44`,
               }}>
-                {severity.level}
+                <h2 className="qz-q">{question.question}</h2>
+                {question.subtitle && <p className="qz-qsub">{question.subtitle}</p>}
+                <div className="qz-opts">
+                  {question.options.map((opt) => {
+                    const isMulti = question.multi;
+                    const isSelected = isMulti
+                      ? multiSelections.includes(opt.value)
+                      : answers[question.id]?.value === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        onClick={() => handleAnswer(question, opt)}
+                        className={`qz-opt${isSelected ? ' on' : ''}`}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                {question.multi && (
+                  <button
+                    onClick={handleMultiSubmit}
+                    disabled={multiSelections.length === 0}
+                    className="qz-continue"
+                  >
+                    Continue →
+                  </button>
+                )}
               </div>
-              <div style={styles.scoreBar}>
-                <div style={styles.scoreTrack}>
-                  <div style={{
-                    ...styles.scoreFill,
+
+              <div className="qz-fact" style={{
+                opacity: factFading ? 0 : 1,
+                transform: factFading ? "translateY(10px)" : "translateY(0)",
+              }}>
+                <div className="qz-fact-lab">Did You Know</div>
+                <p className="qz-fact-text">{currentFact.text}</p>
+                {currentFact.source && <p className="qz-fact-source">{currentFact.source}</p>}
+              </div>
+            </div>
+          )}
+
+          {phase === "results" && (
+            <div ref={resultsRef} className="qz-results">
+
+              <div className="qz-rsection" style={{
+                opacity: resultsRevealed >= 1 ? 1 : 0,
+                transform: resultsRevealed >= 1 ? "translateY(0)" : "translateY(30px)",
+              }}>
+                <div className="qz-sev-label">Your assessment</div>
+                <div className="qz-sev-level" style={{ color: severity.color }}>
+                  {severity.level}
+                </div>
+                <div className="qz-score-bar">
+                  <div className="qz-score-fill" style={{
                     width: `${Math.min((score / 19) * 100, 100)}%`,
-                    background: `linear-gradient(90deg, #6b9e6b, #c4a035, #c45a2a, #b82030)`,
                   }} />
                 </div>
-                <div style={styles.scoreLabels}>
+                <div className="qz-score-labs">
                   <span style={{ color: "#6b9e6b" }}>Low</span>
                   <span style={{ color: "#c4a035" }}>Moderate</span>
-                  <span style={{ color: "#c45a2a" }}>Severe</span>
+                  <span style={{ color: "#a34620" }}>Severe</span>
                   <span style={{ color: "#b82030" }}>Critical</span>
                 </div>
+                <p className="qz-sev-msg">{severity.message}</p>
               </div>
-              <p style={styles.severityMessage}>{severity.message}</p>
-            </div>
 
-            {/* Severity-Specific Research Facts */}
-            <div style={{
-              ...styles.resultSection,
-              opacity: resultsRevealed >= 2 ? 1 : 0,
-              transform: resultsRevealed >= 2 ? "translateY(0)" : "translateY(30px)",
-            }}>
-              <h3 style={styles.sectionTitle}>WHAT THE RESEARCH SAYS ABOUT YOUR LEVEL</h3>
-              <div style={styles.researchFacts}>
-                {resultFacts.map((fact, i) => (
-                  <div key={i} style={{
-                    ...styles.researchFactItem,
-                    opacity: resultsRevealed >= 3 + i ? 1 : 0,
-                    transform: resultsRevealed >= 3 + i ? "translateY(0)" : "translateY(15px)",
-                  }}>
-                    <div style={styles.researchFactNumber}>{String(i + 1).padStart(2, "0")}</div>
-                    <p style={styles.researchFactText}>{fact}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* The Mechanism — How Your Brain Gets Hijacked */}
-            <div style={{
-              ...styles.resultSection,
-              opacity: resultsRevealed >= 6 ? 1 : 0,
-              transform: resultsRevealed >= 6 ? "translateY(0)" : "translateY(30px)",
-            }}>
-              <div style={styles.edCallout}>
-                <h3 style={styles.edTitle}>HOW YOUR BRAIN GETS HIJACKED</h3>
-                <p style={styles.edText}>
-                  Dopamine isn't your pleasure chemical — it's your seeking chemical. It doesn't say
-                  "that was satisfying." It says "more, different, keep going." Pornography exploits
-                  this by offering infinite novelty at zero effort.
-                </p>
-                <p style={styles.edText}>
-                  When you chronically overstimulate this system, your brain protects itself by
-                  reducing dopamine sensitivity. Now you need more extreme content to feel the same
-                  thing. This is the same tolerance mechanism behind cocaine and methamphetamine addiction —
-                  confirmed by brain imaging studies at Cambridge University and the Max Planck Institute.
-                </p>
-                <p style={styles.edText}>
-                  Meanwhile, your prefrontal cortex — the part that says "this is wrong, stop" —
-                  gets overridden by the hijacked reward system. The moral reasoning is still there.
-                  That's why you feel disgusted afterward. But in the moment, the dopamine drive
-                  literally suppresses your ability to apply those values.
-                </p>
-                <p style={styles.edTextBold}>
-                  This is not a character flaw. It is a neurological process. And it is reversible.
-                </p>
-              </div>
-            </div>
-
-            {/* Escalation Warning */}
-            <div style={{
-              ...styles.resultSection,
-              opacity: resultsRevealed >= 7 ? 1 : 0,
-              transform: resultsRevealed >= 7 ? "translateY(0)" : "translateY(30px)",
-            }}>
-              <div style={styles.escalationSection}>
-                <h3 style={styles.sectionTitle}>THE ESCALATION PATTERN</h3>
-                <p style={styles.escalationIntro}>
-                  Research confirms what thousands of recovering users already know: porn use escalates.
-                  Not because you're broken — because your brain adapts. It demands more extreme stimuli
-                  to produce the same neurochemical response.
-                </p>
-                <div style={styles.escalationFact}>
-                  <div style={styles.escalationDash}>—</div>
-                  <p style={styles.escalationText}>
-                    Earlier onset of pornography use is the strongest predictor of escalation to deviant content.
-                    The younger you started, the deeper the wiring.
-                  </p>
-                </div>
-                <div style={styles.escalationFact}>
-                  <div style={styles.escalationDash}>—</div>
-                  <p style={styles.escalationText}>
-                    Users consistently report arriving at content that previously disgusted them — genres
-                    they never sought, fantasies that conflict with their values and identity.
-                  </p>
-                </div>
-                <div style={styles.escalationFact}>
-                  <div style={styles.escalationDash}>—</div>
-                  <p style={styles.escalationText}>
-                    A meta-analysis of 50 studies with over 50,000 participants confirmed that pornography
-                    consumption is associated with lower sexual and relational satisfaction — across every
-                    study type: cross-sectional, longitudinal, and experimental.
-                  </p>
-                </div>
-                <p style={styles.escalationWarning}>
-                  If you have found yourself watching content that would have disgusted you a year ago,
-                  you are not a deviant. You are experiencing a predictable neurological process — one
-                  that over 60 peer-reviewed studies have documented. And it will continue escalating
-                  until you stop feeding it.
-                </p>
-              </div>
-            </div>
-
-            {/* Recovery Timeline */}
-            <div style={{
-              ...styles.resultSection,
-              opacity: resultsRevealed >= 8 ? 1 : 0,
-              transform: resultsRevealed >= 8 ? "translateY(0)" : "translateY(30px)",
-            }}>
-              <h3 style={styles.sectionTitle}>WHAT HAPPENS WHEN YOU STOP</h3>
-              <div style={styles.timeline}>
-                {BENEFITS.map((b, i) => (
-                  <div key={i} style={styles.timelineItem}>
-                    <div style={styles.timelineDot}>
-                      <div style={styles.timelineDotInner} />
+              <div className="qz-rsection" style={{
+                opacity: resultsRevealed >= 2 ? 1 : 0,
+                transform: resultsRevealed >= 2 ? "translateY(0)" : "translateY(30px)",
+              }}>
+                <h3 className="qz-rtitle">What the research says about your level</h3>
+                <div className="qz-rfacts">
+                  {resultFacts.map((fact, i) => (
+                    <div key={i} className="qz-rfact" style={{
+                      opacity: resultsRevealed >= 3 + i ? 1 : 0,
+                      transform: resultsRevealed >= 3 + i ? "translateY(0)" : "translateY(15px)",
+                    }}>
+                      <div className="n">{String(i + 1).padStart(2, "0")}</div>
+                      <p>{fact}</p>
                     </div>
-                    <div style={styles.timelineContent}>
-                      <div style={styles.timelineTime}>{b.timeframe}</div>
-                      <div style={styles.timelineTitle}>{b.title}</div>
-                      <div style={styles.timelineDesc}>{b.description}</div>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* CTA — Discord */}
-            <div style={{
-              ...styles.resultSection,
-              opacity: resultsRevealed >= 9 ? 1 : 0,
-              transform: resultsRevealed >= 9 ? "translateY(0)" : "translateY(30px)",
-            }}>
-              <div style={styles.ctaSection}>
-                <h3 style={styles.ctaTitle}>THIS IS YOUR MOMENT OF CLARITY</h3>
-                <p style={styles.ctaText}>
-                  You're reading this because some part of you already knows. Hope alone won't save
-                  you — I tried that for 20 years. What works is finding the one consequence you fear
-                  more than the craving. That fear becomes your weapon.
-                </p>
-                <p style={styles.ctaAuthor}>
-                  — Michael, 41. Cold turkey from daily amphetamines, benzos, weed, and porn.
-                  <br />
-                  <span style={{ color: "#777", fontSize: "13px" }}>
-                    July 15, 2025. Couldn't run 100 meters. Ran 5K in 23:38 by December.
-                  </span>
-                </p>
+              <div className="qz-rsection" style={{
+                opacity: resultsRevealed >= 6 ? 1 : 0,
+                transform: resultsRevealed >= 6 ? "translateY(0)" : "translateY(30px)",
+              }}>
+                <div className="qz-mech">
+                  <h3>How your brain gets hijacked</h3>
+                  <p>Dopamine isn't your pleasure chemical — it's your seeking chemical. It doesn't say "that was satisfying." It says "more, different, keep going." Pornography exploits this by offering infinite novelty at zero effort.</p>
+                  <p>When you chronically overstimulate this system, your brain protects itself by reducing dopamine sensitivity. Now you need more extreme content to feel the same thing. This is the same tolerance mechanism behind cocaine and methamphetamine addiction — confirmed by brain imaging studies at Cambridge University and the Max Planck Institute.</p>
+                  <p>Meanwhile, your prefrontal cortex — the part that says "this is wrong, stop" — gets overridden by the hijacked reward system. The moral reasoning is still there. That's why you feel disgusted afterward. But in the moment, the dopamine drive literally suppresses your ability to apply those values.</p>
+                  <p className="strong">This is not a character flaw. It is a neurological process. And it is reversible.</p>
+                </div>
+              </div>
 
-                <div style={styles.ctaButtons}>
+              <div className="qz-rsection qz-esc" style={{
+                opacity: resultsRevealed >= 7 ? 1 : 0,
+                transform: resultsRevealed >= 7 ? "translateY(0)" : "translateY(30px)",
+              }}>
+                <h3 className="qz-rtitle">The escalation pattern</h3>
+                <p className="intro-p">Research confirms what thousands of recovering users already know: porn use escalates. Not because you're broken — because your brain adapts. It demands more extreme stimuli to produce the same neurochemical response.</p>
+                <div className="qz-esc-item"><span className="d">—</span><p>Earlier onset of pornography use is the strongest predictor of escalation to deviant content. The younger you started, the deeper the wiring.</p></div>
+                <div className="qz-esc-item"><span className="d">—</span><p>Users consistently report arriving at content that previously disgusted them — genres they never sought, fantasies that conflict with their values and identity.</p></div>
+                <div className="qz-esc-item"><span className="d">—</span><p>A meta-analysis of 50 studies with over 50,000 participants confirmed that pornography consumption is associated with lower sexual and relational satisfaction — across every study type: cross-sectional, longitudinal, and experimental.</p></div>
+                <p className="qz-esc-warn">If you have found yourself watching content that would have disgusted you a year ago, you are not a deviant. You are experiencing a predictable neurological process — one that over 60 peer-reviewed studies have documented. And it will continue escalating until you stop feeding it.</p>
+              </div>
+
+              <div className="qz-rsection" style={{
+                opacity: resultsRevealed >= 8 ? 1 : 0,
+                transform: resultsRevealed >= 8 ? "translateY(0)" : "translateY(30px)",
+              }}>
+                <h3 className="qz-rtitle">What happens when you stop</h3>
+                <div className="qz-timeline">
+                  {BENEFITS.map((b, i) => (
+                    <div key={i} className="qz-tl-item">
+                      <div className="qz-tl-dot"></div>
+                      <div className="qz-tl-time">{b.timeframe}</div>
+                      <div className="qz-tl-title">{b.title}</div>
+                      <div className="qz-tl-desc">{b.description}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="qz-rsection" style={{
+                opacity: resultsRevealed >= 9 ? 1 : 0,
+                transform: resultsRevealed >= 9 ? "translateY(0)" : "translateY(30px)",
+              }}>
+                <div className="qz-cta">
+                  <h3>This is your moment of clarity</h3>
+                  <p className="it">You're reading this because some part of you already knows. Hope alone won't save you — I tried that for 20 years. What works is finding the one consequence you fear more than the craving. That fear becomes your weapon.</p>
+                  <p className="author">
+                    — Michael, 41. Cold turkey from daily amphetamines, benzos, weed, and porn.<br />
+                    <span style={{ color: "var(--ink-3)", fontSize: "13px" }}>
+                      July 15, 2025. Couldn't run 100 meters. Ran 5K in 23:38 by December.
+                    </span>
+                  </p>
                   <a
                     href="https://discord.com/invite/tXnBUSbq92"
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={styles.primaryCta}
-                    onMouseEnter={e => { e.target.style.background = "#c45a2a"; e.target.style.color = "#0a0a0a"; }}
-                    onMouseLeave={e => { e.target.style.background = "transparent"; e.target.style.color = "#c45a2a"; }}
+                    className="primary-cta"
                   >
-                    JOIN THE COMMUNITY — FREE
+                    Join the community — free
                   </a>
-                  <p style={styles.ctaSub}>
-                    Private Discord server. Men recovering together.<br />
-                    No judgment. No cost. Just accountability.
-                  </p>
+                  <p className="sub">Private Discord server. Men recovering together.<br />No judgment. No cost. Just accountability.</p>
+                  <button onClick={handleRestart} className="restart">← Take assessment again</button>
                 </div>
+              </div>
 
-                <button onClick={handleRestart} style={styles.restartBtn}>
-                  ← Take assessment again
-                </button>
+              <div className="qz-foot">
+                <div className="line"></div>
+                <div className="t">Mission Phoenix — Alpha</div>
+                <p className="s">Research cited: Zillmann &amp; Bryant (1988) · Seigfried-Spellar (2016) · Endrass et al. (2009) · Voon et al. (2014) · Kühn &amp; Gallinat (2014) · Wright et al. (2017) · Wilson, Your Brain on Porn (2014)</p>
+                <p className="d">This tool is not a substitute for professional medical or psychological help. If you are in crisis, please contact a healthcare provider.</p>
+                <p className="p">Your answers are completely anonymous. No personal data, cookies, or IP addresses are collected.</p>
               </div>
             </div>
-
-            {/* Footer */}
-            <div style={styles.footer}>
-              <div style={styles.footerLine} />
-              <p style={styles.footerText}>
-                MISSION PHOENIX — ALPHA
-              </p>
-              <p style={styles.footerSources}>
-                Research cited: Zillmann & Bryant (1988) · Seigfried-Spellar (2016) · Endrass et al. (2009) ·
-                Voon et al. (2014) · Kühn & Gallinat (2014) · Wright et al. (2017) · Wilson, Your Brain on Porn (2014)
-              </p>
-              <p style={styles.footerDisclaimer}>
-                This tool is not a substitute for professional medical or psychological help.
-                If you are in crisis, please contact a healthcare provider.
-              </p>
-              <p style={styles.footerPrivacy}>
-                Your answers are completely anonymous. No personal data, cookies, or IP
-                addresses are collected.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+          )}
+        </div>
+      </main>
+    </>
   );
 }
-
-// ─── STYLES ─────────────────────────────────────────────────
-const styles = {
-  root: {
-    minHeight: "100vh",
-    background: "#0a0a0a",
-    color: "#d4d0c8",
-    fontFamily: "'EB Garamond', 'Garamond', 'Georgia', serif",
-    position: "relative",
-    overflow: "hidden",
-  },
-  noise: {
-    position: "fixed",
-    inset: 0,
-    background: `repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(255,255,255,0.008) 2px,
-      rgba(255,255,255,0.008) 4px
-    )`,
-    pointerEvents: "none",
-    zIndex: 0,
-  },
-  container: {
-    maxWidth: "680px",
-    margin: "0 auto",
-    padding: "60px 24px",
-    position: "relative",
-    zIndex: 1,
-  },
-  brandMark: {
-    marginBottom: "32px",
-    opacity: 0.8,
-  },
-  fadeContainer: {
-    transition: "opacity 0.4s ease, transform 0.4s ease",
-  },
-  heroTitle: {
-    fontFamily: "'Oswald', 'Impact', 'Arial Narrow', sans-serif",
-    fontSize: "clamp(36px, 8vw, 56px)",
-    fontWeight: 400,
-    letterSpacing: "8px",
-    color: "#e8e4dc",
-    margin: "0 0 16px 0",
-    lineHeight: 1.1,
-  },
-  heroLine: {
-    width: "60px",
-    height: "1px",
-    background: "#c45a2a",
-    margin: "0 0 32px 0",
-  },
-  heroSubtitle: {
-    fontSize: "19px",
-    lineHeight: 1.7,
-    color: "#999",
-    margin: "0 0 16px 0",
-    maxWidth: "520px",
-    fontStyle: "italic",
-  },
-  heroDesc: {
-    fontSize: "15px",
-    lineHeight: 1.8,
-    color: "#666",
-    margin: "0 0 48px 0",
-  },
-  startButton: {
-    fontFamily: "'Oswald', 'Impact', 'Arial Narrow', sans-serif",
-    fontSize: "15px",
-    letterSpacing: "4px",
-    padding: "16px 40px",
-    background: "transparent",
-    color: "#c45a2a",
-    border: "1px solid #c45a2a",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    display: "block",
-    marginBottom: "32px",
-  },
-  disclaimer: {
-    fontSize: "12px",
-    color: "#444",
-    letterSpacing: "1px",
-    textTransform: "uppercase",
-    fontFamily: "'Oswald', sans-serif",
-  },
-
-  // Quiz
-  quizContainer: {
-    minHeight: "80vh",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-  },
-  progressBar: {
-    height: "2px",
-    background: "#1a1a1a",
-    marginBottom: "12px",
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    background: "#c45a2a",
-    transition: "width 0.5s ease",
-  },
-  questionCount: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "12px",
-    letterSpacing: "4px",
-    color: "#555",
-    marginBottom: "48px",
-  },
-  questionCard: {
-    transition: "opacity 0.35s ease, transform 0.35s ease",
-  },
-  questionText: {
-    fontFamily: "'EB Garamond', Georgia, serif",
-    fontSize: "clamp(22px, 5vw, 30px)",
-    fontWeight: 400,
-    lineHeight: 1.5,
-    color: "#e8e4dc",
-    margin: "0 0 8px 0",
-  },
-  questionSubtitle: {
-    fontSize: "15px",
-    color: "#777",
-    fontStyle: "italic",
-    margin: "0 0 36px 0",
-    lineHeight: 1.6,
-  },
-  optionsGrid: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    marginTop: "24px",
-  },
-  optionButton: {
-    fontFamily: "'EB Garamond', Georgia, serif",
-    fontSize: "17px",
-    padding: "18px 24px",
-    background: "rgba(15,15,15,0.8)",
-    color: "#d4d0c8",
-    border: "1px solid #2a2a2a",
-    cursor: "pointer",
-    textAlign: "left",
-    transition: "all 0.2s ease",
-    lineHeight: 1.4,
-  },
-  continueButton: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "14px",
-    letterSpacing: "3px",
-    padding: "14px 32px",
-    background: "transparent",
-    color: "#c45a2a",
-    border: "1px solid #c45a2a",
-    cursor: "pointer",
-    marginTop: "28px",
-    transition: "opacity 0.3s ease",
-  },
-
-  // Quiz Fact
-  quizFact: {
-    marginTop: "48px",
-    paddingTop: "32px",
-    borderTop: "1px solid #1a1a1a",
-    transition: "opacity 0.4s ease, transform 0.4s ease",
-  },
-  quizFactLabel: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "9px",
-    letterSpacing: "4px",
-    color: "#c45a2a",
-    marginBottom: "10px",
-    opacity: 0.7,
-  },
-  quizFactText: {
-    fontSize: "14px",
-    lineHeight: 1.8,
-    color: "#777",
-    margin: "0 0 8px 0",
-    fontStyle: "italic",
-  },
-  quizFactSource: {
-    fontSize: "11px",
-    color: "#3a3a3a",
-    margin: 0,
-    lineHeight: 1.4,
-  },
-
-  // Results
-  resultsContainer: {
-    paddingTop: "20px",
-  },
-  resultSection: {
-    marginBottom: "64px",
-    transition: "opacity 0.6s ease, transform 0.6s ease",
-  },
-  severityLabel: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "11px",
-    letterSpacing: "5px",
-    color: "#555",
-    marginBottom: "12px",
-  },
-  severityLevel: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "clamp(40px, 10vw, 64px)",
-    fontWeight: 400,
-    letterSpacing: "4px",
-    marginBottom: "24px",
-    lineHeight: 1,
-  },
-  scoreBar: {
-    marginBottom: "32px",
-  },
-  scoreTrack: {
-    height: "4px",
-    background: "#1a1a1a",
-    borderRadius: "2px",
-    overflow: "hidden",
-    marginBottom: "8px",
-  },
-  scoreFill: {
-    height: "100%",
-    transition: "width 1.5s ease",
-    borderRadius: "2px",
-  },
-  scoreLabels: {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: "10px",
-    fontFamily: "'Oswald', sans-serif",
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-  },
-  severityMessage: {
-    fontSize: "18px",
-    lineHeight: 1.8,
-    color: "#bbb",
-    maxWidth: "600px",
-  },
-
-  // Research Facts (severity-based results)
-  sectionTitle: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "13px",
-    letterSpacing: "5px",
-    color: "#666",
-    marginBottom: "32px",
-    fontWeight: 400,
-  },
-  researchFacts: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "24px",
-  },
-  researchFactItem: {
-    display: "flex",
-    gap: "20px",
-    alignItems: "flex-start",
-    padding: "24px",
-    background: "rgba(20,20,20,0.6)",
-    border: "1px solid #1a1a1a",
-    transition: "opacity 0.5s ease, transform 0.5s ease",
-  },
-  researchFactNumber: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "28px",
-    color: "#c45a2a",
-    opacity: 0.4,
-    flexShrink: 0,
-    lineHeight: 1,
-    marginTop: "2px",
-  },
-  researchFactText: {
-    fontSize: "16px",
-    lineHeight: 1.7,
-    color: "#999",
-    margin: 0,
-  },
-
-  // Mechanism callout
-  edCallout: {
-    padding: "36px",
-    borderLeft: "2px solid #c45a2a",
-    background: "rgba(196,90,42,0.04)",
-  },
-  edTitle: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "14px",
-    letterSpacing: "4px",
-    color: "#c45a2a",
-    marginTop: 0,
-    marginBottom: "20px",
-    fontWeight: 400,
-  },
-  edText: {
-    fontSize: "17px",
-    lineHeight: 1.8,
-    color: "#999",
-    margin: "0 0 16px 0",
-  },
-  edTextBold: {
-    fontSize: "17px",
-    lineHeight: 1.8,
-    color: "#e8e4dc",
-    margin: 0,
-    fontWeight: 600,
-  },
-
-  // Escalation
-  escalationSection: {
-    padding: "0",
-  },
-  escalationIntro: {
-    fontSize: "17px",
-    lineHeight: 1.8,
-    color: "#999",
-    marginBottom: "28px",
-  },
-  escalationFact: {
-    display: "flex",
-    gap: "16px",
-    marginBottom: "20px",
-    paddingLeft: "8px",
-  },
-  escalationDash: {
-    color: "#c45a2a",
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "18px",
-    flexShrink: 0,
-    marginTop: "2px",
-  },
-  escalationText: {
-    fontSize: "15px",
-    lineHeight: 1.7,
-    color: "#888",
-    margin: 0,
-  },
-  escalationWarning: {
-    fontSize: "17px",
-    lineHeight: 1.8,
-    color: "#ccc",
-    marginTop: "28px",
-    fontStyle: "italic",
-    paddingLeft: "8px",
-    borderLeft: "1px solid #333",
-  },
-
-  // Timeline
-  timeline: {
-    position: "relative",
-    paddingLeft: "32px",
-  },
-  timelineItem: {
-    position: "relative",
-    paddingBottom: "36px",
-    borderLeft: "1px solid #222",
-    paddingLeft: "28px",
-    marginLeft: "6px",
-  },
-  timelineDot: {
-    position: "absolute",
-    left: "-7px",
-    top: "4px",
-    width: "14px",
-    height: "14px",
-    borderRadius: "50%",
-    border: "1px solid #c45a2a",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "#0a0a0a",
-  },
-  timelineDotInner: {
-    width: "4px",
-    height: "4px",
-    borderRadius: "50%",
-    background: "#c45a2a",
-  },
-  timelineContent: {},
-  timelineTime: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "11px",
-    letterSpacing: "3px",
-    color: "#c45a2a",
-    marginBottom: "4px",
-  },
-  timelineTitle: {
-    fontSize: "20px",
-    color: "#e8e4dc",
-    marginBottom: "8px",
-    fontWeight: 600,
-  },
-  timelineDesc: {
-    fontSize: "15px",
-    lineHeight: 1.7,
-    color: "#888",
-  },
-
-  // CTA
-  ctaSection: {
-    textAlign: "center",
-    padding: "48px 0",
-    borderTop: "1px solid #1a1a1a",
-  },
-  ctaTitle: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "clamp(18px, 4vw, 24px)",
-    letterSpacing: "5px",
-    color: "#e8e4dc",
-    marginTop: 0,
-    marginBottom: "24px",
-    fontWeight: 400,
-  },
-  ctaText: {
-    fontSize: "17px",
-    lineHeight: 1.8,
-    color: "#999",
-    maxWidth: "520px",
-    margin: "0 auto 24px",
-    fontStyle: "italic",
-  },
-  ctaAuthor: {
-    fontSize: "15px",
-    color: "#777",
-    lineHeight: 1.6,
-    marginBottom: "48px",
-  },
-  ctaButtons: {
-    marginBottom: "36px",
-  },
-  primaryCta: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "15px",
-    letterSpacing: "4px",
-    padding: "18px 48px",
-    background: "transparent",
-    color: "#c45a2a",
-    border: "1px solid #c45a2a",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    textDecoration: "none",
-    display: "inline-block",
-    marginBottom: "16px",
-  },
-  ctaSub: {
-    fontSize: "13px",
-    color: "#555",
-    lineHeight: 1.6,
-  },
-  restartBtn: {
-    fontFamily: "'EB Garamond', Georgia, serif",
-    fontSize: "14px",
-    background: "none",
-    border: "none",
-    color: "#555",
-    cursor: "pointer",
-    padding: "8px",
-  },
-
-  // Footer
-  footer: {
-    textAlign: "center",
-    padding: "48px 0 24px",
-  },
-  footerLine: {
-    width: "40px",
-    height: "1px",
-    background: "#333",
-    margin: "0 auto 24px",
-  },
-  footerText: {
-    fontFamily: "'Oswald', sans-serif",
-    fontSize: "11px",
-    letterSpacing: "4px",
-    color: "#444",
-    marginBottom: "12px",
-  },
-  footerSources: {
-    fontSize: "11px",
-    color: "#2a2a2a",
-    lineHeight: 1.6,
-    maxWidth: "500px",
-    margin: "0 auto 16px",
-  },
-  footerDisclaimer: {
-    fontSize: "12px",
-    color: "#333",
-    lineHeight: 1.6,
-    maxWidth: "400px",
-    margin: "0 auto 12px",
-  },
-  footerPrivacy: {
-    fontSize: "11px",
-    color: "#2a2a2a",
-    lineHeight: 1.6,
-    maxWidth: "400px",
-    margin: "0 auto",
-    fontStyle: "italic",
-  },
-};

@@ -26,32 +26,37 @@ function AuthForm() {
     setLoading(false);
   };
   return (
-    <div style={authS.wrapper}><div style={authS.box}>
-      <h2 style={authS.title}>{mode === 'login' ? 'LOG IN' : 'CREATE ACCOUNT'}</h2>
-      <p style={authS.sub}>{mode === 'login' ? 'Track your journey.' : 'No email needed. Just pick a username.'}</p>
-      {error && <div style={authS.error}>{error}</div>}
-      <form onSubmit={handleSubmit} style={authS.form}>
-        <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} style={authS.input} autoComplete="username" />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} style={authS.input} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} />
-        <button type="submit" disabled={loading} style={{ ...authS.btn, opacity: loading ? 0.5 : 1 }}>{loading ? '...' : mode === 'login' ? 'LOG IN' : 'CREATE ACCOUNT'}</button>
-      </form>
-      <button onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); }} style={authS.toggle}>
-        {mode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Log in'}
-      </button>
-    </div></div>
+    <>
+      <style>{`
+        .tk-auth{max-width:400px;margin:60px auto;padding:40px 8px;}
+        .tk-auth h2{font-size:18px;font-weight:800;letter-spacing:5px;text-transform:uppercase;margin-bottom:8px;}
+        .tk-auth .s{font-size:14px;color:var(--ink-3);margin-bottom:28px;line-height:1.6;}
+        .tk-auth input{margin-bottom:12px;}
+        .tk-auth .submit{width:100%;font-weight:700;letter-spacing:3px;padding:14px;background:transparent;color:var(--copper);border:1px solid var(--copper);cursor:pointer;margin-top:8px;font-size:13px;text-transform:uppercase;font-family:inherit;border-radius:8px;}
+        .tk-auth .submit:hover{background:var(--copper);color:var(--card);}
+        .tk-auth .toggle{font-size:14px;color:var(--ink-3);background:none;border:none;cursor:pointer;margin-top:20px;text-decoration:underline;text-underline-offset:3px;font-family:inherit;padding:0;}
+        .tk-auth .err{font-size:13px;color:#b82030;margin-bottom:16px;padding:10px 14px;border:1px solid rgba(184,32,48,0.3);background:rgba(184,32,48,0.06);border-radius:8px;}
+      `}</style>
+      <main className="page narrow">
+        <div className="tk-auth">
+          <h2>{mode === 'login' ? 'Log in' : 'Create account'}</h2>
+          <p className="s">{mode === 'login' ? 'Track your journey.' : 'No email needed. Just pick a username.'}</p>
+          {error && <div className="err">{error}</div>}
+          <form onSubmit={handleSubmit}>
+            <input className="input" type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} autoComplete="username" />
+            <input className="input" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} />
+            <button type="submit" disabled={loading} className="submit" style={{ opacity: loading ? 0.5 : 1 }}>
+              {loading ? '...' : mode === 'login' ? 'Log in' : 'Create account'}
+            </button>
+          </form>
+          <button onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); }} className="toggle">
+            {mode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Log in'}
+          </button>
+        </div>
+      </main>
+    </>
   );
 }
-const authS = {
-  wrapper: { display: 'flex', justifyContent: 'center', padding: '80px 24px' },
-  box: { maxWidth: '380px', width: '100%' },
-  title: { fontFamily: "'Oswald', sans-serif", fontSize: '18px', letterSpacing: '5px', color: '#e8e4dc', marginBottom: '8px', fontWeight: 400 },
-  sub: { fontSize: '14px', color: '#666', marginBottom: '24px', lineHeight: 1.6 },
-  error: { fontSize: '13px', color: '#b82030', marginBottom: '16px', padding: '10px 14px', border: '1px solid #b8203044', background: 'rgba(184,32,48,0.06)' },
-  form: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  input: { fontFamily: "'EB Garamond', Georgia, serif", fontSize: '16px', padding: '14px 16px', background: 'rgba(15,15,15,0.8)', color: '#d4d0c8', border: '1px solid #2a2a2a', outline: 'none' },
-  btn: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '4px', padding: '14px', background: 'transparent', color: '#c45a2a', border: '1px solid #c45a2a', cursor: 'pointer', marginTop: '8px' },
-  toggle: { fontFamily: "'EB Garamond', Georgia, serif", fontSize: '14px', color: '#555', background: 'none', border: 'none', cursor: 'pointer', marginTop: '20px', textDecoration: 'underline', textUnderlineOffset: '3px' },
-};
 
 function ds(date) { return date.toISOString().slice(0, 10); }
 function formatEntryDate(dateStr) {
@@ -60,7 +65,7 @@ function formatEntryDate(dateStr) {
 }
 
 function TrackerDashboard() {
-  const { user, profile, updateProfile } = useAuth();
+  const { user, profile, updateProfile, signOut } = useAuth();
   const navigate = useNavigate();
   const [primaryHabit, setPrimaryHabit] = useState(null);
   const [checkedDates, setCheckedDates] = useState([]);
@@ -74,6 +79,7 @@ function TrackerDashboard() {
   const [error, setError] = useState('');
   const [streakInput, setStreakInput] = useState('');
   const [streakBusy, setStreakBusy] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('');
 
   const today = ds(new Date());
 
@@ -81,7 +87,6 @@ function TrackerDashboard() {
     if (!user) return;
     setError('');
     try {
-      // Get or create the primary habit (No pornography, sort_order 0)
       let { data: habits, error: hErr } = await supabase
         .from('habits')
         .select('*')
@@ -101,7 +106,6 @@ function TrackerDashboard() {
       const h = habits[0];
       setPrimaryHabit(h);
 
-      // All check dates for the primary habit
       const { data: checks, error: ckErr } = await supabase
         .from('daily_checks')
         .select('check_date')
@@ -111,7 +115,6 @@ function TrackerDashboard() {
       if (ckErr) throw ckErr;
       setCheckedDates((checks || []).map(c => c.check_date));
 
-      // Last 10 notes for the primary habit
       const { data: notes, error: nErr } = await supabase
         .from('daily_notes')
         .select('*')
@@ -135,7 +138,6 @@ function TrackerDashboard() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  // Current consecutive streak ending at today or yesterday
   const daysClean = useMemo(() => {
     const dateSet = new Set(checkedDates);
     let count = 0;
@@ -187,20 +189,15 @@ function TrackerDashboard() {
       return;
     }
     setShowNotePrompt(false);
-    // Take them to the community to see what others wrote
     navigate('/community');
   };
 
   const handleSkipNote = () => setShowNotePrompt(false);
 
-  // Backfill or unmark any past day from the mini calendar.
-  // Today uses the same insert path as LOG TODAY so the quote/note flow triggers;
-  // past days are a silent correction, no quote.
   const handleToggleDate = async (dateStr, isCurrentlyChecked) => {
     if (!primaryHabit) return;
-    if (dateStr > today) return; // no future logging
+    if (dateStr > today) return;
     if (dateStr === today && !isCurrentlyChecked) {
-      // Route through the normal flow so the user still gets the quote reward
       handleCheckToday();
       return;
     }
@@ -222,8 +219,6 @@ function TrackerDashboard() {
     }
   };
 
-  // Bulk-fill N consecutive days ending today. Used by people who already have
-  // an existing streak when they sign up. Skips dates already logged.
   const handleSetStreak = async () => {
     const n = parseInt(streakInput, 10);
     if (!primaryHabit || !n || n < 1) { setError('Enter a number of days (1 or more).'); return; }
@@ -242,7 +237,6 @@ function TrackerDashboard() {
         d.setDate(d.getDate() - 1);
       }
       if (rows.length > 0) {
-        // Batch inserts to stay well under any row-limit
         const chunk = 500;
         for (let i = 0; i < rows.length; i += chunk) {
           const { error: err } = await supabase.from('daily_checks').insert(rows.slice(i, i + chunk));
@@ -259,151 +253,179 @@ function TrackerDashboard() {
   };
 
   const toggleProfileField = async (field) => { await updateProfile({ [field]: !profile[field] }); };
-  const saveSettings = async () => { await updateProfile({ motivational_message: message }); };
+  const saveSettings = async () => {
+    await updateProfile({ motivational_message: message });
+    setSaveStatus('✓ Saved');
+    setTimeout(() => setSaveStatus(''), 1400);
+  };
 
-  if (loading) return <div style={st.loading}>Loading...</div>;
+  if (loading) return <main className="page narrow"><p style={{ textAlign: 'center', padding: '100px 0', color: 'var(--ink-3)', letterSpacing: '3px' }}>Loading...</p></main>;
 
   return (
-    <div style={st.root}>
-      {/* Physical tracker PDF + Settings toggle */}
-      <div style={st.topWrap}>
-        <a href="/mission_phoenix_habit_journal_2026.pdf" download style={st.physicalTracker}>
-          <div style={st.ptBadge}>RECOMMENDED</div>
-          <div style={st.ptTitle}>PHYSICAL HABIT TRACKER</div>
-          <p style={st.ptDesc}>Download and print a physical habit tracker. Many find that pen-and-paper tracking works best for building real accountability.</p>
-          <div style={st.ptAction}>DOWNLOAD PDF</div>
-        </a>
-        <div style={st.settingsRow}>
-          <button onClick={() => setShowSettings(!showSettings)} style={st.settingsBtn}>
-            {showSettings ? 'CLOSE SETTINGS' : 'SETTINGS'}
-          </button>
-        </div>
-        {/* Prominent streak-import for fresh users */}
-        {checkedDates.length === 0 && (
-          <div style={st.streakCard}>
-            <div style={st.streakLabel}>ALREADY ON A STREAK?</div>
-            <p style={st.streakDesc}>If you already have clean days behind you, enter how many and we&rsquo;ll fill the calendar for you.</p>
-            <div style={st.streakRow}>
-              <input
-                type="number"
-                min="1"
-                max="5000"
-                value={streakInput}
-                onChange={e => setStreakInput(e.target.value)}
-                placeholder="e.g. 365"
-                style={st.streakInput}
-              />
-              <button onClick={handleSetStreak} disabled={streakBusy || !streakInput} style={{ ...st.streakBtn, opacity: streakBusy || !streakInput ? 0.4 : 1 }}>
-                {streakBusy ? 'SETTING...' : 'SET STREAK'}
-              </button>
-            </div>
+    <>
+      <style>{`
+        .tk-top{padding-top:16px;}
+        .tk-userbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:12px 18px;background:var(--card);border:1px solid var(--line);border-radius:12px;flex-wrap:wrap;gap:10px;}
+        .tk-userbar .u{font-size:13px;}
+        .tk-userbar .u span{color:var(--ink-3);}
+        .tk-userbar .u b{color:var(--copper);letter-spacing:1px;}
+        .tk-userbar .out{font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 14px;background:none;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-3);cursor:pointer;text-transform:uppercase;font-family:inherit;}
+        .tk-userbar .out:hover{border-color:var(--copper);color:var(--copper);}
+
+        .tk-pt{display:block;padding:22px 26px;background:var(--copper-soft);border:1px solid var(--line);border-left:3px solid var(--copper);border-radius:0 14px 14px 0;margin-bottom:16px;text-align:center;transition:background .2s;text-decoration:none;color:inherit;}
+        .tk-pt:hover{background:rgba(163,70,32,0.12);}
+        .tk-pt-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--copper);background:rgba(163,70,32,0.18);padding:3px 10px;border-radius:999px;margin-bottom:10px;}
+        .tk-pt-title{font-size:14px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;}
+        .tk-pt-desc{font-size:13.5px;color:var(--ink-2);line-height:1.65;margin:0 auto 10px;max-width:500px;}
+        .tk-pt-act{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--copper);text-transform:uppercase;}
+
+        .tk-srow{display:flex;justify-content:flex-end;margin-bottom:14px;}
+        .tk-sbtn{font-size:10px;font-weight:700;letter-spacing:3px;padding:8px 16px;background:none;color:var(--ink-3);border:1px solid var(--line-2);border-radius:999px;cursor:pointer;text-transform:uppercase;font-family:inherit;}
+        .tk-sbtn:hover{border-color:var(--copper);color:var(--copper);}
+
+        .tk-scard{padding:24px;background:var(--copper-soft);border:1px solid var(--line);border-radius:14px;margin-bottom:20px;}
+        .tk-slab{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--copper);margin-bottom:10px;}
+        .tk-sdesc{font-size:14px;color:var(--ink-2);line-height:1.65;margin-bottom:16px;}
+        .tk-srow2{display:flex;gap:10px;flex-wrap:wrap;}
+        .tk-srow2 input{flex:1;min-width:140px;margin:0;}
+        .tk-sbtn2{font-size:11px;font-weight:700;letter-spacing:3px;padding:12px 20px;background:transparent;color:var(--copper);border:1px solid var(--copper);cursor:pointer;text-transform:uppercase;font-family:inherit;border-radius:8px;}
+        .tk-sbtn2:disabled{opacity:0.4;}
+
+        .tk-panel{padding:26px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:24px;}
+        .tk-ptitle{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ink-3);margin-bottom:16px;}
+        .tk-phelp{font-size:13px;color:var(--ink-3);line-height:1.65;margin-bottom:14px;}
+        .tk-pitem{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);}
+        .tk-pitem:last-child{border-bottom:none;}
+        .tk-plabel{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+        .tk-psub{font-size:12.5px;color:var(--ink-3);line-height:1.5;}
+        .tk-tgl{font-size:10px;font-weight:700;letter-spacing:2px;padding:6px 14px;cursor:pointer;min-width:82px;border-radius:999px;text-transform:uppercase;font-family:inherit;transition:all .15s;}
+        .tk-tgl.on{background:var(--copper);color:var(--card);border:1px solid var(--copper);}
+        .tk-tgl.off{background:transparent;color:var(--ink-3);border:1px solid var(--line-2);}
+        .tk-ta{width:100%;margin-top:6px;min-height:64px;resize:vertical;}
+        .tk-save{font-size:11px;font-weight:700;letter-spacing:3px;padding:10px 20px;background:transparent;color:var(--copper);border:1px solid var(--copper);border-radius:8px;cursor:pointer;margin-top:12px;text-transform:uppercase;font-family:inherit;}
+
+        .tk-err{font-size:13px;color:#b82030;margin-top:12px;padding:10px 14px;border:1px solid rgba(184,32,48,0.3);background:rgba(184,32,48,0.06);border-radius:8px;}
+      `}</style>
+      <main className="page narrow" style={{ maxWidth: '760px' }}>
+        <div className="tk-top">
+          <div className="tk-userbar">
+            <div className="u"><span>Logged in as </span><b>{profile?.username || user.username}</b></div>
+            <button className="out" onClick={signOut}>Log out</button>
           </div>
-        )}
-        {showSettings && (
-          <div style={st.settingsPanel}>
-            <h3 style={st.settingsTitle}>SET YOUR DAY COUNT</h3>
-            <p style={st.settingsHelp}>Enter how many days clean you are. This fills in past days ending today. Existing logged days are kept.</p>
-            <div style={st.streakRow}>
-              <input
-                type="number"
-                min="1"
-                max="5000"
-                value={streakInput}
-                onChange={e => setStreakInput(e.target.value)}
-                placeholder="e.g. 365"
-                style={st.streakInput}
-              />
-              <button onClick={handleSetStreak} disabled={streakBusy || !streakInput} style={{ ...st.streakBtn, opacity: streakBusy || !streakInput ? 0.4 : 1 }}>
-                {streakBusy ? 'SETTING...' : 'SET STREAK'}
-              </button>
-            </div>
-            <h3 style={{ ...st.settingsTitle, marginTop: '32px' }}>PROFILE PRIVACY</h3>
-            <p style={st.settingsHelp}>Control what other members see on your public profile.</p>
-            {[
-              ['is_public', 'Profile visible to others', 'When private, nothing below is shown at all.'],
-              ['show_streak', 'Current streak (days clean)', 'Shows your current consecutive-day count.'],
-              ['show_total_days', 'Total days logged', 'Lifetime count across all check-ins.'],
-              ['show_message', 'Your reason / message', 'The short note below.'],
-            ].map(([f, l, sub]) => (
-              <div key={f} style={st.settingsRowItem}>
-                <div style={{ flex: 1 }}>
-                  <div style={st.settingsLabel}>{l}</div>
-                  <div style={st.settingsSub}>{sub}</div>
-                </div>
-                <button
-                  onClick={() => toggleProfileField(f)}
-                  style={{ ...st.toggleBtn, background: profile[f] ? '#c45a2a' : 'transparent', color: profile[f] ? '#0a0a0a' : '#888', border: `1px solid ${profile[f] ? '#c45a2a' : '#333'}` }}
-                >
-                  {profile[f] ? 'PUBLIC' : 'PRIVATE'}
+
+          <a href="/mission_phoenix_habit_journal_2026.pdf" download className="tk-pt">
+            <div className="tk-pt-badge">Recommended</div>
+            <div className="tk-pt-title">Physical habit tracker</div>
+            <p className="tk-pt-desc">Download and print a physical habit tracker. Many find that pen-and-paper tracking works best for building real accountability.</p>
+            <div className="tk-pt-act">Download PDF ↓</div>
+          </a>
+
+          <div className="tk-srow">
+            <button onClick={() => setShowSettings(!showSettings)} className="tk-sbtn">
+              {showSettings ? 'Close settings' : 'Settings'}
+            </button>
+          </div>
+
+          {checkedDates.length === 0 && (
+            <div className="tk-scard">
+              <div className="tk-slab">Already on a streak?</div>
+              <p className="tk-sdesc">If you already have clean days behind you, enter how many and we&rsquo;ll fill the calendar for you.</p>
+              <div className="tk-srow2">
+                <input
+                  className="input"
+                  type="number"
+                  min="1"
+                  max="5000"
+                  value={streakInput}
+                  onChange={e => setStreakInput(e.target.value)}
+                  placeholder="e.g. 365"
+                />
+                <button onClick={handleSetStreak} disabled={streakBusy || !streakInput} className="tk-sbtn2">
+                  {streakBusy ? 'Setting...' : 'Set streak'}
                 </button>
               </div>
-            ))}
-            <div style={{ marginTop: '20px' }}>
-              <label style={st.settingsLabel}>Your reason (shown on your public profile if enabled)</label>
-              <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Why are you doing this?" style={st.textarea} maxLength={200} />
-              <button onClick={saveSettings} style={st.saveBtn}>SAVE</button>
             </div>
-          </div>
-        )}
-        {error && <div style={st.error}>{error}</div>}
-      </div>
+          )}
 
-      <Journey
-        daysClean={daysClean}
-        checkedDates={checkedDates}
-        onCheckToday={handleCheckToday}
-        isTodayChecked={isTodayChecked}
-        showQuote={showQuote}
-        dismissQuote={dismissQuote}
-        todayQuote={todayQuote}
-        showNotePrompt={showNotePrompt}
-        onSaveNote={handleSaveNote}
-        onSkipNote={handleSkipNote}
-        recentNotes={recentNotes}
-        onToggleDate={handleToggleDate}
-      />
-    </div>
+          {showSettings && (
+            <div className="tk-panel">
+              <div className="tk-ptitle">Set your day count</div>
+              <p className="tk-phelp">Enter how many days clean you are. This fills in past days ending today. Existing logged days are kept.</p>
+              <div className="tk-srow2">
+                <input
+                  className="input"
+                  type="number"
+                  min="1"
+                  max="5000"
+                  value={streakInput}
+                  onChange={e => setStreakInput(e.target.value)}
+                  placeholder="e.g. 365"
+                />
+                <button onClick={handleSetStreak} disabled={streakBusy || !streakInput} className="tk-sbtn2">
+                  {streakBusy ? 'Setting...' : 'Set streak'}
+                </button>
+              </div>
+
+              <div className="tk-ptitle" style={{ marginTop: '28px' }}>Profile privacy</div>
+              <p className="tk-phelp">Control what other members see on your public profile.</p>
+              {[
+                ['is_public', 'Profile visible to others', 'When private, nothing below is shown at all.'],
+                ['show_streak', 'Current streak (days clean)', 'Shows your current consecutive-day count.'],
+                ['show_total_days', 'Total days logged', 'Lifetime count across all check-ins.'],
+                ['show_message', 'Your reason / message', 'The short note below.'],
+              ].map(([f, l, sub]) => (
+                <div key={f} className="tk-pitem">
+                  <div style={{ flex: 1 }}>
+                    <div className="tk-plabel">{l}</div>
+                    <div className="tk-psub">{sub}</div>
+                  </div>
+                  <button onClick={() => toggleProfileField(f)} className={`tk-tgl ${profile?.[f] ? 'on' : 'off'}`}>
+                    {profile?.[f] ? 'Public' : 'Private'}
+                  </button>
+                </div>
+              ))}
+
+              <div style={{ marginTop: '20px' }}>
+                <label className="tk-plabel" style={{ display: 'block', marginBottom: '2px' }}>Your reason (shown on your public profile if enabled)</label>
+                <textarea className="tk-ta input" value={message} onChange={e => setMessage(e.target.value)} placeholder="Why are you doing this?" maxLength={200} />
+                <button onClick={saveSettings} className="tk-save">{saveStatus || 'Save'}</button>
+              </div>
+            </div>
+          )}
+
+          {error && <div className="tk-err">{error}</div>}
+        </div>
+
+        <Journey
+          daysClean={daysClean}
+          checkedDates={checkedDates}
+          onCheckToday={handleCheckToday}
+          isTodayChecked={isTodayChecked}
+          showQuote={showQuote}
+          dismissQuote={dismissQuote}
+          todayQuote={todayQuote}
+          showNotePrompt={showNotePrompt}
+          onSaveNote={handleSaveNote}
+          onSkipNote={handleSkipNote}
+          recentNotes={recentNotes}
+          onToggleDate={handleToggleDate}
+        />
+      </main>
+    </>
   );
 }
-
-const st = {
-  root: { minHeight: '100vh' },
-  topWrap: { maxWidth: '720px', margin: '0 auto', padding: '40px 24px 0' },
-  physicalTracker: { display: 'block', padding: '20px 24px', background: 'rgba(196,90,42,0.06)', border: '1px solid #c45a2a33', marginBottom: '20px', textDecoration: 'none', cursor: 'pointer', textAlign: 'center' },
-  ptBadge: { fontFamily: "'Oswald', sans-serif", fontSize: '9px', letterSpacing: '3px', color: '#c45a2a', background: 'rgba(196,90,42,0.15)', display: 'inline-block', padding: '3px 10px', marginBottom: '8px' },
-  ptTitle: { fontFamily: "'Oswald', sans-serif", fontSize: '14px', letterSpacing: '4px', color: '#e8e4dc', marginBottom: '6px' },
-  ptDesc: { fontSize: '13px', color: '#777', lineHeight: 1.6, margin: '0 0 10px 0', maxWidth: '500px', marginLeft: 'auto', marginRight: 'auto' },
-  ptAction: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', color: '#c45a2a' },
-  settingsRow: { display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' },
-  settingsBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '3px', padding: '8px 16px', background: 'none', color: '#555', border: '1px solid #333', cursor: 'pointer' },
-  settingsPanel: { padding: '28px', background: 'rgba(15,15,15,0.8)', border: '1px solid #1a1a1a', marginBottom: '24px' },
-  settingsTitle: { fontFamily: "'Oswald', sans-serif", fontSize: '12px', letterSpacing: '4px', color: '#666', fontWeight: 400, marginBottom: '20px' },
-  settingsRowItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '14px', padding: '14px 0', borderBottom: '1px solid #141414' },
-  settingsLabel: { fontSize: '14px', color: '#c8c3ba', marginBottom: '3px' },
-  settingsSub: { fontSize: '12px', color: '#666', fontStyle: 'italic', fontFamily: "'EB Garamond', Georgia, serif" },
-  toggleBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '10px', letterSpacing: '2px', padding: '6px 14px', cursor: 'pointer', minWidth: '82px' },
-  textarea: { width: '100%', fontFamily: "'EB Garamond', Georgia, serif", fontSize: '15px', padding: '12px', background: 'rgba(10,10,10,0.8)', color: '#d4d0c8', border: '1px solid #2a2a2a', outline: 'none', resize: 'vertical', minHeight: '60px', marginTop: '4px', boxSizing: 'border-box' },
-  saveBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', padding: '10px 20px', background: 'none', color: '#c45a2a', border: '1px solid #c45a2a', cursor: 'pointer', marginTop: '12px' },
-  error: { fontSize: '13px', color: '#b82030', marginTop: '12px', padding: '10px 14px', border: '1px solid #b8203044', background: 'rgba(184,32,48,0.06)' },
-  streakCard: { padding: '24px', background: 'rgba(196,90,42,0.05)', border: '1px solid #c45a2a33', marginBottom: '20px' },
-  streakLabel: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '4px', color: '#c45a2a', marginBottom: '10px' },
-  streakDesc: { fontSize: '14px', color: '#888', lineHeight: 1.6, margin: '0 0 16px 0', fontFamily: "'EB Garamond', Georgia, serif" },
-  streakRow: { display: 'flex', gap: '10px', flexWrap: 'wrap' },
-  streakInput: { flex: 1, minWidth: '140px', fontFamily: "'Oswald', sans-serif", fontSize: '16px', letterSpacing: '2px', padding: '12px 14px', background: 'rgba(10,10,10,0.8)', color: '#e8e4dc', border: '1px solid #2a2a2a', outline: 'none' },
-  streakBtn: { fontFamily: "'Oswald', sans-serif", fontSize: '11px', letterSpacing: '3px', padding: '12px 20px', background: 'transparent', color: '#c45a2a', border: '1px solid #c45a2a', cursor: 'pointer' },
-  settingsHelp: { fontSize: '13px', color: '#666', lineHeight: 1.6, margin: '0 0 14px 0', fontFamily: "'EB Garamond', Georgia, serif" },
-  loading: { fontFamily: "'Oswald', sans-serif", fontSize: '13px', letterSpacing: '3px', color: '#555', textAlign: 'center', padding: '100px 24px' },
-};
 
 export default function Tracker() {
   const { user, loading } = useAuth();
   if (!isSupabaseConfigured()) return (
-    <div style={{ maxWidth: '500px', margin: '0 auto', padding: '100px 24px', textAlign: 'center' }}>
-      <h2 style={{ fontFamily: "'Oswald', sans-serif", fontSize: '18px', letterSpacing: '4px', color: '#e8e4dc', fontWeight: 400, marginBottom: '16px' }}>TRACKER COMING SOON</h2>
-      <p style={{ fontSize: '15px', color: '#666', lineHeight: 1.7 }}>The recovery tracker is being set up.</p>
-    </div>
+    <main className="page narrow">
+      <div style={{ maxWidth: '500px', margin: '0 auto', padding: '100px 24px', textAlign: 'center' }}>
+        <h2 style={{ fontSize: '18px', letterSpacing: '4px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '16px' }}>Tracker coming soon</h2>
+        <p style={{ fontSize: '15px', color: 'var(--ink-3)', lineHeight: 1.7 }}>The recovery tracker is being set up.</p>
+      </div>
+    </main>
   );
-  if (loading) return <div style={st.loading}>Loading...</div>;
+  if (loading) return <main className="page narrow"><p style={{ textAlign: 'center', padding: '100px 0', color: 'var(--ink-3)', letterSpacing: '3px' }}>Loading...</p></main>;
   if (!user) return <AuthForm />;
   return <TrackerDashboard />;
 }
