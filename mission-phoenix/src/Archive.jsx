@@ -1,6 +1,11 @@
 export default function Archive() {
   const newsletters = [
     {
+      title: 'The lying and cheating porn addict',
+      date: '24/04/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/the-lying-and-cheating-porn-addict/',
+    },
+    {
       title: 'Porn is the killer of creative energy',
       date: '17/04/2026',
       url: 'https://buttondown.com/missionphoenix/archive/porn-is-the-killer-of-creative-energy/',
