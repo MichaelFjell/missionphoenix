@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Community — Mission Phoenix</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+  .title{font-size:clamp(26px,4vw,34px);font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+  .sub{font-size:15px;color:var(--ink-3);margin-bottom:24px;line-height:1.7;}
+
+  .preview-banner{display:flex;align-items:center;gap:12px;padding:12px 18px;background:var(--copper-soft);border:1px solid var(--copper);border-radius:10px;margin-bottom:28px;}
+  .preview-banner .pb-badge{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--card);background:var(--copper);padding:4px 10px;border-radius:999px;flex-shrink:0;}
+  .preview-banner .pb-text{font-size:13px;color:var(--ink-2);line-height:1.5;}
+
+  .tabs{display:flex;gap:0;margin-bottom:32px;border-bottom:1px solid var(--line);}
+  .tab{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;padding:14px 18px;color:var(--ink-3);font-family:inherit;transition:all .15s;white-space:nowrap;}
+  .tab:hover{color:var(--ink-2);}
+  .tab.on{color:var(--copper);border-bottom-color:var(--copper);}
+
+  .empty-state{text-align:center;padding:80px 24px;border:1px dashed var(--line);border-radius:14px;}
+  .empty-state p{color:var(--ink-3);font-style:italic;font-size:15px;line-height:1.7;max-width:440px;margin:0 auto;}
+
+  .list{display:flex;flex-direction:column;gap:14px;margin-bottom:48px;}
+  .member-card{padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:14px;}
+  .mc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:16px;flex-wrap:wrap;}
+  .mc-name{font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--ink);line-height:1.3;min-width:0;flex:1;}
+  .mc-streak{font-size:13px;color:var(--ink-2);white-space:nowrap;flex-shrink:0;}
+  .mc-streak b{font-size:22px;font-weight:800;color:var(--copper);margin-right:4px;}
+  .mc-stat{font-size:13px;color:var(--ink-3);margin-bottom:8px;}
+  .mc-habits{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .tag{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-3);white-space:nowrap;}
+  .mc-msg{font-size:14px;color:var(--ink-2);font-style:italic;margin-top:12px;line-height:1.6;}
+
+  .note-card{padding:20px 24px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--copper);border-radius:0 14px 14px 0;}
+  .note-meta{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .note-date{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--ink-3);}
+  .note-sep{color:var(--line-2);}
+  .note-habit{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-3);white-space:nowrap;}
+  .note-text{font-size:15px;line-height:1.75;color:var(--ink-2);margin:0 0 10px 0;font-style:italic;}
+  .note-author{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--copper);}
+
+  .foot-cta{text-align:center;padding:32px 0;border-top:1px solid var(--line);}
+  .foot-cta a{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--copper);text-decoration:none;}
+  .foot-cta a:hover{text-decoration:underline;}
+
+  .mode-toggle{display:flex;justify-content:center;gap:8px;margin-bottom:20px;}
+  .mode-toggle button{font-size:10px;font-weight:700;letter-spacing:2px;padding:6px 14px;background:none;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-3);cursor:pointer;font-family:inherit;text-transform:uppercase;}
+  .mode-toggle button.on{background:var(--copper);color:var(--card);border-color:var(--copper);}
+</style>
+</head>
+<body data-active="community">
+
+<main class="page narrow">
+  <h1 class="title">Community</h1>
+  <p class="sub">People in recovery. No ranking. No competition. Just proof that you're not alone.</p>
+
+  <div class="preview-banner">
+    <span class="pb-badge">Preview</span>
+    <span class="pb-text">The real site pulls public profiles from the database — currently empty. Toggle below to see either the live empty-state or sample data for the prototype.</span>
+  </div>
+
+  <div class="mode-toggle">
+    <button class="mode on" data-m="empty">Empty state (real)</button>
+    <button class="mode" data-m="sample">Sample data (preview)</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-t="members">Members</button>
+    <button class="tab" data-t="notes">Public Notes</button>
+  </div>
+
+  <!-- EMPTY STATE (the actual current state of the real site) -->
+  <div id="mode-empty">
+    <div id="empty-members">
+      <div class="empty-state">
+        <p>No public profiles yet. Be the first.</p>
+      </div>
+    </div>
+    <div id="empty-notes" style="display:none;">
+      <div class="empty-state">
+        <p>No public notes yet. When tracking your habits, toggle a note to "PUBLIC" to share it here.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAMPLE DATA (clearly marked for the preview) -->
+  <div id="mode-sample" style="display:none;">
+    <div id="sample-members">
+      <div class="list">
+        <div class="member-card">
+          <div class="mc-head">
+            <div class="mc-name">Anonymous_Runner</div>
+            <div class="mc-streak"><b>412</b>day streak</div>
+          </div>
+          <div class="mc-stat">412 total days tracked</div>
+          <div class="mc-habits"><span class="tag">No&nbsp;pornography</span><span class="tag">Run&nbsp;daily</span><span class="tag">Meditate</span></div>
+          <p class="mc-msg">"I am doing this for my future wife and children, whoever you are. I will not show up broken."</p>
+        </div>
+        <div class="member-card">
+          <div class="mc-head">
+            <div class="mc-name">QuietFire</div>
+            <div class="mc-streak"><b>187</b>day streak</div>
+          </div>
+          <div class="mc-stat">203 total days tracked</div>
+          <div class="mc-habits"><span class="tag">No&nbsp;pornography</span><span class="tag">Cold&nbsp;shower</span></div>
+          <p class="mc-msg">"Three failed attempts. This is the one that sticks."</p>
+        </div>
+        <div class="member-card">
+          <div class="mc-head">
+            <div class="mc-name">Michael_Founder</div>
+            <div class="mc-streak"><b>284</b>day streak</div>
+          </div>
+          <div class="mc-stat">284 total days tracked</div>
+          <div class="mc-habits"><span class="tag">No&nbsp;pornography</span><span class="tag">No&nbsp;drugs</span><span class="tag">Daily&nbsp;workout</span></div>
+          <p class="mc-msg">"I couldn't run 100 meters in July. I ran 5K in 23:38 by December. Purpose bigger than myself."</p>
+        </div>
+        <div class="member-card">
+          <div class="mc-head">
+            <div class="mc-name">Phoenix_07</div>
+            <div class="mc-streak"><b>64</b>day streak</div>
+          </div>
+          <div class="mc-stat">71 total days tracked</div>
+          <div class="mc-habits"><span class="tag">No&nbsp;pornography</span></div>
+        </div>
+        <div class="member-card">
+          <div class="mc-head">
+            <div class="mc-name">Dawn_Walker</div>
+            <div class="mc-streak"><b>31</b>day streak</div>
+          </div>
+          <div class="mc-stat">31 total days tracked</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sample-notes" style="display:none;">
+      <div class="list">
+        <div class="note-card">
+          <div class="note-meta"><span class="note-date">19/04/2026</span><span class="note-sep">—</span><span class="note-habit">No&nbsp;pornography</span></div>
+          <p class="note-text">Craving hit at 11pm like it always does. Walked around the block twice instead. Came back and it was gone.</p>
+          <span class="note-author">— Anonymous_Runner</span>
+        </div>
+        <div class="note-card">
+          <div class="note-meta"><span class="note-date">18/04/2026</span><span class="note-sep">—</span><span class="note-habit">No&nbsp;pornography</span></div>
+          <p class="note-text">90 days today. Morning wood is back. Eye contact with my wife feels different — I actually see her.</p>
+          <span class="note-author">— QuietFire</span>
+        </div>
+        <div class="note-card">
+          <div class="note-meta"><span class="note-date">17/04/2026</span><span class="note-sep">—</span><span class="note-habit">Run&nbsp;daily</span></div>
+          <p class="note-text">Ran 10k under 50 minutes for the first time. A year ago I couldn't climb stairs without stopping.</p>
+          <span class="note-author">— Michael_Founder</span>
+        </div>
+        <div class="note-card">
+          <div class="note-meta"><span class="note-date">15/04/2026</span><span class="note-sep">—</span><span class="note-habit">No&nbsp;pornography</span></div>
+          <p class="note-text">Relapsed yesterday. Not writing this for sympathy. Writing it so the next guy scrolling at 1am knows he's not the only one who slips. Day 1 again. That's it.</p>
+          <span class="note-author">— Phoenix_07</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot-cta">
+    <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener">Join the Discord for deeper support →</a>
+  </div>
+</main>
+
+<script src="chrome.js"></script>
+<script>
+  let mode = 'empty';     // 'empty' | 'sample'
+  let tab  = 'members';   // 'members' | 'notes'
+
+  function render(){
+    document.querySelectorAll('.mode').forEach(b => b.classList.toggle('on', b.dataset.m === mode));
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+
+    document.getElementById('mode-empty').style.display  = mode === 'empty'  ? '' : 'none';
+    document.getElementById('mode-sample').style.display = mode === 'sample' ? '' : 'none';
+
+    document.getElementById('empty-members').style.display  = tab === 'members' ? '' : 'none';
+    document.getElementById('empty-notes').style.display    = tab === 'notes'   ? '' : 'none';
+    document.getElementById('sample-members').style.display = tab === 'members' ? '' : 'none';
+    document.getElementById('sample-notes').style.display   = tab === 'notes'   ? '' : 'none';
+  }
+
+  document.querySelectorAll('.mode').forEach(btn => btn.addEventListener('click', () => { mode = btn.dataset.m; render(); }));
+  document.querySelectorAll('.tab').forEach(btn  => btn.addEventListener('click', () => { tab  = btn.dataset.t; render(); }));
+  render();
+</script>
+</body></html>
