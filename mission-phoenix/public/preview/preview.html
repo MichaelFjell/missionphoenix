@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" data-theme="oxblood">
+<head>
+<meta charset="utf-8">
+<title>Mission Phoenix — Theme Preview</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="mission-phoenix-themes.css">
+<style>
+  /* This preview page is just a swatch sheet. Your real site can drop
+     mission-phoenix-themes.css in alongside its own CSS — every component
+     should reference the --mp-* variables. */
+  html, body { margin:0; padding:0; background:var(--mp-bg); color:var(--mp-fg);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 48px 32px 96px; }
+  .switcher { display:flex; gap:8px; margin-bottom:32px; }
+  .switcher button {
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:11px; letter-spacing:2px; text-transform:uppercase;
+    padding:10px 16px; cursor:pointer;
+    background:var(--mp-panel); color:var(--mp-fg-2);
+    border:1px solid var(--mp-line-2); border-radius:0;
+  }
+  .switcher button[aria-current="true"] {
+    color:var(--mp-accent); border-color:var(--mp-accent); background:var(--mp-accent-soft);
+  }
+  h1 { font-size: 56px; font-weight: 700; letter-spacing:-0.025em; line-height:1; margin: 0 0 16px; }
+  h1 em { font-style: normal; color: var(--mp-accent); }
+  p.lead { font-size: 17px; color: var(--mp-fg-2); max-width: 56ch; line-height:1.6; }
+  .swatches { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:48px 0 32px; }
+  .sw { border:1px solid var(--mp-line-2); padding:16px; background:var(--mp-panel); }
+  .sw .chip { width:100%; height:48px; margin-bottom:10px; border:1px solid var(--mp-line); }
+  .sw .lab { font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:1.5px;
+    color:var(--mp-fg-3); text-transform:uppercase; }
+  .sw .val { font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--mp-fg); margin-top:4px; }
+  .panel { border:1px solid var(--mp-line-2); background:var(--mp-panel); padding:24px; margin-top:24px; }
+  .btn { display:inline-flex; padding:13px 22px; font-family:'JetBrains Mono', monospace;
+    font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase;
+    background:var(--mp-accent); color:var(--mp-on-accent); border:1px solid var(--mp-accent);
+    cursor:pointer; }
+  .btn.ghost { background:transparent; color:var(--mp-fg); border-color:var(--mp-line-2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="switcher" role="group" aria-label="Theme">
+    <button data-set="oxblood" aria-current="true">Oxblood</button>
+    <button data-set="ember">Ember</button>
+    <button data-set="slate">Slate</button>
+  </div>
+
+  <h1>You don't have to do this <em>alone</em>.</h1>
+  <p class="lead">Theme preview. Switch themes above — every component on your site should reference the <code>--mp-*</code> tokens defined in <code>mission-phoenix-themes.css</code>.</p>
+
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:var(--mp-bg)"></div><div class="lab">--mp-bg</div></div>
+    <div class="sw"><div class="chip" style="background:var(--mp-panel)"></div><div class="lab">--mp-panel</div></div>
+    <div class="sw"><div class="chip" style="background:var(--mp-accent)"></div><div class="lab">--mp-accent</div></div>
+    <div class="sw"><div class="chip" style="background:var(--mp-fg)"></div><div class="lab">--mp-fg</div></div>
+  </div>
+
+  <div class="panel">
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn">Take the assessment →</button>
+      <button class="btn ghost">Read Michael's story</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.switcher button').forEach(b => {
+    b.addEventListener('click', () => {
+      const t = b.dataset.set;
+      document.documentElement.setAttribute('data-theme', t);
+      document.querySelectorAll('.switcher button').forEach(x =>
+        x.setAttribute('aria-current', x === b ? 'true' : 'false'));
+      try { localStorage.setItem('mp-theme', t); } catch(e){}
+    });
+  });
+  try {
+    const saved = localStorage.getItem('mp-theme');
+    if (saved) document.querySelector(`.switcher button[data-set="${saved}"]`)?.click();
+  } catch(e){}
+</script>
+</body>
+</html>
