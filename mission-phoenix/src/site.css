@@ -15,7 +15,7 @@ a{color:inherit;text-decoration:none;}
 button{font-family:inherit;}
 
 /* ------- NAV ------- */
-nav.site{position:sticky;top:0;z-index:20;background:rgba(244,236,221,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+nav.site{position:sticky;top:0;z-index:20;background:var(--mp-nav-bg);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
 .nav-inner{max-width:1160px;margin:0 auto;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
 .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:16px;letter-spacing:-0.01em;}
 .brand img{width:28px;height:28px;background:var(--copper);-webkit-mask:url(/phoenix.png) center/contain no-repeat;mask:url(/phoenix.png) center/contain no-repeat;}

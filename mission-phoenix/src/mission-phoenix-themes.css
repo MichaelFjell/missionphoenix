@@ -26,6 +26,7 @@
   --mp-live:          #2f8f47;
 
   --mp-on-accent: #fbf5e8;
+  --mp-nav-bg: rgba(244,236,221,0.92);
 }
 
 :root[data-theme="oxblood"] {
@@ -49,6 +50,7 @@
   --mp-live:          #90d094;
 
   --mp-on-accent: #170c0c;
+  --mp-nav-bg: rgba(23,12,12,0.92);
 }
 
 :root[data-theme="ember"] {
@@ -72,6 +74,7 @@
   --mp-live:          #94c6a3;
 
   --mp-on-accent: #0d0907;
+  --mp-nav-bg: rgba(22,17,14,0.92);
 }
 
 :root[data-theme="slate"] {
@@ -95,4 +98,5 @@
   --mp-live:          #86d2af;
 
   --mp-on-accent: #141921;
+  --mp-nav-bg: rgba(20,25,33,0.92);
 }
