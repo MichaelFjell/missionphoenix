@@ -237,7 +237,7 @@ export default function Journey({
         .j-header{text-align:center;padding:40px 0 32px;border-top:1px solid var(--line);margin-top:32px;}
         .j-phx{position:relative;width:120px;height:120px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;}
         .j-phx-glow{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle, var(--copper) 0%, transparent 70%);filter:blur(30px);}
-        .j-phx img{width:100px;height:auto;position:relative;z-index:1;transition:all .6s ease;filter:brightness(0) saturate(100%) invert(29%) sepia(50%) saturate(2180%) hue-rotate(357deg) brightness(90%) contrast(95%);}
+        .j-phx img{width:100px;height:100px;position:relative;z-index:1;transition:all .6s ease;background:var(--copper);-webkit-mask:url(/phoenix.png) center/contain no-repeat;mask:url(/phoenix.png) center/contain no-repeat;}
         .j-days{font-size:clamp(72px,15vw,120px);font-weight:800;color:var(--copper);line-height:1;letter-spacing:-0.04em;margin-bottom:12px;}
         .j-days-label{font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--ink-3);margin-bottom:28px;}
         .j-tier-line{width:40px;height:2px;background:var(--copper);margin:20px auto;border-radius:2px;}

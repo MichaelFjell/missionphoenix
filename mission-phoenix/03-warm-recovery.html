@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mission Phoenix — Warm Recovery</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#f4ecdd; --bg-2:#ebe1cd; --card:#fbf5e8;
+    --ink:#1d1915; --ink-2:#5c4f42; --ink-3:#8a7c6b;
+    --line:#d8cdb6; --line-2:#c4b79c;
+    --copper:#a34620; --copper-2:#8a3a1b; --copper-soft:rgba(163,70,32,0.08);
+  }
+  html,body{background:var(--bg);color:var(--ink);font-family:'Manrope',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
+  ::selection{background:var(--copper);color:var(--card);}
+  a{color:inherit;text-decoration:none;}
+
+  nav{position:sticky;top:0;z-index:20;background:rgba(244,236,221,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .nav-inner{max-width:1160px;margin:0 auto;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:16px;letter-spacing:-0.01em;}
+  .brand svg{width:28px;height:28px;}
+  .links{display:flex;gap:28px;}
+  .links a{font-size:14px;color:var(--ink-2);font-weight:500;transition:color .15s;}
+  .links a:hover{color:var(--copper);}
+  .donate-btn{padding:9px 18px;background:var(--copper);color:var(--card)!important;border-radius:999px;font-weight:600;font-size:13px!important;}
+  .donate-btn:hover{background:var(--copper-2);color:var(--card)!important;}
+
+  main{max-width:1160px;margin:0 auto;padding:48px 32px 80px;}
+
+  .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center;padding:32px 0 56px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--copper);letter-spacing:0.5px;margin-bottom:24px;background:var(--copper-soft);padding:6px 14px;border-radius:999px;}
+  .eyebrow .d{width:6px;height:6px;border-radius:50%;background:var(--copper);}
+  h1.title{font-size:clamp(44px,5.5vw,72px);font-weight:800;line-height:1.02;letter-spacing:-0.025em;margin-bottom:28px;}
+  h1.title em{font-style:normal;color:var(--copper);}
+  .tagline{font-size:18px;line-height:1.65;color:var(--ink-2);max-width:540px;margin-bottom:32px;}
+  .cta{display:flex;gap:12px;align-items:center;}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .2s;}
+  .btn.primary{background:var(--copper);color:var(--card);}
+  .btn.primary:hover{background:var(--copper-2);transform:translateY(-1px);}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line-2);}
+  .btn.ghost:hover{border-color:var(--copper);color:var(--copper);}
+
+  .hero-visual{background:var(--card);border-radius:24px;border:1px solid var(--line);padding:36px;position:relative;overflow:hidden;}
+  .hero-visual::before{content:"";position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,var(--copper-soft),transparent 70%);}
+  .hv-label{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:16px;position:relative;}
+  .hv-quote{font-size:22px;line-height:1.4;font-weight:500;letter-spacing:-0.01em;margin-bottom:28px;position:relative;}
+  .hv-quote em{color:var(--copper);font-style:normal;font-weight:700;}
+  .hv-byline{display:flex;align-items:center;gap:12px;position:relative;padding-top:20px;border-top:1px solid var(--line);}
+  .hv-avatar{width:40px;height:40px;border-radius:50%;background:var(--copper);display:flex;align-items:center;justify-content:center;color:var(--card);font-weight:700;font-size:15px;}
+  .hv-byline .n{font-weight:600;font-size:14px;}
+  .hv-byline .r{font-size:12px;color:var(--ink-3);}
+
+  .sec-title{font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--copper);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  .sec-title::before{content:"";width:20px;height:2px;background:var(--copper);border-radius:2px;}
+
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:12px;}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;transition:all .25s;cursor:pointer;}
+  .tile:hover{border-color:var(--copper);transform:translateY(-3px);box-shadow:0 12px 32px -18px rgba(163,70,32,0.35);}
+  .tile .ico{width:48px;height:48px;border-radius:14px;background:var(--copper-soft);display:flex;align-items:center;justify-content:center;color:var(--copper);margin-bottom:20px;}
+  .tile .ico svg{width:24px;height:24px;}
+  .tile h3{font-size:20px;font-weight:700;letter-spacing:-0.01em;margin-bottom:8px;}
+  .tile p{font-size:15px;line-height:1.6;color:var(--ink-2);margin-bottom:18px;}
+  .tile .foot{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--line);font-size:13px;}
+  .tile .foot .m{color:var(--ink-3);font-weight:500;}
+  .tile .foot .arr{color:var(--copper);font-weight:700;}
+
+  .newsletter{margin-top:64px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;position:relative;overflow:hidden;}
+  .newsletter::before{content:"";position:absolute;bottom:-80px;left:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,var(--copper-soft),transparent 70%);}
+  .newsletter h2{font-size:32px;font-weight:800;letter-spacing:-0.02em;line-height:1.15;margin-bottom:12px;position:relative;}
+  .newsletter p{font-size:15px;line-height:1.65;color:var(--ink-2);margin-bottom:6px;position:relative;}
+  .form{display:flex;flex-direction:column;gap:12px;position:relative;}
+  .form input{padding:16px 18px;border-radius:12px;border:1px solid var(--line-2);background:var(--bg);font-family:inherit;font-size:15px;color:var(--ink);outline:none;}
+  .form input:focus{border-color:var(--copper);background:var(--card);}
+  .form .note{font-size:12px;color:var(--ink-3);}
+
+  footer{margin-top:64px;padding-top:32px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--ink-3);}
+  footer .links-f{display:flex;gap:24px;}
+  footer a:hover{color:var(--copper);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#">
+      <img src="../assets/phoenix-ember.svg" alt="" style="width:28px;height:28px;filter:brightness(0) saturate(100%) invert(29%) sepia(50%) saturate(2180%) hue-rotate(357deg) brightness(90%) contrast(95%);">
+      <span>Mission Phoenix</span>
+    </a>
+    <div class="links">
+      <a>Assessment</a><a>Tracker</a><a>Community</a>
+      <a>Archive</a><a>About</a><a>Contact</a>
+      <a class="donate-btn">Donate</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow"><span class="d"></span>Recovery starts where honesty starts</div>
+      <h1 class="title">You don't have to do this <em>alone</em>.</h1>
+      <p class="tagline">A community and a life mission to spread awareness of the real cost of pornography. A beacon of light for those already in the darkness, and a commitment to helping steer the next generation away from it.</p>
+      <div class="cta">
+        <button class="btn primary">Take the assessment →</button>
+        <button class="btn ghost">Read Michael's story</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hv-label">From the field</div>
+      <div class="hv-quote">"The battle is never finished. You have to go inside your inner dungeon and scrub every shelf, <em>every single day</em>."</div>
+      <div class="hv-byline">
+        <div class="hv-avatar">M</div>
+        <div><div class="n">Michael · founder</div><div class="r">30,000+ hours in darkness. Now running 10km a day.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sec-title">What's here</div>
+
+  <section class="features">
+    <div class="tile">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/></svg></div>
+      <h3>Self-Assessment</h3>
+      <p>5 questions. Research-backed facts. No data stored. A wake-up call that takes 2 minutes.</p>
+      <div class="foot"><span class="m">2 minutes · anonymous</span><span class="arr">→</span></div>
+    </div>
+    <div class="tile">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20h16M6 20V13M11 20V9M16 20V15M20 20V6"/></svg></div>
+      <h3>Recovery Tracker</h3>
+      <p>Track your streak. Build daily habits. See your progress. Join others who are fighting the same battle.</p>
+      <div class="foot"><span class="m">Private · daily</span><span class="arr">→</span></div>
+    </div>
+    <div class="tile">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M14 19c0-2 2-3.5 4-3.5s4 1.5 4 3.5"/></svg></div>
+      <h3>Community</h3>
+      <p>Private Discord. Men recovering together. No performance, no preaching — just the daily work.</p>
+      <div class="foot"><span class="m">3,400+ men</span><span class="arr">→</span></div>
+    </div>
+  </section>
+
+  <section class="newsletter">
+    <div>
+      <div class="sec-title" style="margin-bottom:8px;">Weekly dispatch</div>
+      <h2>Honest words about breaking free.</h2>
+      <p>Hand-written by Michael, once a week. No AI-slop. No drip campaigns. No upsells. Unsubscribe any time.</p>
+    </div>
+    <form class="form" onsubmit="event.preventDefault();this.innerHTML='<div style=\'padding:16px;background:var(--copper-soft);border-radius:12px;color:var(--copper);font-weight:600;\'>✓ Check your email to confirm.</div>';">
+      <input type="email" placeholder="you@example.com" required>
+      <button class="btn primary" type="submit">Subscribe</button>
+      <div class="note">No spam. One email per week. Powered by Buttondown.</div>
+    </form>
+  </section>
+
+  <footer>
+    <div>© 2026 Mission Phoenix · v0.2-alpha · Built by someone who lived it</div>
+    <div class="links-f"><a>About</a><a>Contact</a><a>Discord</a><a>Archive</a><a>Donate</a></div>
+  </footer>
+</main>
+
+</body></html>

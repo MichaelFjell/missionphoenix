@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mission Phoenix — Disciplined Modern</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#0b0c0e; --panel:#111317; --line:#1d2026; --line-2:#262a32;
+    --fg:#e8eaee; --fg-2:#9aa0ab; --fg-3:#6b7280;
+    --copper:#c45a2a; --copper-dim:rgba(196,90,42,0.14);
+    --grid:rgba(255,255,255,0.025);
+  }
+  html,body{background:var(--bg);color:var(--fg);font-family:'Inter',-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  body{
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  ::selection{background:var(--copper);color:#0a0a0a;}
+  a{color:inherit;text-decoration:none;}
+
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:20;background:rgba(11,12,14,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  .nav-inner{max-width:1240px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand svg{width:22px;height:22px;}
+  .brand .name{font-weight:600;letter-spacing:1px;font-size:13px;color:var(--fg);}
+  .brand .name em{font-style:normal;color:var(--copper);}
+  .links{display:flex;gap:28px;}
+  .links a{font-size:13px;color:var(--fg-2);font-weight:500;transition:color .15s;}
+  .links a:hover{color:var(--fg);}
+  .links a.donate{color:var(--copper);}
+
+  /* MAIN */
+  main{max-width:1240px;margin:0 auto;padding:108px 28px 80px;}
+
+  /* HERO */
+  .hero{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;padding-bottom:56px;border-bottom:1px solid var(--line);}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--copper);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+  .eyebrow::before{content:"";width:18px;height:1px;background:var(--copper);}
+  h1.display{font-size:clamp(44px,5vw,72px);line-height:0.98;font-weight:700;letter-spacing:-0.02em;margin-bottom:24px;}
+  h1.display em{font-style:normal;color:var(--copper);}
+  .tagline{font-size:17px;line-height:1.65;color:var(--fg-2);max-width:540px;margin-bottom:32px;}
+  .cta-row{display:flex;gap:12px;align-items:center;}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;font-size:13px;font-weight:600;letter-spacing:0.3px;border:1px solid var(--line-2);background:var(--panel);color:var(--fg);cursor:pointer;transition:all .15s;}
+  .btn:hover{border-color:var(--copper);color:var(--copper);}
+  .btn.primary{background:var(--copper);border-color:var(--copper);color:#0a0a0a;}
+  .btn.primary:hover{background:#d66a34;color:#0a0a0a;}
+  .btn svg{width:14px;height:14px;}
+
+  /* HERO RIGHT — metric panel */
+  .metrics{border:1px solid var(--line);background:var(--panel);}
+  .metric-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+  .metric-head .label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--fg-3);text-transform:uppercase;}
+  .dot{width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,0.6);}
+  .metric-grid{display:grid;grid-template-columns:1fr 1fr;}
+  .metric{padding:22px 20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .metric:nth-child(2n){border-right:0;}
+  .metric:nth-last-child(-n+2){border-bottom:0;}
+  .metric .k{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--fg-3);text-transform:uppercase;margin-bottom:10px;}
+  .metric .v{font-size:32px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px;}
+  .metric .v .u{font-size:14px;color:var(--fg-3);font-weight:500;margin-left:4px;}
+  .metric .delta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--copper);}
+  .bar{height:4px;background:var(--line);margin-top:12px;overflow:hidden;}
+  .bar .fill{height:100%;background:var(--copper);}
+
+  /* FEATURE TILES */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:48px;border:1px solid var(--line);}
+  .tile{padding:32px 28px;border-right:1px solid var(--line);position:relative;transition:background .2s;cursor:pointer;}
+  .tile:last-child{border-right:0;}
+  .tile:hover{background:var(--copper-dim);}
+  .tile .idx{position:absolute;top:16px;right:20px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--fg-3);}
+  .tile .ti{width:28px;height:28px;margin-bottom:20px;color:var(--copper);}
+  .tile h3{font-size:18px;font-weight:600;margin-bottom:8px;letter-spacing:-0.01em;}
+  .tile p{font-size:14px;line-height:1.6;color:var(--fg-2);margin-bottom:20px;}
+  .tile .stat-row{display:flex;gap:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-3);letter-spacing:1px;text-transform:uppercase;}
+  .tile .stat-row b{color:var(--fg);font-weight:600;}
+
+  /* NEWSLETTER */
+  .newsletter{margin-top:56px;padding:48px;border:1px solid var(--line);background:var(--panel);display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+  .newsletter .label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--copper);text-transform:uppercase;margin-bottom:12px;}
+  .newsletter h2{font-size:28px;font-weight:700;letter-spacing:-0.02em;line-height:1.15;margin-bottom:12px;}
+  .newsletter p{font-size:14px;color:var(--fg-2);line-height:1.6;}
+  .form{display:flex;flex-direction:column;gap:10px;}
+  .form-row{display:flex;gap:8px;}
+  .form input{flex:1;padding:14px 16px;background:var(--bg);border:1px solid var(--line-2);color:var(--fg);font-family:inherit;font-size:14px;outline:none;}
+  .form input:focus{border-color:var(--copper);}
+  .form .note{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--fg-3);text-transform:uppercase;}
+
+  /* FOOTER */
+  footer{margin-top:64px;padding-top:32px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+  footer .f-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-3);letter-spacing:1px;}
+  footer .f-links{display:flex;gap:22px;font-size:12px;color:var(--fg-3);}
+  footer .f-links a:hover{color:var(--copper);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#">
+      <img src="../assets/phoenix-ember.svg" alt="" style="width:28px;height:28px;filter:brightness(0) saturate(100%) invert(36%) sepia(58%) saturate(1290%) hue-rotate(353deg) brightness(95%) contrast(92%);">
+      <span class="name">MISSION<em> /</em> PHOENIX</span>
+    </a>
+    <div class="links">
+      <a href="#">Assessment</a><a href="#">Tracker</a><a href="#">Community</a>
+      <a href="#">Archive</a><a href="#">About</a><a href="#">Contact</a>
+      <a href="#" class="donate">Donate</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="hero">
+    <div>
+      <div class="eyebrow">SYS.01 · RECOVERY PROTOCOL</div>
+      <h1 class="display">Reclaim the signal.<br>Starting today<em>.</em></h1>
+      <p class="tagline">A community and a life mission to spread awareness of the real cost of pornography. A beacon of light for those already in the darkness, and a commitment to helping steer the next generation away from it.</p>
+      <div class="cta-row">
+        <button class="btn primary">Take the assessment →</button>
+        <button class="btn">Read the methodology</button>
+      </div>
+    </div>
+    <div class="metrics">
+      <div class="metric-head">
+        <div class="label">COMMUNITY BASELINE</div>
+        <div style="display:flex;align-items:center;gap:8px;"><div class="dot"></div><span class="mono" style="font-size:10px;letter-spacing:2px;color:var(--fg-3);">LIVE</span></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="k">ACTIVE STREAKS</div>
+          <div class="v">1,284</div>
+          <div class="delta">+42 this week</div>
+          <div class="bar"><div class="fill" style="width:72%"></div></div>
+        </div>
+        <div class="metric">
+          <div class="k">MEDIAN DAYS</div>
+          <div class="v">47<span class="u">d</span></div>
+          <div class="delta">+3 vs. last mo</div>
+          <div class="bar"><div class="fill" style="width:58%"></div></div>
+        </div>
+        <div class="metric">
+          <div class="k">ASSESSMENTS</div>
+          <div class="v">18,902</div>
+          <div class="delta">+612 this week</div>
+          <div class="bar"><div class="fill" style="width:86%"></div></div>
+        </div>
+        <div class="metric">
+          <div class="k">AVG · MINUTES</div>
+          <div class="v">2.3<span class="u">min</span></div>
+          <div class="delta">assessment length</div>
+          <div class="bar"><div class="fill" style="width:22%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="tile">
+      <div class="idx mono">01 / SELF-ASSESSMENT</div>
+      <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 5h16M4 12h10M4 19h16"/><circle cx="19" cy="12" r="2" fill="currentColor"/></svg>
+      <h3>Self-Assessment</h3>
+      <p>5 questions. Research-backed facts. No data stored. A wake-up call that takes 2 minutes.</p>
+      <div class="stat-row"><span><b>5</b> QUESTIONS</span><span><b>2</b> MIN</span><span><b>0</b> STORED</span></div>
+    </div>
+    <div class="tile">
+      <div class="idx mono">02 / RECOVERY TRACKER</div>
+      <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 20h18M5 20V11M10 20V7M15 20V13M20 20V4"/></svg>
+      <h3>Recovery Tracker</h3>
+      <p>Track your streak. Build daily habits. See your progress. Join others who are fighting the same battle.</p>
+      <div class="stat-row"><span><b>DAILY</b> CHECK-IN</span><span><b>PRIVATE</b> LOG</span></div>
+    </div>
+    <div class="tile">
+      <div class="idx mono">03 / COMMUNITY</div>
+      <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M14 20c0-2 2-3.5 4-3.5s4 1.5 4 3.5"/></svg>
+      <h3>Community</h3>
+      <p>Private Discord. Men recovering together. No performance, no preaching — just the work, every day.</p>
+      <div class="stat-row"><span><b>3,400+</b> MEMBERS</span><span><b>24/7</b> PRESENT</span></div>
+    </div>
+  </section>
+
+  <section class="newsletter">
+    <div>
+      <div class="label">GET WEEKLY RECOVERY INSIGHTS</div>
+      <h2>Honest words about breaking free, once a week.</h2>
+      <p>Hand-written by Michael. No AI-slop, no drip campaigns, no upsells. Unsubscribe any time.</p>
+    </div>
+    <form class="form" onsubmit="event.preventDefault();this.querySelector('.done').style.display='block';this.querySelector('.form-row').style.display='none';">
+      <div class="form-row">
+        <input type="email" placeholder="you@example.com" required>
+        <button class="btn primary" type="submit">Subscribe →</button>
+      </div>
+      <div class="note">NO SPAM · UNSUBSCRIBE ANY TIME · BUTTONDOWN</div>
+      <div class="done" style="display:none;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--copper);letter-spacing:1px;">✓ CHECK YOUR EMAIL TO CONFIRM.</div>
+    </form>
+  </section>
+
+  <footer>
+    <div class="f-meta">MISSION PHOENIX · v0.2-ALPHA · BUILT BY SOMEONE WHO LIVED IT</div>
+    <div class="f-links">
+      <a href="#">About</a><a href="#">Contact</a><a href="#">Discord</a><a href="#">Archive</a>
+    </div>
+  </footer>
+</main>
+
+</body></html>

@@ -333,7 +333,7 @@ export default function Quiz() {
         .qz-wrap{max-width:720px;margin:0 auto;}
         .qz-intro{text-align:center;padding:40px 0 20px;transition:opacity .4s ease, transform .4s ease;}
         .qz-mark{width:64px;height:64px;margin:0 auto 24px;}
-        .qz-mark img{width:64px;height:64px;filter:brightness(0) saturate(100%) invert(29%) sepia(50%) saturate(2180%) hue-rotate(357deg) brightness(90%) contrast(95%);}
+        .qz-mark img{width:64px;height:64px;background:var(--copper);-webkit-mask:url(/phoenix.png) center/contain no-repeat;mask:url(/phoenix.png) center/contain no-repeat;}
         .qz-h1{font-size:clamp(32px,5vw,44px);font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
         .qz-sep{width:60px;height:2px;background:var(--copper);margin:0 auto 24px;border-radius:2px;}
         .qz-sub{font-size:19px;line-height:1.7;color:var(--ink-2);font-style:italic;max-width:520px;margin:0 auto 16px;}

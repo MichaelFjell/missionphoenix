@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Log in · Mission Phoenix</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+  .auth-wrap{max-width:440px;margin:40px auto 0;}
+  .auth-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:40px;position:relative;overflow:hidden;}
+  .auth-card::before{content:"";position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,var(--copper-soft),transparent 70%);pointer-events:none;}
+  .tabs{display:flex;gap:24px;margin-bottom:28px;border-bottom:1px solid var(--line);position:relative;}
+  .tabs button{background:none;border:0;padding:14px 0;font-family:inherit;font-size:15px;font-weight:700;color:var(--ink-3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
+  .tabs button.on{color:var(--copper);border-bottom-color:var(--copper);}
+  .sso{display:flex;gap:10px;margin-bottom:20px;}
+  .sso button{flex:1;padding:12px;border:1px solid var(--line-2);background:var(--bg);border-radius:10px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .sso button:hover{border-color:var(--copper);}
+  .or{text-align:center;font-size:12px;color:var(--ink-3);margin:8px 0 16px;letter-spacing:2px;position:relative;}
+  .or::before,.or::after{content:"";position:absolute;top:50%;width:calc(50% - 30px);height:1px;background:var(--line);}
+  .or::before{left:0;} .or::after{right:0;}
+  .pri-note{font-size:12px;color:var(--ink-3);margin-top:16px;text-align:center;line-height:1.6;}
+  .pri-note a{color:var(--copper);}
+</style>
+</head>
+<body data-active="login">
+<main class="page">
+  <div class="auth-wrap">
+    <div style="text-align:center;margin-bottom:32px;">
+      <img src="../assets/phoenix-ember.svg" style="width:56px;height:56px;filter:brightness(0) saturate(100%) invert(29%) sepia(50%) saturate(2180%) hue-rotate(357deg) brightness(90%) contrast(95%);" alt="">
+      <h1 style="font-size:32px;font-weight:800;letter-spacing:-0.02em;margin-top:12px;">Welcome back.</h1>
+      <p style="color:var(--ink-2);margin-top:6px;">Your tracker data is already saved in this browser — signing in just lets it follow you across devices.</p>
+    </div>
+    <div class="auth-card">
+      <div class="tabs"><button id="tLog" class="on">Log in</button><button id="tSign">Create account</button></div>
+      <div class="sso">
+        <button>🟠 Google</button>
+        <button>⬛ Apple</button>
+      </div>
+      <div class="or">OR</div>
+      <form id="af">
+        <div class="field-wrap" id="nameWrap" style="display:none;"><label class="field">Handle (public)</label><input type="text" placeholder="Doesn't have to be real"></div>
+        <div class="field-wrap"><label class="field">Email</label><input type="email" required placeholder="you@example.com"></div>
+        <div class="field-wrap"><label class="field">Password</label><input type="password" required placeholder="••••••••"></div>
+        <button type="submit" class="btn primary" style="width:100%;justify-content:center;" id="sub">Log in →</button>
+        <div class="pri-note" id="note">Forgot your password? <a href="#">Reset it.</a></div>
+      </form>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--ink-3);margin-top:20px;line-height:1.6;">By continuing you agree to use Mission Phoenix in good faith.<br>We store: email, handle, streak data. We do not store: anything else.</p>
+  </div>
+</main>
+<script src="chrome.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+let mode = params.get('mode') === 'signup' ? 'sign' : 'log';
+function setMode(m){
+  mode = m;
+  document.getElementById('tLog').classList.toggle('on', m==='log');
+  document.getElementById('tSign').classList.toggle('on', m==='sign');
+  document.getElementById('nameWrap').style.display = m==='sign'?'block':'none';
+  document.getElementById('sub').textContent = m==='sign'?'Create account →':'Log in →';
+  document.getElementById('note').innerHTML = m==='sign'?'Already have an account? <a href="#" onclick="event.preventDefault();setMode(\'log\')">Log in.</a>':'Forgot your password? <a href="#">Reset it.</a>';
+}
+window.setMode = setMode;
+document.getElementById('tLog').onclick = () => setMode('log');
+document.getElementById('tSign').onclick = () => setMode('sign');
+setMode(mode);
+document.getElementById('af').addEventListener('submit', e => {
+  e.preventDefault();
+  location.href = 'tracker.html';
+});
+</script>
+</body></html>

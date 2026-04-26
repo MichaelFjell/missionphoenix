@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mission Phoenix — Editorial</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#fbf7ef; --paper:#fff9ec; --ink:#171411; --ink-2:#3f3932; --ink-3:#6e665b;
+    --line:#e6dcc7; --line-2:#cdbfa1;
+    --copper:#a84a22; --copper-soft:rgba(168,74,34,0.08);
+  }
+  html,body{background:var(--bg);color:var(--ink);font-family:'Newsreader',Georgia,serif;-webkit-font-smoothing:antialiased;}
+  ::selection{background:var(--copper);color:var(--bg);}
+  a{color:inherit;text-decoration:none;}
+  .sans{font-family:'Inter',sans-serif;}
+
+  /* MASTHEAD */
+  .mast{border-bottom:3px double var(--ink);padding:16px 0 14px;}
+  .mast-inner{max-width:1180px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;}
+  .mast-date{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-3);}
+  .mast-logo{text-align:center;}
+  .mast-logo .wordmark{font-family:'Newsreader',serif;font-weight:500;font-size:38px;letter-spacing:-0.01em;line-height:1;}
+  .mast-logo .sub{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:4px;color:var(--copper);text-transform:uppercase;margin-top:6px;}
+  .mast-iss{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-3);text-align:right;}
+
+  /* NAV */
+  nav{border-bottom:1px solid var(--ink);background:var(--bg);position:sticky;top:0;z-index:10;}
+  .nav-inner{max-width:1180px;margin:0 auto;padding:10px 32px;display:flex;justify-content:center;gap:36px;}
+  nav a{font-family:'Inter',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-2);font-weight:500;transition:color .15s;}
+  nav a:hover{color:var(--copper);}
+  nav a.donate{color:var(--copper);}
+
+  main{max-width:1180px;margin:0 auto;padding:56px 32px 80px;}
+
+  /* HERO — feature article layout */
+  .hero{display:grid;grid-template-columns:1.5fr 1fr;gap:56px;padding-bottom:56px;border-bottom:1px solid var(--line);}
+  .kicker{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--copper);font-weight:600;margin-bottom:20px;}
+  .kicker::before{content:"—  ";color:var(--copper);}
+  h1.lede{font-family:'Newsreader',serif;font-size:clamp(44px,5.5vw,78px);line-height:1;letter-spacing:-0.02em;font-weight:600;margin-bottom:24px;}
+  h1.lede em{font-style:italic;color:var(--copper);font-weight:500;}
+  .standfirst{font-family:'Newsreader',serif;font-size:21px;line-height:1.5;color:var(--ink-2);font-weight:400;max-width:560px;margin-bottom:32px;}
+  .dropcap::first-letter{font-family:'Newsreader',serif;font-size:84px;font-weight:700;color:var(--copper);float:left;line-height:0.85;padding:6px 10px 0 0;}
+  .byline{font-family:'Inter',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-3);border-top:1px solid var(--line);padding-top:14px;display:flex;gap:18px;}
+  .byline b{color:var(--ink);font-weight:600;}
+  .byline .dot{color:var(--copper);}
+
+  .hero-side{padding-top:32px;}
+  .hero-side .sect-mark{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--copper);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--copper);display:flex;justify-content:space-between;}
+  .hero-side h3{font-family:'Newsreader',serif;font-size:22px;line-height:1.25;font-weight:600;margin-bottom:10px;letter-spacing:-0.01em;}
+  .hero-side p{font-size:16px;line-height:1.55;color:var(--ink-2);margin-bottom:14px;}
+  .hero-side .also{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-3);border-top:1px solid var(--line);padding-top:14px;}
+  .hero-side .also a{display:block;padding:8px 0;border-bottom:1px dashed var(--line);color:var(--ink);font-size:13px;text-transform:none;letter-spacing:0;font-family:'Newsreader',serif;}
+  .hero-side .also a:last-child{border-bottom:0;}
+
+  /* FEATURE COLUMNS */
+  .cols-header{padding:40px 0 20px;display:flex;align-items:baseline;gap:16px;border-bottom:1px solid var(--ink);margin-bottom:28px;}
+  .cols-header h2{font-family:'Newsreader',serif;font-size:28px;font-weight:500;font-style:italic;letter-spacing:-0.01em;}
+  .cols-header .rubric{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--copper);margin-left:auto;}
+
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;}
+  .col{border-right:1px solid var(--line);padding-right:40px;}
+  .col:last-child{border-right:0;padding-right:0;}
+  .col .num{font-family:'Newsreader',serif;font-size:13px;letter-spacing:3px;font-style:italic;color:var(--copper);margin-bottom:12px;text-transform:uppercase;}
+  .col h3{font-family:'Newsreader',serif;font-size:26px;line-height:1.12;font-weight:600;letter-spacing:-0.015em;margin-bottom:12px;}
+  .col p{font-size:16px;line-height:1.6;color:var(--ink-2);margin-bottom:16px;}
+  .col .read{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--copper);font-weight:600;border-top:1px solid var(--copper-soft);padding-top:12px;}
+
+  /* PULL QUOTE */
+  .pq{margin:64px 0 0;padding:48px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);text-align:center;}
+  .pq blockquote{font-family:'Newsreader',serif;font-size:clamp(28px,3.4vw,44px);line-height:1.18;font-style:italic;font-weight:500;letter-spacing:-0.01em;max-width:820px;margin:0 auto 20px;}
+  .pq blockquote em{font-style:italic;color:var(--copper);font-weight:600;}
+  .pq cite{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-3);font-style:normal;}
+
+  /* NEWSLETTER — sign up notice */
+  .signup{margin-top:56px;padding:40px;border:1px solid var(--line);background:var(--paper);display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+  .signup .label{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--copper);font-weight:600;margin-bottom:14px;}
+  .signup h2{font-family:'Newsreader',serif;font-size:30px;line-height:1.15;letter-spacing:-0.01em;font-weight:600;margin-bottom:10px;}
+  .signup h2 em{font-style:italic;color:var(--copper);font-weight:500;}
+  .signup p{font-size:15px;line-height:1.55;color:var(--ink-2);}
+  .form{display:flex;flex-direction:column;gap:10px;}
+  .form-row{display:flex;gap:8px;border-bottom:1px solid var(--ink);padding-bottom:8px;}
+  .form input{flex:1;padding:12px 4px;background:transparent;border:0;font-family:'Newsreader',serif;font-size:18px;color:var(--ink);outline:none;}
+  .form input::placeholder{color:var(--ink-3);font-style:italic;}
+  .form button{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;padding:10px 16px;background:var(--copper);color:var(--paper);border:0;cursor:pointer;font-weight:600;}
+  .form button:hover{background:var(--ink);}
+  .form .note{font-family:'Inter',sans-serif;font-size:11px;color:var(--ink-3);letter-spacing:0.5px;}
+
+  /* FOOTER */
+  footer{margin-top:56px;padding-top:28px;border-top:3px double var(--ink);display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:40px;}
+  footer .col-f h4{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--copper);font-weight:600;margin-bottom:12px;}
+  footer .col-f a{display:block;padding:5px 0;font-family:'Newsreader',serif;font-size:15px;color:var(--ink-2);}
+  footer .col-f a:hover{color:var(--copper);}
+  footer .col-f p{font-family:'Newsreader',serif;font-size:14px;line-height:1.5;color:var(--ink-3);font-style:italic;}
+  .colophon{grid-column:1/-1;padding-top:24px;margin-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:1px;color:var(--ink-3);text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<div class="mast">
+  <div class="mast-inner">
+    <div class="mast-date">Sunday · April 19, 2026</div>
+    <div class="mast-logo">
+      <div class="wordmark" style="display:flex;align-items:center;justify-content:center;gap:14px;">
+        <img src="../assets/phoenix-ember.svg" alt="" style="width:36px;height:36px;filter:brightness(0) saturate(100%) invert(29%) sepia(68%) saturate(2100%) hue-rotate(357deg) brightness(86%) contrast(93%);">
+        <span><em style="color:#a84a22;font-style:italic;">Mission</em> Phoenix</span>
+      </div>
+      <div class="sub">A PUBLICATION ON THE REAL COST OF PORNOGRAPHY</div>
+    </div>
+    <div class="mast-iss">No. 42 · v0.2</div>
+  </div>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a>Assessment</a><a>Tracker</a><a>Community</a>
+    <a>Archive</a><a>About</a><a>Contact</a>
+    <a class="donate">Donate</a>
+  </div>
+</nav>
+
+<main>
+
+  <section class="hero">
+    <div>
+      <div class="kicker">Editor's letter · Issue Forty-Two</div>
+      <h1 class="lede">The real cost is <em>always</em> hidden<br>until it isn't.</h1>
+      <p class="standfirst dropcap">A community and a life mission to spread awareness of the real cost of pornography. A beacon of light for those already in the darkness, and a commitment to helping steer the next generation away from it.</p>
+      <div class="byline"><span><b>Michael Fjell</b></span><span class="dot">·</span><span>Founder</span><span class="dot">·</span><span>8 min read</span></div>
+    </div>
+    <aside class="hero-side">
+      <div class="sect-mark"><span>In this issue</span><span>→</span></div>
+      <h3>What you find when you stop looking away.</h3>
+      <p>A brief note on AI-generated content, compulsive habits, and the quiet arithmetic of hours you will not get back.</p>
+      <div class="also">Also in this issue
+        <a>The Slight Edge, reconsidered</a>
+        <a>A handbook for the first 30 days</a>
+        <a>On the difference between motivation and philosophy</a>
+        <a>Field reports from the Discord</a>
+      </div>
+    </aside>
+  </section>
+
+  <div class="cols-header">
+    <h2>The three practices</h2>
+    <span class="rubric">Departments · A · B · C</span>
+  </div>
+
+  <section class="cols">
+    <div class="col">
+      <div class="num">I · The Reckoning</div>
+      <h3>Self-<br>Assessment.</h3>
+      <p>5 questions. Research-backed facts. No data stored. A wake-up call that takes 2 minutes.</p>
+      <div class="read">Begin the assessment →</div>
+    </div>
+    <div class="col">
+      <div class="num">II · The Record</div>
+      <h3>Recovery<br>Tracker.</h3>
+      <p>Track your streak. Build daily habits. See your progress. Join others who are fighting the same battle.</p>
+      <div class="read">Start your tracker →</div>
+    </div>
+    <div class="col">
+      <div class="num">III · The Room</div>
+      <h3>The<br>Community.</h3>
+      <p>A private Discord of men recovering together. No performance, no preaching — just the daily work.</p>
+      <div class="read">Join the Discord →</div>
+    </div>
+  </section>
+
+  <section class="pq">
+    <blockquote>"A creep in the dark will <em>always</em> be a creep in the light. Your confidence and your level-ups show on you."</blockquote>
+    <cite>— From the Editor's Letter, Issue 07</cite>
+  </section>
+
+  <section class="signup">
+    <div>
+      <div class="label">The Dispatch · Weekly</div>
+      <h2>Honest words about <em>breaking free</em>, delivered once a week.</h2>
+      <p>Hand-written by Michael. While some quotes and statistics are drawn from other sources, every sentence of the newsletter is worked on by hand. No copy-paste AI slop, ever.</p>
+    </div>
+    <form class="form" onsubmit="event.preventDefault();this.innerHTML='<div style=\'font-family:Newsreader,serif;font-style:italic;font-size:18px;color:var(--copper);\'>Check your email to confirm your subscription.</div>';">
+      <div class="form-row">
+        <input type="email" placeholder="your email address" required>
+        <button type="submit">Subscribe</button>
+      </div>
+      <div class="note">Powered by Buttondown · no spam, unsubscribe anytime</div>
+    </form>
+  </section>
+
+  <footer>
+    <div class="col-f">
+      <h4>Mission Phoenix</h4>
+      <p>A publication and community on the real cost of pornography, AI-generated content, and compulsive habits. Built by someone who lived it.</p>
+    </div>
+    <div class="col-f">
+      <h4>Departments</h4>
+      <a>Assessment</a><a>Tracker</a><a>Community</a><a>Archive</a>
+    </div>
+    <div class="col-f">
+      <h4>Masthead</h4>
+      <a>About</a><a>Contact</a><a>Donate</a>
+    </div>
+    <div class="col-f">
+      <h4>Subscribe</h4>
+      <a>Weekly Dispatch</a><a>RSS</a><a>Discord</a>
+    </div>
+    <div class="colophon">
+      <span>SET IN NEWSREADER &amp; INTER · ©2026 MISSION PHOENIX</span>
+      <span>v0.2-alpha · built with intent</span>
+    </div>
+  </footer>
+</main>
+
+</body></html>

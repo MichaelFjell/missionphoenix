@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recovery Tracker — Mission Phoenix</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+  main.page.narrow{max-width:760px;}
+
+  /* Auth */
+  .auth{max-width:400px;margin:60px auto;padding:40px 8px;}
+  .auth h2{font-size:18px;font-weight:800;letter-spacing:5px;text-transform:uppercase;margin-bottom:8px;}
+  .auth .s{font-size:14px;color:var(--ink-3);margin-bottom:28px;line-height:1.6;}
+  .auth input{margin-bottom:12px;}
+  .auth button[type=submit]{width:100%;font-weight:700;letter-spacing:3px;padding:14px;background:transparent;color:var(--copper);border:1px solid var(--copper);cursor:pointer;margin-top:8px;font-size:13px;text-transform:uppercase;font-family:inherit;}
+  .auth button[type=submit]:hover{background:var(--copper);color:var(--card);}
+  .auth .toggle{font-size:14px;color:var(--ink-3);background:none;border:none;cursor:pointer;margin-top:20px;text-decoration:underline;text-underline-offset:3px;font-family:inherit;padding:0;}
+
+  /* Top cards */
+  .top{padding-top:16px;}
+  .pt-card{display:block;padding:22px 26px;background:var(--copper-soft);border:1px solid var(--line);border-left:3px solid var(--copper);border-radius:0 14px 14px 0;margin-bottom:16px;text-align:center;transition:background .2s;}
+  .pt-card:hover{background:rgba(163,70,32,0.12);}
+  .pt-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--copper);background:rgba(163,70,32,0.18);padding:3px 10px;border-radius:999px;margin-bottom:10px;}
+  .pt-title{font-size:14px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;}
+  .pt-desc{font-size:13.5px;color:var(--ink-2);line-height:1.65;margin:0 auto 10px;max-width:500px;}
+  .pt-action{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--copper);text-transform:uppercase;}
+
+  .settings-row{display:flex;justify-content:flex-end;margin-bottom:14px;}
+  .settings-btn{font-size:10px;font-weight:700;letter-spacing:3px;padding:8px 16px;background:none;color:var(--ink-3);border:1px solid var(--line-2);border-radius:999px;cursor:pointer;text-transform:uppercase;font-family:inherit;}
+  .settings-btn:hover{border-color:var(--copper);color:var(--copper);}
+
+  .streak-card{padding:24px;background:var(--copper-soft);border:1px solid var(--line);border-radius:14px;margin-bottom:20px;}
+  .streak-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--copper);margin-bottom:10px;}
+  .streak-desc{font-size:14px;color:var(--ink-2);line-height:1.65;margin-bottom:16px;}
+  .streak-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .streak-row input{flex:1;min-width:140px;margin:0;}
+  .streak-row button{font-size:11px;font-weight:700;letter-spacing:3px;padding:12px 20px;background:transparent;color:var(--copper);border:1px solid var(--copper);cursor:pointer;text-transform:uppercase;font-family:inherit;border-radius:8px;}
+  .streak-row button:disabled{opacity:0.4;}
+
+  .settings-panel{padding:26px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:24px;}
+  .sp-title{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ink-3);margin-bottom:16px;}
+  .sp-help{font-size:13px;color:var(--ink-3);line-height:1.65;margin-bottom:14px;}
+  .sp-item{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);}
+  .sp-item:last-child{border-bottom:none;}
+  .sp-label{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+  .sp-sub{font-size:12.5px;color:var(--ink-3);line-height:1.5;}
+  .toggle-btn{font-size:10px;font-weight:700;letter-spacing:2px;padding:6px 14px;cursor:pointer;min-width:82px;border-radius:999px;text-transform:uppercase;font-family:inherit;transition:all .15s;}
+  .toggle-btn.on{background:var(--copper);color:var(--card);border:1px solid var(--copper);}
+  .toggle-btn.off{background:transparent;color:var(--ink-3);border:1px solid var(--line-2);}
+
+  textarea.field{width:100%;margin-top:6px;min-height:64px;resize:vertical;}
+  .save-btn{font-size:11px;font-weight:700;letter-spacing:3px;padding:10px 20px;background:transparent;color:var(--copper);border:1px solid var(--copper);border-radius:8px;cursor:pointer;margin-top:12px;text-transform:uppercase;font-family:inherit;}
+
+  /* Journey */
+  .journey{margin-top:8px;}
+  .j-header{text-align:center;padding:40px 0 32px;border-top:1px solid var(--line);margin-top:32px;}
+  .j-days{font-size:clamp(72px,15vw,120px);font-weight:800;color:var(--copper);line-height:1;letter-spacing:-0.04em;margin-bottom:12px;}
+  .j-days-label{font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--ink-3);margin-bottom:28px;}
+
+  .check-btn{display:inline-block;font-size:13px;font-weight:700;letter-spacing:3px;padding:16px 32px;background:var(--copper);color:var(--card);border:none;border-radius:999px;cursor:pointer;text-transform:uppercase;font-family:inherit;transition:all .2s;}
+  .check-btn:hover:not(:disabled){background:var(--copper-2);transform:translateY(-1px);}
+  .check-btn:disabled{background:transparent;color:var(--copper);border:1px solid var(--copper);cursor:default;opacity:0.7;}
+
+  /* Quote overlay */
+  .quote-overlay{position:fixed;inset:0;background:rgba(29,25,21,0.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:40;padding:24px;}
+  .quote-box{max-width:560px;background:var(--card);border:1px solid var(--copper);border-radius:20px;padding:48px;text-align:center;position:relative;}
+  .qb-lab{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--copper);margin-bottom:20px;}
+  .qb-text{font-size:20px;line-height:1.55;font-weight:500;font-style:italic;color:var(--ink);margin-bottom:16px;}
+  .qb-src{font-size:13px;color:var(--ink-3);margin-bottom:24px;}
+  .qb-dismiss{font-size:12px;font-weight:700;letter-spacing:3px;padding:12px 28px;background:var(--copper);color:var(--card);border:none;border-radius:999px;cursor:pointer;text-transform:uppercase;font-family:inherit;}
+
+  /* Note prompt */
+  .note-prompt{background:var(--card);border:1px solid var(--copper);border-radius:14px;padding:28px;margin:20px 0;}
+  .np-title{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--copper);margin-bottom:12px;}
+  .np-desc{font-size:14.5px;color:var(--ink-2);line-height:1.6;margin-bottom:14px;}
+  .np-row{display:flex;align-items:center;gap:10px;margin-top:12px;}
+  .np-row label{font-size:13px;color:var(--ink-2);display:flex;align-items:center;gap:6px;cursor:pointer;}
+  .np-actions{display:flex;gap:10px;margin-top:14px;}
+  .np-actions .save{flex:1;font-size:12px;font-weight:700;letter-spacing:3px;padding:12px;background:var(--copper);color:var(--card);border:none;border-radius:8px;cursor:pointer;text-transform:uppercase;font-family:inherit;}
+  .np-actions .skip{font-size:12px;font-weight:700;letter-spacing:3px;padding:12px 20px;background:none;color:var(--ink-3);border:1px solid var(--line-2);border-radius:8px;cursor:pointer;text-transform:uppercase;font-family:inherit;}
+
+  /* Chart row */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;}
+  .stat-card{padding:24px;background:var(--card);border:1px solid var(--line);border-radius:14px;}
+  .sc-label{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px;}
+  .sc-value{font-size:32px;font-weight:800;color:var(--copper);line-height:1;margin-bottom:6px;}
+  .sc-sub{font-size:12px;color:var(--ink-3);}
+
+  /* Calendar */
+  .cal-card{padding:28px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:24px;}
+  .cal-title{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px;}
+  .cal-sub{font-size:12px;color:var(--ink-3);margin-bottom:18px;}
+  .cal-grid{display:grid;grid-template-columns:repeat(14,1fr);gap:5px;}
+  .cal-cell{aspect-ratio:1;border-radius:4px;background:var(--line);cursor:pointer;transition:all .1s;border:1px solid transparent;}
+  .cal-cell:hover{transform:scale(1.15);border-color:var(--copper);}
+  .cal-cell.on{background:var(--copper);}
+  .cal-cell.today{box-shadow:0 0 0 2px var(--copper);}
+  .cal-cell.future{opacity:0.3;cursor:default;}
+  .cal-legend{display:flex;gap:16px;margin-top:14px;font-size:11px;color:var(--ink-3);}
+  .cal-legend .sw{width:12px;height:12px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:5px;}
+
+  /* Notes */
+  .notes-card{padding:28px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:24px;}
+  .notes-title{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ink-3);margin-bottom:18px;}
+  .note-entry{padding:14px 0;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:flex-start;}
+  .note-entry:last-child{border-bottom:none;}
+  .ne-date{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--copper);min-width:70px;flex-shrink:0;padding-top:2px;}
+  .ne-body{flex:1;}
+  .ne-text{font-size:14.5px;color:var(--ink-2);line-height:1.65;font-style:italic;margin-bottom:4px;}
+  .ne-pub{font-size:9.5px;font-weight:700;letter-spacing:2px;color:var(--copper);text-transform:uppercase;}
+  .notes-empty{text-align:center;color:var(--ink-3);padding:16px 0;font-style:italic;font-size:14px;}
+
+  @media (max-width: 640px){
+    .two-col{grid-template-columns:1fr;}
+    .cal-grid{grid-template-columns:repeat(7,1fr);}
+  }
+</style>
+</head>
+<body data-active="tracker">
+
+<main class="page narrow">
+  <div id="app"></div>
+</main>
+
+<script src="chrome.js"></script>
+<script>
+// —————— Light local store ——————
+const LS_USER = 'mp-tracker:user';
+const LS_DATA = 'mp-tracker:data';
+
+function getUser(){ try{ return JSON.parse(localStorage.getItem(LS_USER)); }catch(e){ return null; } }
+function setUser(u){ localStorage.setItem(LS_USER, JSON.stringify(u)); }
+function clearUser(){ localStorage.removeItem(LS_USER); }
+
+function getData(){
+  const d = JSON.parse(localStorage.getItem(LS_DATA) || '{}');
+  return {
+    checkedDates: d.checkedDates || [],
+    notes: d.notes || [],
+    profile: d.profile || {
+      motivational_message:'',
+      is_public:true, show_streak:true, show_total_days:true, show_message:true, show_habits:true
+    }
+  };
+}
+function setData(d){ localStorage.setItem(LS_DATA, JSON.stringify(d)); }
+
+function ds(date){ return date.toISOString().slice(0,10); }
+function today(){ return ds(new Date()); }
+
+// —————— Demo quote pool (from real app's quote feature) ——————
+const QUOTES = [
+  {text:"Motivation comes and goes. But when you integrate something deeply within yourself and your life philosophy, it becomes a completely different weapon.", source:"Michael Fjell"},
+  {text:"The battle is never finished. You have to go inside your inner dungeon and scrub every shelf, every single day.", source:"Michael Fjell"},
+  {text:"A creep in the dark will always be a creep in the light.", source:"Michael Fjell"},
+  {text:"You exude victory, strength, discipline, when you overcome your inner demons.", source:"Michael Fjell"},
+  {text:"The obstacle in the path becomes the path. Never forget, within every obstacle is an opportunity to improve our condition.", source:"Ryan Holiday"},
+  {text:"Pain is the touchstone of all growth.", source:"Bill W."},
+];
+function quoteFor(key){
+  let h = 0;
+  for (let i=0; i<key.length; i++) h = ((h<<5)-h) + key.charCodeAt(i);
+  return QUOTES[Math.abs(h) % QUOTES.length];
+}
+
+// —————— State ——————
+let user = getUser();
+let state = {
+  showQuote:false, todayQuote:null,
+  showNotePrompt:false,
+  showSettings:false,
+  streakInput:'',
+  noteDraft:'', noteIsPublic:false,
+};
+
+const app = document.getElementById('app');
+function escapeHTML(s){return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+// —————— Auth screen ——————
+let authMode = 'login';
+function renderAuth(){
+  app.innerHTML = `
+    <div class="auth">
+      <h2>${authMode==='login' ? 'Log in' : 'Create account'}</h2>
+      <p class="s">${authMode==='login' ? 'Track your journey.' : 'No email needed. Just pick a username.'}</p>
+      <form id="af">
+        <input class="input" type="text" name="username" placeholder="Username" required autocomplete="username">
+        <input class="input" type="password" name="password" placeholder="Password (min 6)" minlength="6" required autocomplete="${authMode==='signup'?'new-password':'current-password'}">
+        <button type="submit">${authMode==='login' ? 'Log in' : 'Create account'}</button>
+      </form>
+      <button class="toggle" onclick="toggleAuth()">${authMode==='login' ? "Don't have an account? Sign up" : 'Already have an account? Log in'}</button>
+      <p style="font-size:11px;color:var(--ink-3);margin-top:24px;font-style:italic;">Demo mode — data lives only in your browser's localStorage. Clearing browser data resets everything.</p>
+    </div>`;
+  document.getElementById('af').addEventListener('submit', e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const u = { username: fd.get('username').trim(), created: Date.now() };
+    setUser(u);
+    user = u;
+    render();
+  });
+}
+window.toggleAuth = () => { authMode = authMode==='login' ? 'signup' : 'login'; renderAuth(); };
+
+// —————— Dashboard ——————
+function computeStreak(dates){
+  const set = new Set(dates);
+  const t = today();
+  let count = 0;
+  const d = new Date();
+  if (!set.has(t)) d.setDate(d.getDate() - 1);
+  while (true){
+    const s = ds(d);
+    if (set.has(s)){ count++; d.setDate(d.getDate()-1); } else break;
+  }
+  return count;
+}
+
+function formatEntryDate(dateStr){
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}).toUpperCase();
+}
+
+function renderDashboard(){
+  const data = getData();
+  const daysClean = computeStreak(data.checkedDates);
+  const t = today();
+  const isToday = data.checkedDates.includes(t);
+  const totalDays = data.checkedDates.length;
+  const hasHistory = totalDays > 0;
+
+  app.innerHTML = `
+    <div class="top">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:12px 18px;background:var(--card);border:1px solid var(--line);border-radius:12px;">
+        <div style="font-size:13px;"><span style="color:var(--ink-3);">Logged in as </span><b style="color:var(--copper);letter-spacing:1px;">${escapeHTML(user.username)}</b></div>
+        <button onclick="logout()" style="font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 14px;background:none;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-3);cursor:pointer;text-transform:uppercase;">Log out</button>
+      </div>
+
+      <a href="#" onclick="alert('Would download the Mission Phoenix Habit Journal PDF in the real app.'); return false;" class="pt-card">
+        <div class="pt-badge">Recommended</div>
+        <div class="pt-title">Physical habit tracker</div>
+        <p class="pt-desc">Download and print a physical habit tracker. Many find that pen-and-paper tracking works best for building real accountability.</p>
+        <div class="pt-action">Download PDF ↓</div>
+      </a>
+
+      <div class="settings-row">
+        <button class="settings-btn" onclick="toggleSettings()">${state.showSettings ? 'Close settings' : 'Settings'}</button>
+      </div>
+
+      ${!hasHistory ? `
+        <div class="streak-card">
+          <div class="streak-label">Already on a streak?</div>
+          <p class="streak-desc">If you already have clean days behind you, enter how many and we'll fill the calendar for you.</p>
+          <div class="streak-row">
+            <input class="input" type="number" min="1" max="5000" id="si" placeholder="e.g. 365" value="${state.streakInput}">
+            <button onclick="setStreak()">Set streak</button>
+          </div>
+        </div>
+      ` : ''}
+
+      ${state.showSettings ? renderSettings(data) : ''}
+    </div>
+
+    <div class="journey">
+      <div class="j-header">
+        <div class="j-days">${daysClean}</div>
+        <div class="j-days-label">${daysClean === 1 ? 'Day' : 'Days'} clean</div>
+        <button class="check-btn" ${isToday ? 'disabled' : ''} onclick="checkToday()">
+          ${isToday ? '✓ Logged today' : 'Log today'}
+        </button>
+      </div>
+
+      ${state.showNotePrompt ? renderNotePrompt() : ''}
+
+      <div class="two-col">
+        <div class="stat-card">
+          <div class="sc-label">Current streak</div>
+          <div class="sc-value">${daysClean}</div>
+          <div class="sc-sub">consecutive days</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-label">Total logged</div>
+          <div class="sc-value">${totalDays}</div>
+          <div class="sc-sub">days across all time</div>
+        </div>
+      </div>
+
+      <div class="cal-card">
+        <div class="cal-title">Last 28 days</div>
+        <div class="cal-sub">Click any cell to mark or unmark that day. Hold on a pattern — the daily action is the work.</div>
+        <div class="cal-grid" id="calgrid"></div>
+        <div class="cal-legend">
+          <span><span class="sw" style="background:var(--line);"></span>Not logged</span>
+          <span><span class="sw" style="background:var(--copper);"></span>Logged</span>
+          <span><span class="sw" style="background:var(--card);box-shadow:0 0 0 2px var(--copper);"></span>Today</span>
+        </div>
+      </div>
+
+      <div class="notes-card">
+        <div class="notes-title">Recent notes</div>
+        ${data.notes.length === 0
+          ? `<div class="notes-empty">No notes yet. After you log a day you'll have a chance to add one.</div>`
+          : data.notes.slice(0,10).map(n => `
+            <div class="note-entry">
+              <div class="ne-date">${escapeHTML(formatEntryDate(n.date))}</div>
+              <div class="ne-body">
+                <div class="ne-text">${escapeHTML(n.text)}</div>
+                ${n.isPublic ? '<span class="ne-pub">Public</span>' : ''}
+              </div>
+            </div>`).join('')}
+      </div>
+    </div>
+
+    ${state.showQuote && state.todayQuote ? renderQuoteOverlay() : ''}
+  `;
+
+  // Build calendar: 28 days ending today
+  const grid = document.getElementById('calgrid');
+  const set = new Set(data.checkedDates);
+  const cells = [];
+  for (let i = 27; i >= 0; i--){
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const s = ds(d);
+    const isOn = set.has(s);
+    const isToday_ = s === t;
+    const cls = ['cal-cell'];
+    if (isOn) cls.push('on');
+    if (isToday_) cls.push('today');
+    cells.push(`<div class="${cls.join(' ')}" data-d="${s}" title="${s}"></div>`);
+  }
+  grid.innerHTML = cells.join('');
+  grid.querySelectorAll('.cal-cell').forEach(c => c.addEventListener('click', () => toggleDate(c.dataset.d)));
+
+  // Wire streak input
+  const si = document.getElementById('si');
+  if (si) si.addEventListener('input', e => state.streakInput = e.target.value);
+}
+
+function renderSettings(data){
+  const p = data.profile;
+  const fields = [
+    ['is_public','Profile visible to others','When private, nothing below is shown at all.'],
+    ['show_streak','Current streak (days clean)','Shows your current consecutive-day count.'],
+    ['show_total_days','Total days logged','Lifetime count across all check-ins.'],
+    ['show_message','Your reason / message','The short note below.'],
+  ];
+  return `
+    <div class="settings-panel">
+      <div class="sp-title">Set your day count</div>
+      <p class="sp-help">Enter how many days clean you are. This fills in past days ending today. Existing logged days are kept.</p>
+      <div class="streak-row">
+        <input class="input" type="number" min="1" max="5000" id="si2" placeholder="e.g. 365" value="${state.streakInput}">
+        <button onclick="setStreak()">Set streak</button>
+      </div>
+
+      <div class="sp-title" style="margin-top:28px;">Profile privacy</div>
+      <p class="sp-help">Control what other members see on your public profile.</p>
+      ${fields.map(([f,l,sub]) => `
+        <div class="sp-item">
+          <div style="flex:1;">
+            <div class="sp-label">${l}</div>
+            <div class="sp-sub">${sub}</div>
+          </div>
+          <button class="toggle-btn ${p[f] ? 'on' : 'off'}" onclick="toggleField('${f}')">${p[f] ? 'Public' : 'Private'}</button>
+        </div>
+      `).join('')}
+
+      <div style="margin-top:20px;">
+        <label class="sp-label" style="display:block;margin-bottom:2px;">Your reason (shown on your public profile if enabled)</label>
+        <textarea class="field" id="msg" maxlength="200" placeholder="Why are you doing this?">${escapeHTML(p.motivational_message)}</textarea>
+        <button class="save-btn" onclick="saveMessage()">Save</button>
+      </div>
+    </div>`;
+}
+
+function renderQuoteOverlay(){
+  const q = state.todayQuote;
+  return `
+    <div class="quote-overlay" onclick="dismissQuote()">
+      <div class="quote-box" onclick="event.stopPropagation()">
+        <div class="qb-lab">For today</div>
+        <p class="qb-text">"${escapeHTML(q.text)}"</p>
+        <div class="qb-src">— ${escapeHTML(q.source)}</div>
+        <button class="qb-dismiss" onclick="dismissQuote()">Continue</button>
+      </div>
+    </div>`;
+}
+
+function renderNotePrompt(){
+  return `
+    <div class="note-prompt">
+      <div class="np-title">Add a note for today?</div>
+      <p class="np-desc">Write a quick reflection — what triggered you, how you got through it, a win. Optional, and you can mark it public to share in the community feed.</p>
+      <textarea class="field" id="nd" placeholder="What's on your mind today?">${escapeHTML(state.noteDraft)}</textarea>
+      <div class="np-row">
+        <label><input type="checkbox" id="npub" ${state.noteIsPublic ? 'checked' : ''}> Share publicly in community</label>
+      </div>
+      <div class="np-actions">
+        <button class="save" onclick="saveNote()">Save note</button>
+        <button class="skip" onclick="skipNote()">Skip</button>
+      </div>
+    </div>`;
+}
+
+// —————— Actions ——————
+window.logout = () => { if (confirm('Log out of the tracker demo?')){ clearUser(); user = null; render(); } };
+
+window.checkToday = () => {
+  const data = getData();
+  const t = today();
+  if (data.checkedDates.includes(t)) return;
+  data.checkedDates = [t, ...data.checkedDates];
+  setData(data);
+  state.todayQuote = quoteFor(t + '_' + user.username);
+  state.showQuote = true;
+  render();
+};
+
+window.dismissQuote = () => {
+  state.showQuote = false;
+  state.showNotePrompt = true;
+  render();
+};
+
+window.saveNote = () => {
+  const text = document.getElementById('nd').value.trim();
+  const isPub = document.getElementById('npub').checked;
+  if (!text){ state.showNotePrompt = false; state.noteDraft=''; render(); return; }
+  const data = getData();
+  data.notes = [{date: today(), text, isPublic: isPub, id: Date.now()}, ...data.notes];
+  setData(data);
+  state.showNotePrompt = false;
+  state.noteDraft = ''; state.noteIsPublic = false;
+  render();
+};
+
+window.skipNote = () => { state.showNotePrompt = false; state.noteDraft=''; render(); };
+
+window.toggleDate = (dateStr) => {
+  if (dateStr > today()) return;
+  const data = getData();
+  if (dateStr === today() && !data.checkedDates.includes(dateStr)){
+    checkToday();
+    return;
+  }
+  if (data.checkedDates.includes(dateStr)){
+    data.checkedDates = data.checkedDates.filter(d => d !== dateStr);
+  } else {
+    data.checkedDates = [dateStr, ...data.checkedDates];
+  }
+  setData(data);
+  render();
+};
+
+window.setStreak = () => {
+  const val = (document.getElementById('si') || document.getElementById('si2')).value;
+  const n = parseInt(val, 10);
+  if (!n || n < 1){ alert('Enter a number of days (1 or more).'); return; }
+  if (n > 5000){ alert('Max 5000.'); return; }
+  const data = getData();
+  const existing = new Set(data.checkedDates);
+  const d = new Date();
+  for (let i=0; i<n; i++){
+    const s = ds(d);
+    if (!existing.has(s)) data.checkedDates.unshift(s);
+    d.setDate(d.getDate() - 1);
+  }
+  setData(data);
+  state.streakInput = '';
+  render();
+};
+
+window.toggleSettings = () => { state.showSettings = !state.showSettings; render(); };
+window.toggleField = (f) => {
+  const data = getData();
+  data.profile[f] = !data.profile[f];
+  setData(data);
+  render();
+};
+window.saveMessage = () => {
+  const data = getData();
+  data.profile.motivational_message = document.getElementById('msg').value;
+  setData(data);
+  const btn = event.target;
+  const orig = btn.textContent;
+  btn.textContent = '✓ Saved';
+  setTimeout(() => { btn.textContent = orig; }, 1200);
+};
+
+// —————— Root ——————
+function render(){
+  if (!user) renderAuth();
+  else renderDashboard();
+}
+render();
+</script>
+</body></html>

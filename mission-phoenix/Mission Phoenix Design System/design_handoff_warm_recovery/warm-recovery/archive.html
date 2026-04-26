@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Newsletter Archive — Mission Phoenix</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+  .title{font-size:clamp(26px,4vw,34px);font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+  .sep{width:60px;height:2px;background:var(--copper);margin-bottom:24px;border-radius:2px;}
+  .desc{font-size:16px;line-height:1.7;color:var(--ink-2);margin-bottom:40px;max-width:600px;}
+  .list{display:flex;flex-direction:column;gap:12px;}
+  .entry{display:flex;align-items:center;gap:24px;padding:22px 26px;background:var(--card);border:1px solid var(--line);border-radius:14px;transition:all .2s;}
+  .entry:hover{border-color:var(--copper);background:var(--copper-soft);}
+  .entry-date{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--copper);white-space:nowrap;min-width:100px;}
+  .entry-title{font-size:16px;line-height:1.5;font-weight:600;color:var(--ink);flex:1;}
+  .entry-arrow{color:var(--copper);font-weight:700;font-size:18px;}
+</style>
+</head>
+<body data-active="archive">
+<main class="page narrow">
+  <h1 class="title">Newsletter Archive</h1>
+  <div class="sep"></div>
+  <p class="desc">This is the archive of all the sent out newsletters, linked with dates. Click any entry to read it in full.</p>
+
+  <div class="list">
+    <a href="https://buttondown.com/missionphoenix/archive/porn-is-the-killer-of-creative-energy/" target="_blank" rel="noopener" class="entry">
+      <div class="entry-date">17/04/2026</div>
+      <div class="entry-title">Porn is the killer of creative energy</div>
+      <div class="entry-arrow">↗</div>
+    </a>
+    <a href="https://buttondown.com/missionphoenix/archive/welcome-to-the-first-newsletter-of-mission-phoenix/" target="_blank" rel="noopener" class="entry">
+      <div class="entry-date">10/04/2026</div>
+      <div class="entry-title">Welcome to the first newsletter of Mission Phoenix</div>
+      <div class="entry-arrow">↗</div>
+    </a>
+  </div>
+</main>
+<script src="chrome.js"></script>
+</body></html>

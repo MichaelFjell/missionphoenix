@@ -1,0 +1,76 @@
+/* ──────────────────────────────────────────────────────────────
+   Mission Phoenix — color themes (Oxblood, Ember, Slate)
+   Drop-in CSS custom properties. Apply by setting
+   <html data-theme="oxblood"> (or "ember" / "slate").
+   Default theme = oxblood.
+   ────────────────────────────────────────────────────────────── */
+
+:root,
+:root[data-theme="oxblood"] {
+  --mp-bg:        #170c0c;
+  --mp-bg-2:      #0d0606;
+  --mp-panel:     #1d1010;
+  --mp-panel-2:   #241616;
+  --mp-line:      #281616;
+  --mp-line-2:    #3a201e;
+  --mp-line-3:    #562d29;
+
+  --mp-fg:        #f5e8e3;
+  --mp-fg-2:      #bd9d97;
+  --mp-fg-3:      #85655f;
+  --mp-fg-4:      #5a423e;
+
+  --mp-accent:        #e0a653; /* warm gold */
+  --mp-accent-hi:     #f0b667;
+  --mp-accent-soft:   rgba(224,166,83,0.08);
+  --mp-accent-dim:    rgba(224,166,83,0.18);
+  --mp-live:          #90d094;
+
+  --mp-on-accent: #170c0c; /* text color on accent buttons */
+}
+
+:root[data-theme="ember"] {
+  --mp-bg:        #16110e;
+  --mp-bg-2:      #0d0907;
+  --mp-panel:     #1c1611;
+  --mp-panel-2:   #221a14;
+  --mp-line:      #241c16;
+  --mp-line-2:    #332921;
+  --mp-line-3:    #4a3b2f;
+
+  --mp-fg:        #f4ede0;
+  --mp-fg-2:      #b3a895;
+  --mp-fg-3:      #7a6f5e;
+  --mp-fg-4:      #544a3e;
+
+  --mp-accent:        #d4763e; /* copper */
+  --mp-accent-hi:     #e5894e;
+  --mp-accent-soft:   rgba(212,118,62,0.08);
+  --mp-accent-dim:    rgba(212,118,62,0.18);
+  --mp-live:          #94c6a3;
+
+  --mp-on-accent: #0d0907;
+}
+
+:root[data-theme="slate"] {
+  --mp-bg:        #141921;
+  --mp-bg-2:      #0d1117;
+  --mp-panel:     #1b2129;
+  --mp-panel-2:   #222933;
+  --mp-line:      #22293a;
+  --mp-line-2:    #323c4d;
+  --mp-line-3:    #4a576a;
+
+  --mp-fg:        #eef2f8;
+  --mp-fg-2:      #a8b3c2;
+  --mp-fg-3:      #6f7c8d;
+  --mp-fg-4:      #4d5768;
+
+  --mp-accent:        #e88b6d; /* warm coral on cool grey */
+  --mp-accent-hi:     #f59e83;
+  --mp-accent-soft:   rgba(232,139,109,0.08);
+  --mp-accent-dim:    rgba(232,139,109,0.18);
+  --mp-live:          #86d2af;
+
+  --mp-on-accent: #141921;
+}

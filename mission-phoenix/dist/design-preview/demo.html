@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mission Phoenix · Clickable Demo (Warm Recovery)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#f4ecdd; --card:#fbf5e8;
+    --ink:#1d1915; --ink-2:#5c4f42; --ink-3:#8a7c6b;
+    --line:#d8cdb6; --copper:#a34620; --copper-soft:rgba(163,70,32,0.08);
+  }
+  html,body{background:var(--bg);color:var(--ink);font-family:'Manrope',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
+  header{max-width:1200px;margin:0 auto;padding:48px 32px 24px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;}
+  .brand{display:flex;align-items:center;gap:14px;font-weight:800;font-size:18px;}
+  .brand img{width:36px;height:36px;filter:brightness(0) saturate(100%) invert(29%) sepia(50%) saturate(2180%) hue-rotate(357deg) brightness(90%) contrast(95%);}
+  h1{font-size:clamp(36px,5vw,56px);font-weight:800;line-height:1.05;letter-spacing:-0.025em;margin-top:16px;margin-bottom:12px;max-width:700px;}
+  h1 em{font-style:normal;color:var(--copper);}
+  .lede{font-size:18px;line-height:1.55;color:var(--ink-2);max-width:640px;margin-bottom:32px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--copper);background:var(--copper-soft);padding:6px 14px;border-radius:999px;letter-spacing:0.5px;}
+  .meta{display:flex;gap:32px;font-size:13px;color:var(--ink-3);margin-bottom:40px;flex-wrap:wrap;}
+  .meta b{color:var(--ink);font-weight:700;}
+
+  .controls{max-width:1200px;margin:0 auto;padding:0 32px 24px;display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{padding:8px 16px;border:1px solid var(--line);background:transparent;border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:all .15s;}
+  .chip.on{background:var(--copper);color:var(--card);border-color:var(--copper);}
+  .chip:hover:not(.on){border-color:var(--copper);color:var(--copper);}
+
+  .grid{max-width:1200px;margin:0 auto;padding:24px 32px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
+  .screen{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;transition:all .25s;display:flex;flex-direction:column;text-decoration:none;color:inherit;}
+  .screen:hover{border-color:var(--copper);transform:translateY(-4px);box-shadow:0 16px 40px -20px rgba(163,70,32,0.35);}
+  .frame{position:relative;overflow:hidden;height:240px;background:var(--bg);border-bottom:1px solid var(--line);}
+  .frame iframe{position:absolute;top:0;left:0;width:1280px;height:800px;transform:scale(0.31);transform-origin:top left;border:0;pointer-events:none;background:var(--bg);}
+  .screen-meta{padding:18px 20px;}
+  .screen-name{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--copper);margin-bottom:6px;}
+  .screen-title{font-size:17px;font-weight:700;letter-spacing:-0.01em;margin-bottom:4px;}
+  .screen-desc{font-size:13px;color:var(--ink-3);line-height:1.5;}
+  .open-hint{padding:12px 20px;border-top:1px solid var(--line);background:var(--bg);font-size:12px;font-weight:600;color:var(--copper);display:flex;justify-content:space-between;}
+
+  .flow{max-width:1200px;margin:0 auto;padding:0 32px 60px;}
+  .flow-title{font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--copper);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  .flow-title::before{content:"";width:20px;height:2px;background:var(--copper);border-radius:2px;}
+  .flow-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:32px;display:grid;grid-template-columns:1fr 2fr;gap:32px;align-items:center;}
+  @media(max-width:800px){.flow-card{grid-template-columns:1fr;}}
+  .flow-steps{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:600;color:var(--ink-2);}
+  .flow-steps a{padding:8px 14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--ink);text-decoration:none;transition:all .15s;}
+  .flow-steps a:hover{background:var(--copper);color:var(--card);border-color:var(--copper);}
+  .flow-steps .arr{color:var(--copper);font-weight:800;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand"><img src="/phoenix.png" alt=""><span>Mission Phoenix</span></div>
+    <div class="eyebrow" style="margin-top:24px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--copper);"></span>Clickable demo · Warm Recovery direction</div>
+    <h1>Full site preview. Every <em>link works</em>.</h1>
+    <p class="lede">Nine screens. Nav wired end-to-end. Assessment asks real questions, tracker saves to your browser's localStorage, archive filters live. Click any tile below to open a screen full-screen.</p>
+  </div>
+</header>
+
+<div class="meta" style="max-width:1200px;margin:0 auto;padding:0 32px 24px;">
+  <div><b>9</b> screens</div>
+  <div><b>0</b> network calls</div>
+  <div><b>Local-only</b> — nothing is pushed to GitHub or a live server</div>
+</div>
+
+<div class="flow">
+  <div class="flow-title">Suggested walkthrough</div>
+  <div class="flow-card">
+    <p style="font-size:15px;line-height:1.55;color:var(--ink-2);">Follow this path to hit every interactive piece in about 2 minutes.</p>
+    <div class="flow-steps">
+      <a href="index.html">Home</a><span class="arr">→</span>
+      <a href="assessment.html">Assessment</a><span class="arr">→</span>
+      <a href="tracker.html">Tracker</a><span class="arr">→</span>
+      <a href="community.html">Community</a><span class="arr">→</span>
+      <a href="archive.html">Archive</a><span class="arr">→</span>
+      <a href="article.html">Article</a><span class="arr">→</span>
+      <a href="about.html">About</a><span class="arr">→</span>
+      <a href="donate.html">Donate</a>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="chip on" data-f="all">All screens</button>
+  <button class="chip" data-f="product">Product</button>
+  <button class="chip" data-f="content">Content</button>
+  <button class="chip" data-f="account">Account</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const SCREENS = [
+  {f:'product', slug:'index.html', name:'Home', title:'Landing page', desc:'Hero, three-up feature tiles, newsletter signup.'},
+  {f:'product', slug:'assessment.html', name:'Assessment', title:'Self-assessment quiz', desc:'5 questions, progress bar, scored result screen.'},
+  {f:'product', slug:'tracker.html', name:'Tracker', title:'Recovery tracker', desc:'Streak counter, weekly chart, 28-day heatmap, check-in (localStorage).'},
+  {f:'product', slug:'community.html', name:'Community', title:'Discord landing', desc:'Live chat preview, channel list, house rules.'},
+  {f:'content', slug:'archive.html', name:'Archive', title:'Newsletter index', desc:'12 issues, live search, tag filters.'},
+  {f:'content', slug:'article.html', name:'Article', title:'Issue 042 · full read', desc:'Long-form article with dropcap, pull-quote, prev/next.'},
+  {f:'content', slug:'about.html', name:'About', title:"Michael's story", desc:'Founder bio, mission pillars, profile sidebar.'},
+  {f:'product', slug:'donate.html', name:'Donate', title:'Support page', desc:'Amount tiles, one-time vs monthly toggle, goal progress.'},
+  {f:'account', slug:'contact.html', name:'Contact', title:'Get in touch', desc:'Contact form + crisis / community fallbacks.'},
+  {f:'account', slug:'login.html', name:'Log in', title:'Auth screen', desc:'Login / signup toggle, SSO buttons, Apple + Google.'},
+  {f:'account', slug:'404.html', name:'404', title:'Not found', desc:'On-brand empty state.'},
+];
+
+const grid = document.getElementById('grid');
+function render(f){
+  grid.innerHTML = SCREENS.filter(s => f==='all' || s.f===f).map(s => `
+    <a href="${s.slug}" class="screen" rel="noopener">
+      <div class="frame"><iframe src="${s.slug}" loading="lazy" scrolling="no" tabindex="-1"></iframe></div>
+      <div class="screen-meta">
+        <div class="screen-name">${s.name}</div>
+        <div class="screen-title">${s.title}</div>
+        <div class="screen-desc">${s.desc}</div>
+      </div>
+      <div class="open-hint"><span>Open full-screen</span><span>↗</span></div>
+    </a>
+  `).join('');
+}
+render('all');
+document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach(x => x.classList.remove('on'));
+  c.classList.add('on');
+  render(c.dataset.f);
+}));
+</script>
+
+</body></html>
