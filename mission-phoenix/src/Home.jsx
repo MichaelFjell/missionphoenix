@@ -145,7 +145,7 @@ export default function Home() {
             <div className="side-card nl">
               <div className="sec-title">Weekly dispatch</div>
               <h2>Honest words about breaking free.</h2>
-              <p className="sm">Hand-written by Michael, once a week. No AI-slop. No drip campaigns. Unsubscribe any time.</p>
+              <p className="sm">Hand-written by Michael, once a week. No AI-slop. Unsubscribe any time.</p>
               <NewsletterSignup />
               <div className="note">One email per week. <Link to="/archive">Read past newsletters →</Link></div>
             </div>
