@@ -30,6 +30,7 @@ export default function Community() {
         profiles:user_id ( username )
       `)
       .eq('is_public', true)
+      .neq('note_text', '__STREAK_START__')
       .order('created_at', { ascending: false })
       .limit(50);
 
