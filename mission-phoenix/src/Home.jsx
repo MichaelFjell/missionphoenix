@@ -136,7 +136,7 @@ export default function Home() {
             <h1>You don't have to do this <em>alone</em>.</h1>
             <p className="tagline">A community and life mission to spread awareness of the real cost of pornography. A beacon of light for those already in the darkness, and a commitment to helping steer the next generation away from it.</p>
             <div className="cta">
-              <Link to="/quiz" className="btn primary">Take the assessment →</Link>
+              <Link to="/quiz" className="btn primary">Am I at risk? →</Link>
               <Link to="/about" className="btn ghost">Read Michael's story</Link>
             </div>
           </div>
