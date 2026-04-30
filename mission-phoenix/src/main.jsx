@@ -15,7 +15,6 @@ import Archive from './Archive.jsx';
 import JourneyPreview from './JourneyPreview.jsx';
 import SiteNav from './SiteNav.jsx';
 import SiteFooter from './SiteFooter.jsx';
-import ThemeSwitcher from './ThemeSwitcher.jsx';
 
 // Auth Context
 const AuthContext = createContext(null);
@@ -118,7 +117,6 @@ function App() {
           <Route path="/support" element={<Support />} />
         </Routes>
         <SiteFooter />
-        <ThemeSwitcher />
       </AuthProvider>
     </BrowserRouter>
   );
