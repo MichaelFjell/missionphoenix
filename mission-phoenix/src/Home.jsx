@@ -176,7 +176,7 @@ export default function Home() {
             <p>Track your streak. Build daily habits. See your progress. Join others fighting the same battle.</p>
             <div className="foot"><span className="m">Private · daily</span><span className="arr">→</span></div>
           </Link>
-          <Link to="/community" className="tile">
+          <Link to="https://discord.com/invite/tXnBUSbq92" className="tile">
             <div className="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M14 19c0-2 2-3.5 4-3.5s4 1.5 4 3.5"/></svg></div>
             <h3>Community</h3>
             <p>Private Discord. Men recovering together. No performance, no preaching — just the daily work.</p>
