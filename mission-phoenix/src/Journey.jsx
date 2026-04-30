@@ -78,10 +78,11 @@ const MILESTONES = [
 
 function ds(date) { return date.toISOString().slice(0, 10); }
 
-function MiniCalendar({ checkedDates, onToggleDate }) {
+function MiniCalendar({ checkedDates, onToggleDate, relapseDates = [], onRemoveRelapse }) {
   const today = useMemo(() => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; }, []);
   const todayStr = ds(today);
   const checkedSet = useMemo(() => new Set(checkedDates), [checkedDates]);
+  const relapseSet = useMemo(() => new Set(relapseDates), [relapseDates]);
 
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
 
@@ -127,7 +128,7 @@ function MiniCalendar({ checkedDates, onToggleDate }) {
         </div>
         <button onClick={goNext} disabled={!canNext} className="jc-nav" aria-label="Next month">›</button>
       </div>
-      <div className="jc-hint">Tap a past day to backfill or unmark</div>
+      <div className="jc-hint">Tap a past day to backfill or unmark · red = relapse</div>
       <div className="jc-weekdays">
         {weekdays.map((w, i) => <div key={i} className="jc-wd">{w}</div>)}
       </div>
@@ -138,17 +139,27 @@ function MiniCalendar({ checkedDates, onToggleDate }) {
           const isFuture = s > todayStr;
           const isToday = s === todayStr;
           const isChecked = checkedSet.has(s);
+          const isRelapse = relapseSet.has(s);
           const dayNum = d.getDate();
           const cls = ['jc-cell'];
-          if (isChecked) cls.push('on');
+          if (isRelapse) cls.push('relapse');
+          else if (isChecked) cls.push('on');
           if (isFuture) cls.push('future');
           if (isToday) cls.push('today');
+          const titleSuffix = isRelapse
+            ? ' — relapse (tap to remove)'
+            : isChecked ? ' — logged' : '';
+          const handleClick = () => {
+            if (isFuture) return;
+            if (isRelapse && onRemoveRelapse) onRemoveRelapse(s);
+            else if (onToggleDate) onToggleDate(s, isChecked);
+          };
           return (
             <button
               key={i}
-              onClick={() => !isFuture && onToggleDate && onToggleDate(s, isChecked)}
+              onClick={handleClick}
               disabled={isFuture}
-              title={d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + (isChecked ? ' — logged' : '')}
+              title={d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + titleSuffix}
               className={cls.join(' ')}
             >
               {dayNum}
@@ -160,6 +171,7 @@ function MiniCalendar({ checkedDates, onToggleDate }) {
       <div className="jc-legend">
         <span><span className="jc-sw on" /> Logged</span>
         <span><span className="jc-sw" /> Missed</span>
+        <span><span className="jc-sw relapse" /> Relapse</span>
         <span><span className="jc-sw ring" /> Today</span>
       </div>
     </div>
@@ -223,6 +235,9 @@ export default function Journey({
   onSkipNote,
   recentNotes = [],
   onToggleDate,
+  relapseDates = [],
+  onRemoveRelapse,
+  onOpenRelapse,
 }) {
   const tier = useMemo(() => getTier(daysClean), [daysClean]);
   const nextTier = useMemo(() => getNextTier(daysClean), [daysClean]);
@@ -308,11 +323,19 @@ export default function Journey({
         .jc-cell.on{background:var(--copper);color:var(--card);border-color:var(--copper);}
         .jc-cell.future{opacity:0.3;cursor:default;background:transparent;border:1px dashed var(--line-2);color:var(--ink-3);}
         .jc-cell.today{box-shadow:0 0 0 2px var(--copper);}
+        .jc-cell.relapse{background:#b82030;color:#fbf5e8;border-color:#b82030;}
+        .jc-cell.relapse:hover:not(:disabled){background:#9b1828;border-color:#9b1828;transform:scale(1.08);}
         .jc-legend{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;font-size:11px;color:var(--ink-3);justify-content:center;}
         .jc-legend > span{display:inline-flex;align-items:center;gap:6px;}
         .jc-sw{width:12px;height:12px;border-radius:3px;display:inline-block;background:var(--line);}
         .jc-sw.on{background:var(--copper);}
+        .jc-sw.relapse{background:#b82030;}
         .jc-sw.ring{background:var(--card);box-shadow:0 0 0 2px var(--copper);}
+
+        /* I relapsed button (under calendar) */
+        .j-relapse-row{display:flex;justify-content:center;margin-top:18px;}
+        .j-relapse-btn{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:11px 22px;background:transparent;color:#b82030;border:1px solid rgba(184,32,48,0.45);border-radius:999px;cursor:pointer;font-family:inherit;transition:all .15s;}
+        .j-relapse-btn:hover{background:#b82030;color:#fbf5e8;border-color:#b82030;}
 
         /* Quote overlay */
         .jq-overlay{position:fixed;inset:0;background:rgba(29,25,21,0.75);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:100;padding:24px;}
@@ -361,7 +384,17 @@ export default function Journey({
 
         <section className="j-section">
           <div className="j-slab">Recent days</div>
-          <MiniCalendar checkedDates={checkedDates} onToggleDate={onToggleDate} />
+          <MiniCalendar
+            checkedDates={checkedDates}
+            onToggleDate={onToggleDate}
+            relapseDates={relapseDates}
+            onRemoveRelapse={onRemoveRelapse}
+          />
+          {onOpenRelapse && (
+            <div className="j-relapse-row">
+              <button onClick={onOpenRelapse} className="j-relapse-btn">I relapsed</button>
+            </div>
+          )}
         </section>
 
         <section className="j-section">

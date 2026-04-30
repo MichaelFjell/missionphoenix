@@ -80,7 +80,8 @@ function TrackerDashboard() {
   const [streakInput, setStreakInput] = useState('');
   const [streakBusy, setStreakBusy] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
-  const [streakStartDate, setStreakStartDate] = useState(null);
+  const [streakBaseDate, setStreakBaseDate] = useState(null); // from __STREAK_START__
+  const [relapseDates, setRelapseDates] = useState([]); // from __RELAPSE__ rows
   const [showRelapse, setShowRelapse] = useState(false);
   const [relapseDate, setRelapseDate] = useState('');
   const [relapseBusy, setRelapseBusy] = useState(false);
@@ -129,13 +130,19 @@ function TrackerDashboard() {
       if (nErr) throw nErr;
       const allNotes = notes || [];
 
-      // Latest streak-start sentinel (private internal record)
-      const streakRow = allNotes.find(n => n.note_text === '__STREAK_START__');
-      setStreakStartDate(streakRow ? streakRow.note_date : null);
+      // Latest streak-baseline sentinel (private internal record)
+      const baseRow = allNotes.find(n => n.note_text === '__STREAK_START__');
+      setStreakBaseDate(baseRow ? baseRow.note_date : null);
 
-      // Real notes only (filter out sentinels)
+      // All relapse sentinels (private)
+      const relapses = allNotes
+        .filter(n => n.note_text === '__RELAPSE__')
+        .map(n => n.note_date);
+      setRelapseDates(relapses);
+
+      // Real notes only (filter out internal sentinels)
       setRecentNotes(allNotes
-        .filter(n => n.note_text !== '__STREAK_START__')
+        .filter(n => n.note_text !== '__STREAK_START__' && n.note_text !== '__RELAPSE__')
         .slice(0, 10)
         .map(n => ({
           date: formatEntryDate(n.note_date),
@@ -152,18 +159,30 @@ function TrackerDashboard() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
+  // Effective streak-start = the latest of (streak-baseline, latest-relapse + 1 day).
+  const effectiveStartDate = useMemo(() => {
+    const candidates = [];
+    if (streakBaseDate) candidates.push(streakBaseDate);
+    if (relapseDates.length) {
+      const latestRelapse = [...relapseDates].sort().pop();
+      const next = new Date(latestRelapse + 'T12:00:00');
+      next.setDate(next.getDate() + 1);
+      candidates.push(ds(next));
+    }
+    if (!candidates.length) return null;
+    return candidates.sort().pop();
+  }, [streakBaseDate, relapseDates]);
+
   const daysClean = useMemo(() => {
-    // Preferred: explicit streak-start date (set by relapse log or "set streak").
-    // Counts every day from streak-start to today, inclusive — missed check-ins
-    // do NOT break the streak.
-    if (streakStartDate) {
-      const start = new Date(streakStartDate + 'T12:00:00');
+    // Preferred: explicit streak-start date. Counts every day from streak-start
+    // to today, inclusive — missed check-ins do NOT break the streak.
+    if (effectiveStartDate) {
+      const start = new Date(effectiveStartDate + 'T12:00:00');
       const todayD = new Date(today + 'T12:00:00');
       if (todayD < start) return 0;
       return Math.floor((todayD - start) / 86400000) + 1;
     }
-    // Fallback for accounts that pre-date the streak-start model: count
-    // consecutive check-ins ending at today (or yesterday if today not yet logged).
+    // Fallback for legacy accounts: count consecutive check-ins ending today.
     const dateSet = new Set(checkedDates);
     let count = 0;
     const d = new Date();
@@ -173,7 +192,7 @@ function TrackerDashboard() {
       if (dateSet.has(s)) { count++; d.setDate(d.getDate() - 1); } else break;
     }
     return count;
-  }, [streakStartDate, checkedDates, today]);
+  }, [effectiveStartDate, checkedDates, today]);
 
   const isTodayChecked = checkedDates.includes(today);
 
@@ -244,29 +263,6 @@ function TrackerDashboard() {
     }
   };
 
-  // Replace any existing streak-start sentinel for this habit with one at `dateStr`.
-  const writeStreakStart = async (dateStr) => {
-    if (!primaryHabit) return;
-    // Delete existing sentinel(s)
-    await supabase
-      .from('daily_notes')
-      .delete()
-      .eq('habit_id', primaryHabit.id)
-      .eq('user_id', user.id)
-      .eq('note_text', '__STREAK_START__');
-    // Insert new sentinel
-    const { error: err } = await supabase
-      .from('daily_notes')
-      .insert({
-        habit_id: primaryHabit.id,
-        user_id: user.id,
-        note_date: dateStr,
-        note_text: '__STREAK_START__',
-        is_public: false,
-      });
-    if (err) throw err;
-  };
-
   const handleSetStreak = async () => {
     const n = parseInt(streakInput, 10);
     if (!primaryHabit || !n || n < 1) { setError('Enter a number of days (1 or more).'); return; }
@@ -279,7 +275,23 @@ function TrackerDashboard() {
       start.setHours(12, 0, 0, 0);
       start.setDate(start.getDate() - (n - 1));
       const startStr = ds(start);
-      await writeStreakStart(startStr);
+      // Setting streak is a hard reset of the baseline \u2014 clear all sentinels.
+      await supabase
+        .from('daily_notes')
+        .delete()
+        .eq('habit_id', primaryHabit.id)
+        .eq('user_id', user.id)
+        .in('note_text', ['__STREAK_START__', '__RELAPSE__']);
+      const { error: err } = await supabase
+        .from('daily_notes')
+        .insert({
+          habit_id: primaryHabit.id,
+          user_id: user.id,
+          note_date: startStr,
+          note_text: '__STREAK_START__',
+          is_public: false,
+        });
+      if (err) throw err;
       setStreakInput('');
       await loadData();
     } catch (e) {
@@ -292,14 +304,28 @@ function TrackerDashboard() {
   const handleRelapse = async () => {
     const dateStr = relapseDate || today;
     if (dateStr > today) { setError('Relapse date cannot be in the future.'); return; }
+    if (!primaryHabit) return;
     setRelapseBusy(true);
     setError('');
     try {
-      // New streak begins the day AFTER the relapse.
-      const next = new Date(dateStr + 'T12:00:00');
-      next.setDate(next.getDate() + 1);
-      const startStr = ds(next);
-      await writeStreakStart(startStr);
+      // Insert a relapse marker for this date (idempotent \u2014 clean any duplicate first).
+      await supabase
+        .from('daily_notes')
+        .delete()
+        .eq('habit_id', primaryHabit.id)
+        .eq('user_id', user.id)
+        .eq('note_text', '__RELAPSE__')
+        .eq('note_date', dateStr);
+      const { error: err } = await supabase
+        .from('daily_notes')
+        .insert({
+          habit_id: primaryHabit.id,
+          user_id: user.id,
+          note_date: dateStr,
+          note_text: '__RELAPSE__',
+          is_public: false,
+        });
+      if (err) throw err;
       setShowRelapse(false);
       setRelapseDate('');
       await loadData();
@@ -308,6 +334,35 @@ function TrackerDashboard() {
       setError('Could not log relapse: ' + (e.message || 'unknown error'));
     }
     setRelapseBusy(false);
+  };
+
+  // Click a red relapse cell on the calendar to undo the relapse.
+  const handleRemoveRelapse = async (dateStr) => {
+    if (!primaryHabit) return;
+    if (!window.confirm(`Remove relapse marker on ${dateStr}?`)) return;
+    try {
+      const { error: err } = await supabase
+        .from('daily_notes')
+        .delete()
+        .eq('habit_id', primaryHabit.id)
+        .eq('user_id', user.id)
+        .eq('note_text', '__RELAPSE__')
+        .eq('note_date', dateStr);
+      if (err) throw err;
+      await loadData();
+    } catch (e) {
+      console.error(e);
+      setError('Could not remove relapse: ' + (e.message || 'unknown error'));
+    }
+  };
+
+  const openRelapse = () => {
+    setShowRelapse(true);
+    setRelapseDate(today);
+    // Scroll the form into view if it's off-screen
+    setTimeout(() => {
+      document.getElementById('tk-relapse-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
   };
 
   const toggleProfileField = async (field) => { await updateProfile({ [field]: !profile[field] }); };
@@ -385,38 +440,11 @@ function TrackerDashboard() {
             <div className="tk-pt-act">Download PDF ↓</div>
           </a>
 
-          <div className="tk-srow" style={{ gap: '8px', justifyContent: 'flex-end' }}>
-            <button
-              onClick={() => { setShowRelapse(s => !s); setRelapseDate(today); }}
-              className="tk-sbtn tk-rb"
-            >
-              {showRelapse ? 'Cancel' : 'I relapsed'}
-            </button>
+          <div className="tk-srow">
             <button onClick={() => setShowSettings(!showSettings)} className="tk-sbtn">
               {showSettings ? 'Close settings' : 'Settings'}
             </button>
           </div>
-
-          {showRelapse && (
-            <div className="tk-rcard">
-              <div className="tk-slab">Reset streak</div>
-              <p className="tk-sdesc">
-                Pick the date you relapsed. The new streak starts the day after — so if you log today, day 1 begins tomorrow. Honesty is the floor of recovery.
-              </p>
-              <div className="tk-srow2">
-                <input
-                  className="input"
-                  type="date"
-                  max={today}
-                  value={relapseDate}
-                  onChange={e => setRelapseDate(e.target.value)}
-                />
-                <button onClick={handleRelapse} disabled={relapseBusy || !relapseDate} className="tk-sbtn2 tk-rconf">
-                  {relapseBusy ? 'Saving...' : 'Confirm relapse'}
-                </button>
-              </div>
-            </div>
-          )}
 
           {checkedDates.length === 0 && (
             <div className="tk-scard">
@@ -501,7 +529,32 @@ function TrackerDashboard() {
           onSkipNote={handleSkipNote}
           recentNotes={recentNotes}
           onToggleDate={handleToggleDate}
+          relapseDates={relapseDates}
+          onRemoveRelapse={handleRemoveRelapse}
+          onOpenRelapse={openRelapse}
         />
+
+        {showRelapse && (
+          <div id="tk-relapse-form" className="tk-rcard">
+            <div className="tk-slab">Log a relapse</div>
+            <p className="tk-sdesc">
+              Pick the date you relapsed. The day will be marked red on your calendar and your new streak begins the day after. Honesty is the floor of recovery.
+            </p>
+            <div className="tk-srow2">
+              <input
+                className="input"
+                type="date"
+                max={today}
+                value={relapseDate}
+                onChange={e => setRelapseDate(e.target.value)}
+              />
+              <button onClick={handleRelapse} disabled={relapseBusy || !relapseDate} className="tk-sbtn2 tk-rconf">
+                {relapseBusy ? 'Saving...' : 'Confirm relapse'}
+              </button>
+              <button onClick={() => setShowRelapse(false)} className="tk-sbtn">Cancel</button>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );
