@@ -6,6 +6,10 @@ import './site.css';
 import Home from './Home.jsx';
 import Quiz from './Quiz.jsx';
 import Tracker from './Tracker.jsx';
+import Trainer from './Trainer.jsx';
+import TrainerSession from './TrainerSession.jsx';
+import TrainerExercise from './TrainerExercise.jsx';
+import TrainerSettings from './TrainerSettings.jsx';
 import Community from './Community.jsx';
 import Journal from './Journal.jsx';
 import About from './About.jsx';
@@ -108,6 +112,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/tracker" element={<Tracker />} />
+          <Route path="/trainer" element={<Trainer />} />
+          <Route path="/trainer/session/:code" element={<TrainerSession />} />
+          <Route path="/trainer/exercise/:slug" element={<TrainerExercise />} />
+          <Route path="/trainer/settings" element={<TrainerSettings />} />
           <Route path="/community" element={<Community />} />
           <Route path="/journal" element={<Journal />} />
           <Route path="/archive" element={<Archive />} />
