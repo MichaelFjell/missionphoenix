@@ -92,9 +92,10 @@ function ExerciseView() {
 }
 
 export default function TrainerExercise() {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   if (!isSupabaseConfigured()) return <Navigate to="/trainer" replace />;
   if (loading) return null;
   if (!user) return <Navigate to="/trainer" replace />;
+  if (!profile?.is_admin) return <Navigate to="/" replace />;
   return <ExerciseView />;
 }
