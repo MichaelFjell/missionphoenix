@@ -1,6 +1,11 @@
 export default function Archive() {
   const newsletters = [
     {
+      title: 'The importance of your subconscious',
+      date: '01/05/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/the-importance-of-your-subconscious/',
+    },
+    {
       title: 'The lying and cheating porn addict',
       date: '24/04/2026',
       url: 'https://buttondown.com/missionphoenix/archive/the-lying-and-cheating-porn-addict/',
