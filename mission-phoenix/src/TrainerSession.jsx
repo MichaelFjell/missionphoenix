@@ -8,7 +8,7 @@ import {
 import { evaluateSlots } from './trainer/rules.js';
 import { isPR, bestSetInWorkoutFor, previousBestSet } from './trainer/oneRm.js';
 import JournalLog, { buildPRPrefill } from './trainer/JournalLog.jsx';
-import { hasKey, stream, suggestSwapPrompt } from './trainer/anthropic.js';
+import { hasKey, stream, suggestSwapPrompt } from './trainer/ai.js';
 import ReadinessCard from './trainer/Readiness.jsx';
 import PlateCalc from './trainer/PlateCalc.jsx';
 import RestTimer, { notifySetSaved } from './trainer/RestTimer.jsx';

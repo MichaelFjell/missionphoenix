@@ -5,11 +5,15 @@ import { isSupabaseConfigured } from './supabase.js';
 import {
   loadProgram, loadWorkouts, saveSession,
   getApiKey, setApiKey,
+  getOpenAIKey, setOpenAIKey,
+  getGeminiKey, setGeminiKey,
+  getAiProvider,
 } from './trainer/store.js';
 import { newSlotId, slugify, SLOT_TAGS, CONDITIONAL_RULES } from './trainer/seed.js';
+import { reviewWeekPrompt, planMesocyclePrompt } from './trainer/anthropic.js';
 import {
-  hasKey, stream, reviewWeekPrompt, planMesocyclePrompt,
-} from './trainer/anthropic.js';
+  PROVIDERS, hasAnyKey, activeProvider, setActiveProvider, stream,
+} from './trainer/ai.js';
 import './trainer.css';
 
 const ALL_TAG_OPTIONS = SLOT_TAGS;
@@ -250,16 +254,60 @@ function ProgramEditor({ user, program, setProgram }) {
   );
 }
 
+function ProviderKeyRow({ id, label, placeholder, value, onChange, onSave, savedFlash }) {
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <label className="field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <span>{label}</span>
+        {value && <span style={{ fontSize: 10, color: 'var(--mp-live)', letterSpacing: 1 }}>SAVED</span>}
+      </label>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <input className="input" type="password" placeholder={placeholder}
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          autoComplete="off" spellCheck="false"
+          style={{ flex: 1 }}/>
+        <button className="btn primary sm" onClick={onSave}>{savedFlash || 'Save'}</button>
+      </div>
+    </div>
+  );
+}
+
 function AiPanel({ workouts, program }) {
-  const [keyInput, setKeyInput] = useState(getApiKey());
-  const [keyMessage, setKeyMessage] = useState('');
+  const [anthropicInput, setAnthropicInput] = useState(getApiKey());
+  const [openaiInput, setOpenaiInput] = useState(getOpenAIKey());
+  const [geminiInput, setGeminiInput] = useState(getGeminiKey());
+  const [provider, setProvider] = useState(() => activeProvider());
+  const [flash, setFlash] = useState({});
   const [activeTask, setActiveTask] = useState(null);
   const [output, setOutput] = useState('');
 
-  const saveKey = () => {
-    setApiKey(keyInput.trim());
-    setKeyMessage(keyInput.trim() ? 'Saved' : 'Cleared');
-    setTimeout(() => setKeyMessage(''), 1500);
+  const saveKey = (id) => {
+    const trimmed = (id === 'anthropic' ? anthropicInput
+      : id === 'openai' ? openaiInput
+      : geminiInput).trim();
+    if (id === 'anthropic') setApiKey(trimmed);
+    if (id === 'openai') setOpenAIKey(trimmed);
+    if (id === 'gemini') setGeminiKey(trimmed);
+    setFlash(prev => ({ ...prev, [id]: 'Saved' }));
+    setTimeout(() => setFlash(prev => ({ ...prev, [id]: '' })), 1500);
+
+    // If the user just added their first key, make it the default so
+    // a future key for another provider doesn't silently re-route.
+    // Also handle the "explicitly chosen provider got cleared" case.
+    const stickyChoice = getAiProvider();
+    const currentlyResolved = activeProvider();
+    if (trimmed && !stickyChoice) {
+      setActiveProvider(id);
+    } else if (!currentlyResolved && trimmed) {
+      setActiveProvider(id);
+    }
+    setProvider(activeProvider());
+  };
+
+  const pickProvider = (id) => {
+    setActiveProvider(id);
+    setProvider(id);
   };
 
   const runTask = async (taskName, promptOpts) => {
@@ -276,44 +324,82 @@ function AiPanel({ workouts, program }) {
     setActiveTask(null);
   };
 
+  const anyKey = hasAnyKey();
+  const activeLabel = PROVIDERS.find(p => p.id === provider)?.label;
+
   return (
     <div className="tr-ai-card">
       <h3>AI features (BYOK)</h3>
-      <label className="field">Anthropic API key</label>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <input className="input" type="password" placeholder="sk-ant-..."
-          value={keyInput}
-          onChange={e => setKeyInput(e.target.value)}
-          autoComplete="off" spellCheck="false"
-          style={{ flex: 1 }}/>
-        <button className="btn primary sm" onClick={saveKey}>{keyMessage || 'Save'}</button>
-      </div>
+
+      <ProviderKeyRow
+        id="anthropic" label="Anthropic API key" placeholder="sk-ant-..."
+        value={anthropicInput} onChange={setAnthropicInput}
+        onSave={() => saveKey('anthropic')} savedFlash={flash.anthropic}
+      />
+      <ProviderKeyRow
+        id="openai" label="OpenAI API key" placeholder="sk-..."
+        value={openaiInput} onChange={setOpenaiInput}
+        onSave={() => saveKey('openai')} savedFlash={flash.openai}
+      />
+      <ProviderKeyRow
+        id="gemini" label="Gemini API key" placeholder="AIza..."
+        value={geminiInput} onChange={setGeminiInput}
+        onSave={() => saveKey('gemini')} savedFlash={flash.gemini}
+      />
+
       <p className="note">
-        Your key lives in this browser only. Mission Phoenix never sees or stores it. Clear the field and save to remove it.
+        Your keys live in this browser only. Mission Phoenix never sees or stores them. Clear a field and save to remove it.
       </p>
 
-      {hasKey() ? (
+      {anyKey && (
+        <div className="tr-ai-providers">
+          <div className="tr-ai-providers-label">Use for AI features</div>
+          <div className="tr-ai-providers-row" role="radiogroup" aria-label="AI provider">
+            {PROVIDERS.map(p => {
+              const has = p.hasKey();
+              const on = provider === p.id;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  className={`tr-ai-provider ${on ? 'on' : ''}`}
+                  disabled={!has}
+                  onClick={() => pickProvider(p.id)}
+                  title={has ? `${p.label} · ${p.model}` : `Add a ${p.label} key first`}
+                >
+                  <span className="tr-ai-provider-name">{p.label}</span>
+                  <span className="tr-ai-provider-model">{p.model}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {anyKey ? (
         <>
           <div className="tr-ai-row">
             <button
-              disabled={!!activeTask}
+              disabled={!!activeTask || !provider}
               onClick={() => runTask('week', reviewWeekPrompt({ workouts }))}>
               {activeTask === 'week' ? 'Reviewing…' : 'Review my week'}
             </button>
             <button
-              disabled={!!activeTask}
+              disabled={!!activeTask || !provider}
               onClick={() => runTask('plan', planMesocyclePrompt({ workouts, program }))}>
               {activeTask === 'plan' ? 'Planning…' : 'Plan next mesocycle'}
             </button>
           </div>
           {output && <div className="tr-ai-out">{output}</div>}
           <p className="note" style={{ marginTop: 10 }}>
-            Swap suggestions are available inside the Swap dialog when logging a session.
+            {activeLabel ? `Active: ${activeLabel}. ` : ''}Swap suggestions are available inside the Swap dialog when logging a session.
           </p>
         </>
       ) : (
         <p className="note" style={{ marginTop: 14 }}>
-          Save a key above to unlock weekly review, mesocycle planning, and swap suggestions.
+          Save at least one key above to unlock weekly review, mesocycle planning, and swap suggestions.
         </p>
       )}
     </div>
