@@ -358,6 +358,9 @@ function AiPanel({ workouts, program }) {
             {PROVIDERS.map(p => {
               const has = p.hasKey();
               const on = provider === p.id;
+              const titleSuffix = p.fallbackModel
+                ? ` (auto-falls back to ${p.fallbackModel} on quota)`
+                : '';
               return (
                 <button
                   key={p.id}
@@ -367,10 +370,15 @@ function AiPanel({ workouts, program }) {
                   className={`tr-ai-provider ${on ? 'on' : ''}`}
                   disabled={!has}
                   onClick={() => pickProvider(p.id)}
-                  title={has ? `${p.label} · ${p.model}` : `Add a ${p.label} key first`}
+                  title={has ? `${p.label} · ${p.model}${titleSuffix}` : `Add a ${p.label} key first`}
                 >
                   <span className="tr-ai-provider-name">{p.label}</span>
-                  <span className="tr-ai-provider-model">{p.model}</span>
+                  <span className="tr-ai-provider-model">
+                    {p.model}
+                    {p.fallbackModel && (
+                      <span className="tr-ai-provider-fallback"> · ↳ {p.fallbackModel}</span>
+                    )}
+                  </span>
                 </button>
               );
             })}

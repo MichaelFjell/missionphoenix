@@ -11,9 +11,13 @@ import {
 } from './store.js';
 
 export const PROVIDERS = [
-  { id: 'anthropic', label: 'Claude (Anthropic)', model: anthropic.MODEL, hasKey: () => !!getApiKey() },
-  { id: 'openai',    label: 'ChatGPT (OpenAI)',   model: openai.MODEL,    hasKey: () => !!getOpenAIKey() },
-  { id: 'gemini',    label: 'Gemini (Google)',    model: gemini.MODEL,    hasKey: () => !!getGeminiKey() },
+  { id: 'anthropic', label: 'Claude (Anthropic)', model: anthropic.MODEL,
+    hasKey: () => !!getApiKey() },
+  { id: 'openai',    label: 'ChatGPT (OpenAI)',   model: openai.MODEL,
+    hasKey: () => !!getOpenAIKey() },
+  { id: 'gemini',    label: 'Gemini (Google)',    model: gemini.MODEL,
+    fallbackModel: gemini.FALLBACK_MODEL,
+    hasKey: () => !!getGeminiKey() },
 ];
 
 export function hasAnyKey() {
