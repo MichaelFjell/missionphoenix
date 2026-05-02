@@ -117,32 +117,46 @@ Reply with 1–3 lines, each: "Exercise name — short rationale".`,
   };
 }
 
+function readinessSuffix(w) {
+  const r = w.readiness;
+  if (!r || r.skipped) return '';
+  const parts = [];
+  if (Number.isFinite(r.sleep_quality)) parts.push(`S${r.sleep_quality}`);
+  if (Number.isFinite(r.energy)) parts.push(`E${r.energy}`);
+  if (Number.isFinite(r.mood)) parts.push(`M${r.mood}`);
+  let out = parts.length ? ` [${parts.join(' ')}` : '';
+  if (r.niggles) out += `, "${r.niggles.replace(/\n/g, ' ').slice(0, 80)}"`;
+  if (out) out += ']';
+  return out;
+}
+
 function describeWorkoutLine(w) {
   const dateCode = `${w.performed_at.slice(0,10)} (${w.code})`;
+  const rd = readinessSuffix(w);
   if (w.session_kind === 'cardio') {
     const block = (w.sets || [])[0];
-    if (!block) return `${dateCode} cardio: (empty)`;
+    if (!block) return `${dateCode} cardio: (empty)${rd}`;
     if (block.kind === 'intervals') {
       const blocks = block.blocks || [];
       const totalS = blocks.reduce((sum, b) => sum + (b.duration_s || 0), 0);
       const hrs = blocks.map(b => b.avg_hr).filter(Number.isFinite);
       const avgHr = hrs.length ? Math.round(hrs.reduce((a, b) => a + b, 0) / hrs.length) : null;
-      return `${dateCode} cardio intervals: ${blocks.length} blocks, ${Math.round(totalS / 60)}min total${avgHr ? `, avg HR ${avgHr}` : ''}`;
+      return `${dateCode} cardio intervals: ${blocks.length} blocks, ${Math.round(totalS / 60)}min total${avgHr ? `, avg HR ${avgHr}` : ''}${rd}`;
     }
     if (block.kind === 'steady') {
       const mins = Math.round((block.duration_s || 0) / 60);
-      return `${dateCode} cardio steady: ${mins}min${block.avg_hr ? `, avg HR ${block.avg_hr}` : ''}${block.distance_km ? `, ${block.distance_km}km` : ''}`;
+      return `${dateCode} cardio steady: ${mins}min${block.avg_hr ? `, avg HR ${block.avg_hr}` : ''}${block.distance_km ? `, ${block.distance_km}km` : ''}${rd}`;
     }
-    return `${dateCode} cardio`;
+    return `${dateCode} cardio${rd}`;
   }
   const exercises = [...new Set((w.sets || []).map(s => s.exercise_name))].join(', ');
-  return `${dateCode} strength: ${exercises}`;
+  return `${dateCode} strength: ${exercises}${rd}`;
 }
 
 export function reviewWeekPrompt({ workouts }) {
   const byDay = workouts.slice(0, 14).map(describeWorkoutLine).join('\n');
   return {
-    system: 'You are a strength-and-conditioning coach. Review the athlete\'s last 7 days across both strength and cardio. Be specific and brief.',
+    system: 'You are a strength-and-conditioning coach. Review the athlete\'s last 7 days across both strength and cardio. Each session may include a readiness snapshot in brackets like [S3 E4 M3, "achilles tight"] (sleep, energy, mood on 1-5; optional niggles in quotes). If the same body part is mentioned 3+ times in niggles, flag it explicitly. Be specific and brief.',
     messages: [{
       role: 'user',
       content: `Here are the recent workouts:
@@ -151,7 +165,8 @@ ${byDay || '(no workouts)'}
 
 Give me a concise weekly review (max ~150 words):
 - What went well (strength volume, cardio mix)
-- Plateaus, imbalances, recovery flags you can see
+- Plateaus, imbalances, recovery flags (use the readiness data)
+- Repeating niggles → flag them
 - One concrete suggestion for next week`,
     }],
     max_tokens: 600,
@@ -160,10 +175,11 @@ Give me a concise weekly review (max ~150 words):
 
 export function planMesocyclePrompt({ workouts, program }) {
   const recent = workouts.slice(0, 12).map(w => {
+    const rd = readinessSuffix(w);
     if (w.session_kind === 'cardio') return describeWorkoutLine(w);
     return `${w.performed_at.slice(0,10)} (${w.code}): ` + (w.sets || []).map(s =>
       `${s.exercise_name} ${s.set_number}×${s.reps}@${s.load_kg ?? '–'}kg`
-    ).join('; ');
+    ).join('; ') + rd;
   }).join('\n');
   const prog = program.map(p => {
     if (p.session_kind === 'cardio') {

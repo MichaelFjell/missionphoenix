@@ -4,6 +4,7 @@ import { useAuth } from './main.jsx';
 import { isSupabaseConfigured } from './supabase.js';
 import { loadProgram, loadWorkouts, flushUnsynced } from './trainer/store.js';
 import { hasKey } from './trainer/anthropic.js';
+import { ReadinessBadge } from './trainer/Readiness.jsx';
 import './trainer.css';
 
 function AuthForm() {
@@ -80,6 +81,21 @@ function startOfWeek(d) {
   return date;
 }
 function weekKey(d) { return startOfWeek(d).toISOString().slice(0, 10); }
+
+function cardioSummary(w) {
+  const block = (w.sets || [])[0];
+  if (!block) return 'cardio';
+  if (block.kind === 'intervals') {
+    const blocks = block.blocks || [];
+    const totalS = blocks.reduce((sum, b) => sum + (b.duration_s || 0), 0);
+    return `${blocks.length} blocks · ${Math.round(totalS / 60)}min`;
+  }
+  if (block.kind === 'steady') {
+    const mins = Math.round((block.duration_s || 0) / 60);
+    return `steady · ${mins}min${block.avg_hr ? ` · HR ${block.avg_hr}` : ''}`;
+  }
+  return 'cardio';
+}
 
 function computeStreak(workouts) {
   // Consecutive past weeks (including current) where A, B, and C all logged.
@@ -226,12 +242,24 @@ function Dashboard() {
           <h2>Recent</h2>
           {workouts.slice(0, 5).map(w => {
             const d = new Date(w.performed_at);
+            const isCardio = w.session_kind === 'cardio';
             const totalSets = (w.sets || []).length;
             const exercises = [...new Set((w.sets || []).map(s => s.exercise_name))];
+            const summary = isCardio
+              ? cardioSummary(w)
+              : `${exercises.slice(0, 3).join(', ')}${exercises.length > 3 ? `, +${exercises.length - 3}` : ''} · ${totalSets} sets`;
             return (
               <div className="row" key={w.client_id || w.id}>
-                <span><b>{w.code}</b> · {exercises.slice(0, 3).join(', ')}{exercises.length > 3 ? `, +${exercises.length - 3}` : ''} · {totalSets} sets</span>
-                <span className="d">{d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
+                <span><b>{w.code}</b> · {summary}</span>
+                <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <ReadinessBadge
+                    readiness={w.readiness}
+                    onClick={() => {
+                      if (w.readiness?.niggles) alert(w.readiness.niggles);
+                    }}
+                  />
+                  <span className="d">{d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
+                </span>
               </div>
             );
           })}

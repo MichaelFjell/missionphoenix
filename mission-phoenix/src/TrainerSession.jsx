@@ -8,6 +8,7 @@ import {
 import { evaluateSlots } from './trainer/rules.js';
 import { isPR } from './trainer/oneRm.js';
 import { hasKey, stream, suggestSwapPrompt } from './trainer/anthropic.js';
+import ReadinessCard from './trainer/Readiness.jsx';
 import './trainer.css';
 
 // ───────── helpers ─────────
@@ -227,6 +228,13 @@ function CardioSession({ session }) {
           <button className="btn primary sm" onClick={finish}>Finish</button>
         </div>
       </div>
+
+      {!draft.readiness && (
+        <ReadinessCard
+          onSave={(r) => persistDraft({ ...draft, readiness: r })}
+          onSkip={(r) => persistDraft({ ...draft, readiness: r })}
+        />
+      )}
 
       <div className="tr-slot">
         <div className="head">
@@ -511,6 +519,13 @@ function SessionView() {
           <button className="btn primary sm" onClick={finish}>Finish</button>
         </div>
       </div>
+
+      {draft && !draft.readiness && (
+        <ReadinessCard
+          onSave={(r) => persistDraft({ ...draft, readiness: r })}
+          onSkip={(r) => persistDraft({ ...draft, readiness: r })}
+        />
+      )}
 
       {evaluatedSlots.map(slot => {
         const eff = effectiveSlot(slot);

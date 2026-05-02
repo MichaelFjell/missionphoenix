@@ -193,6 +193,7 @@ export async function upsertWorkout(userId, workout) {
       notes: workout.notes || '',
       client_id: workout.client_id,
       session_kind: workout.session_kind || 'strength',
+      readiness: workout.readiness ?? null,
     }, { onConflict: 'user_id,client_id' });
     if (error) throw error;
     dequeueSynced(workout.client_id);
@@ -218,6 +219,7 @@ export async function flushUnsynced(userId) {
         sets: w.sets || [], swaps: w.swaps || [], notes: w.notes || '',
         client_id: w.client_id,
         session_kind: w.session_kind || 'strength',
+        readiness: w.readiness ?? null,
       }, { onConflict: 'user_id,client_id' });
       if (!error) dequeueSynced(cid);
     } catch {}
@@ -234,6 +236,7 @@ export function newWorkoutDraft(code, session_kind = 'strength') {
     sets: [],
     swaps: [],
     notes: '',
+    readiness: null,
   };
 }
 

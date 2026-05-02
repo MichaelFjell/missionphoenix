@@ -252,6 +252,58 @@
 .tr-ex-list .item .d { font-size: 11px; color: var(--ink-3); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
 .tr-ex-list .item .sets { font-size: 13px; color: var(--ink); }
 
+/* Readiness card */
+.tr-readiness {
+  background: var(--card); border: 1px solid var(--copper);
+  border-radius: 14px; padding: 18px 20px; margin-bottom: 18px;
+}
+.tr-readiness .rd-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.tr-readiness .rd-eyebrow {
+  font-size: 11px; font-weight: 800; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--copper);
+}
+.tr-readiness .rd-skip {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--ink-3);
+  background: transparent; border: 1px solid var(--line-2);
+  padding: 5px 12px; border-radius: 999px; cursor: pointer; font-family: inherit;
+}
+.tr-readiness .rd-skip:hover { color: var(--copper); border-color: var(--copper); }
+.tr-readiness .rd-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 8px;
+}
+.tr-readiness .rd-label {
+  font-size: 13px; font-weight: 600; color: var(--ink-2);
+  min-width: 60px;
+}
+.tr-readiness .rd-seg { display: flex; gap: 4px; }
+.tr-readiness .rd-pip {
+  width: 38px; height: 38px; min-height: 38px;
+  border-radius: 10px; border: 1px solid var(--line-2);
+  background: var(--bg-2); color: var(--ink-2);
+  font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+}
+.tr-readiness .rd-pip.on { background: var(--copper); color: var(--on-accent); border-color: var(--copper); }
+.tr-readiness .rd-save { margin-top: 12px; }
+
+/* Readiness badge on dashboard */
+.rd-badge {
+  display: inline-flex; gap: 4px; align-items: center;
+  background: transparent; border: 1px solid var(--line-2);
+  padding: 4px 8px; border-radius: 999px; cursor: pointer;
+  font-family: inherit;
+}
+.rd-badge:hover { border-color: var(--copper); }
+.rd-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; }
+.rd-flag {
+  font-size: 11px; font-weight: 800; color: var(--copper);
+  letter-spacing: 0; line-height: 1; padding-left: 2px;
+}
+
 /* Cardio row + cards */
 .tr-row-label {
   font-size: 12px; font-weight: 700; letter-spacing: 2.5px;
@@ -294,6 +346,7 @@
   .tr-block { grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; }
   .tr-block .rm { grid-column: 1 / -1; justify-self: end; padding: 0; }
   .tr-cardio-steady { grid-template-columns: 1fr 1fr; }
+  .tr-readiness .rd-pip { width: 34px; height: 34px; }
   .tr-grid { grid-template-columns: 1fr; }
   .tr-edit-slot .targets { grid-template-columns: 1fr 1fr; }
   .tr-set-row { grid-template-columns: 24px 1fr 1fr auto; }
