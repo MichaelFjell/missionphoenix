@@ -27,7 +27,14 @@ function toGeminiContents(messages) {
 function buildBody({ system, messages, max_tokens }) {
   const body = {
     contents: toGeminiContents(messages),
-    generationConfig: { maxOutputTokens: max_tokens },
+    generationConfig: {
+      maxOutputTokens: max_tokens,
+      // Flash models support "thinking" by default — internal reasoning that
+      // quietly consumes maxOutputTokens before any visible text is produced.
+      // For our use case (plain-text training advice) we want all the budget
+      // spent on output, so disable thinking explicitly.
+      thinkingConfig: { thinkingBudget: 0 },
+    },
   };
   if (system) {
     body.systemInstruction = { parts: [{ text: system }] };
@@ -54,8 +61,14 @@ async function completeWithModel(model, { system, messages, max_tokens }) {
     throw new Error(`Gemini API ${res.status}: ${t.slice(0, 300)}`);
   }
   const data = await res.json();
-  const parts = data.candidates?.[0]?.content?.parts || [];
-  return parts.map(p => p.text || '').join('');
+  const cand = data.candidates?.[0];
+  const parts = cand?.content?.parts || [];
+  const text = parts.map(p => p.text || '').join('');
+  if (!text) {
+    const reason = cand?.finishReason || 'unknown';
+    throw new Error(`Gemini ${model} returned no text (finishReason: ${reason}). The prompt may have been blocked or the token budget exhausted.`);
+  }
+  return text;
 }
 
 async function streamWithModel(model, { system, messages, max_tokens, onChunk, signal }) {
@@ -73,9 +86,10 @@ async function streamWithModel(model, { system, messages, max_tokens, onChunk, s
     throw new Error(`Gemini API ${res.status}: ${t.slice(0, 300)}`);
   }
   const reader = res.body.getReader();
-  const decoder = new TextDecoder();
+  const decoder = new TextDecoder('utf-8');
   let buf = '';
   let full = '';
+  let finishReason = null;
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
@@ -90,7 +104,9 @@ async function streamWithModel(model, { system, messages, max_tokens, onChunk, s
       if (!payload) continue;
       try {
         const obj = JSON.parse(payload);
-        const parts = obj.candidates?.[0]?.content?.parts || [];
+        const cand = obj.candidates?.[0];
+        if (cand?.finishReason) finishReason = cand.finishReason;
+        const parts = cand?.content?.parts || [];
         for (const p of parts) {
           if (p.text) {
             full += p.text;
@@ -99,6 +115,10 @@ async function streamWithModel(model, { system, messages, max_tokens, onChunk, s
         }
       } catch {}
     }
+  }
+  if (!full) {
+    const reason = finishReason || 'unknown';
+    throw new Error(`Gemini ${model} streamed no text (finishReason: ${reason}). The prompt may have been blocked or the token budget exhausted.`);
   }
   return full;
 }
