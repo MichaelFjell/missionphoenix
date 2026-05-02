@@ -3,7 +3,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from './main.jsx';
 import { isSupabaseConfigured } from './supabase.js';
 import { loadProgram, loadWorkouts, flushUnsynced } from './trainer/store.js';
-import { hasKey } from './trainer/anthropic.js';
+import { hasKey } from './trainer/ai.js';
 import { ReadinessBadge } from './trainer/Readiness.jsx';
 import {
   thisWeekVsLast, fmtTonnage, fmtDurationLong, tonnageDirection,
