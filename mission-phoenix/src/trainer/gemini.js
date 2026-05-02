@@ -1,9 +1,9 @@
 // BYOK Google Gemini client. Streams via SSE using raw fetch — no SDK dependency.
 // Key lives in localStorage and is sent only to generativelanguage.googleapis.com.
 //
-// Models:
-//   primary  = gemini-3-flash-preview  (free tier as of 2026-05; preferred)
-//   fallback = gemini-2.5-flash-lite   (free tier; auto-used on 429 quota errors)
+// Models (per Google's Mar-2026 naming refresh):
+//   primary  = gemini-3-flash-preview        (free tier; preferred)
+//   fallback = gemini-3.1-flash-lite-preview (most generous free-tier as of 2026-05)
 //
 // On a 429 from the primary, the same call is retried with the fallback model
 // before any text has been streamed to the caller — onChunk never sees a duplicate.
@@ -11,7 +11,7 @@
 import { getGeminiKey } from './store.js';
 
 export const PRIMARY_MODEL = 'gemini-3-flash-preview';
-export const FALLBACK_MODEL = 'gemini-2.5-flash-lite';
+export const FALLBACK_MODEL = 'gemini-3.1-flash-lite-preview';
 export const MODEL = PRIMARY_MODEL;
 
 const BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
