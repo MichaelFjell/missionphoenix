@@ -4,9 +4,10 @@
 // (best-effort — failures are queued and retried on online/focus events).
 
 import { supabase, isSupabaseConfigured } from '../supabase.js';
-import { SEED_PROGRAM, newSlotId } from './seed.js';
+import { SEED_PROGRAM, SEED_CARDIO, newSlotId } from './seed.js';
 
 const KEY_PROGRAM = 'mp.trainer.program';
+const KEY_CARDIO = 'mp.trainer.cardio';
 const KEY_WORKOUTS = 'mp.trainer.workouts';
 const KEY_UNSYNCED = 'mp.trainer.unsynced';
 const KEY_API = 'mp.trainer.anthropicKey';
@@ -32,19 +33,30 @@ export function uuid() {
 export const getApiKey = () => localStorage.getItem(KEY_API) || '';
 export const setApiKey = (k) => { if (k) localStorage.setItem(KEY_API, k); else localStorage.removeItem(KEY_API); };
 
-// ───────── Program ─────────
+// ───────── Program (strength A/B/C) ─────────
 export function loadProgramLocal() {
   const cached = readJSON(KEY_PROGRAM, null);
-  if (cached && Array.isArray(cached) && cached.length === 3) return cached;
-  // First-run seed
-  const seeded = SEED_PROGRAM.map(s => ({ ...s }));
+  if (cached && Array.isArray(cached) && cached.length === 3) {
+    // Backfill session_kind on rows seeded before Phase 2.
+    return cached.map(s => ({ session_kind: 'strength', ...s }));
+  }
+  const seeded = SEED_PROGRAM.map(s => ({ ...s, session_kind: 'strength' }));
   writeJSON(KEY_PROGRAM, seeded);
   return seeded;
 }
 
+export function loadCardioLocal() {
+  const cached = readJSON(KEY_CARDIO, null);
+  if (cached && Array.isArray(cached) && cached.length === SEED_CARDIO.length) return cached;
+  const seeded = SEED_CARDIO.map(s => ({ ...s }));
+  writeJSON(KEY_CARDIO, seeded);
+  return seeded;
+}
+
 export async function loadProgram(userId) {
-  let local = loadProgramLocal();
-  if (!isSupabaseConfigured() || !userId) return local;
+  let localStrength = loadProgramLocal();
+  let localCardio = loadCardioLocal();
+  if (!isSupabaseConfigured() || !userId) return [...localStrength, ...localCardio];
   try {
     const { data, error } = await supabase
       .from('trainer_program')
@@ -52,49 +64,69 @@ export async function loadProgram(userId) {
       .eq('user_id', userId)
       .order('code');
     if (error) throw error;
-    if (!data || data.length === 0) {
-      // Push the seed up to the server so it persists across devices.
-      for (const s of local) {
+
+    const remoteByCode = new Map((data || []).map(r => [r.code, r]));
+    const allLocal = [...localStrength, ...localCardio];
+    const missingOnServer = allLocal.filter(s => !remoteByCode.has(s.code));
+    if (missingOnServer.length > 0) {
+      for (const s of missingOnServer) {
         await supabase.from('trainer_program').upsert({
-          user_id: userId, code: s.code, name: s.name, slots: s.slots,
+          user_id: userId,
+          code: s.code,
+          name: s.name,
+          slots: s.slots,
+          session_kind: s.session_kind || 'strength',
           updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id,code' });
       }
-      return local;
     }
-    // Merge: prefer server (it's authoritative if more recent).
-    const merged = ['A','B','C'].map(code => {
-      const remote = data.find(r => r.code === code);
-      const localRow = local.find(r => r.code === code);
-      if (remote) return { code, name: remote.name, slots: remote.slots || [] };
+
+    const merged = allLocal.map(localRow => {
+      const remote = remoteByCode.get(localRow.code);
+      if (remote) return {
+        code: remote.code, name: remote.name,
+        slots: remote.slots || [],
+        session_kind: remote.session_kind || localRow.session_kind || 'strength',
+      };
       return localRow;
     });
-    writeJSON(KEY_PROGRAM, merged);
-    return merged;
+    const strength = merged.filter(s => (s.session_kind || 'strength') === 'strength');
+    const cardio = merged.filter(s => s.session_kind === 'cardio');
+    writeJSON(KEY_PROGRAM, strength);
+    writeJSON(KEY_CARDIO, cardio);
+    return [...strength, ...cardio];
   } catch (e) {
     console.warn('trainer: program server load failed, using local', e);
-    return local;
+    return [...localStrength, ...localCardio];
   }
 }
 
 export async function saveSession(userId, session) {
-  // session = { code, name, slots }
-  const all = loadProgramLocal();
-  const next = all.map(s => s.code === session.code ? { ...session } : s);
-  writeJSON(KEY_PROGRAM, next);
-  if (!isSupabaseConfigured() || !userId) return next;
+  // session = { code, name, slots, session_kind? }
+  const kind = session.session_kind || 'strength';
+  if (kind === 'cardio') {
+    const all = loadCardioLocal();
+    const next = all.map(s => s.code === session.code ? { ...session, session_kind: 'cardio' } : s);
+    writeJSON(KEY_CARDIO, next);
+  } else {
+    const all = loadProgramLocal();
+    const next = all.map(s => s.code === session.code ? { ...session, session_kind: 'strength' } : s);
+    writeJSON(KEY_PROGRAM, next);
+  }
+  if (!isSupabaseConfigured() || !userId) return session;
   try {
     await supabase.from('trainer_program').upsert({
       user_id: userId,
       code: session.code,
       name: session.name,
       slots: session.slots,
+      session_kind: kind,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id,code' });
   } catch (e) {
     console.warn('trainer: program upsert failed (will retry on next change)', e);
   }
-  return next;
+  return session;
 }
 
 // ───────── Workouts ─────────
@@ -160,6 +192,7 @@ export async function upsertWorkout(userId, workout) {
       swaps: workout.swaps || [],
       notes: workout.notes || '',
       client_id: workout.client_id,
+      session_kind: workout.session_kind || 'strength',
     }, { onConflict: 'user_id,client_id' });
     if (error) throw error;
     dequeueSynced(workout.client_id);
@@ -184,6 +217,7 @@ export async function flushUnsynced(userId) {
         code: w.code, performed_at: w.performed_at,
         sets: w.sets || [], swaps: w.swaps || [], notes: w.notes || '',
         client_id: w.client_id,
+        session_kind: w.session_kind || 'strength',
       }, { onConflict: 'user_id,client_id' });
       if (!error) dequeueSynced(cid);
     } catch {}
@@ -191,10 +225,11 @@ export async function flushUnsynced(userId) {
 }
 
 // ───────── Helpers ─────────
-export function newWorkoutDraft(code) {
+export function newWorkoutDraft(code, session_kind = 'strength') {
   return {
     client_id: uuid(),
     code,
+    session_kind,
     performed_at: new Date().toISOString(),
     sets: [],
     swaps: [],

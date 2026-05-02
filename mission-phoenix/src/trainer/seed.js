@@ -16,6 +16,41 @@ const sid = () => `slot_${Date.now().toString(36)}_${(++_id).toString(36)}`;
 
 const ex = (name, slug, tags) => ({ name, slug, tags });
 
+export const SEED_CARDIO = [
+  {
+    code: 'N4x4',
+    name: 'Norwegian 4×4',
+    session_kind: 'cardio',
+    slots: [{
+      kind: 'intervals',
+      blocks: [
+        { id: 'b1', label: 'Warmup',  target_duration_s: 600, target_hr: 130 },
+        { id: 'b2', label: 'Work 1',  target_duration_s: 240, target_hr: 178 },
+        { id: 'b3', label: 'Rest 1',  target_duration_s: 180, target_hr: 145 },
+        { id: 'b4', label: 'Work 2',  target_duration_s: 240, target_hr: 178 },
+        { id: 'b5', label: 'Rest 2',  target_duration_s: 180, target_hr: 145 },
+        { id: 'b6', label: 'Work 3',  target_duration_s: 240, target_hr: 178 },
+        { id: 'b7', label: 'Rest 3',  target_duration_s: 180, target_hr: 145 },
+        { id: 'b8', label: 'Work 4',  target_duration_s: 240, target_hr: 178 },
+        { id: 'b9', label: 'Cooldown', target_duration_s: 300, target_hr: 120 },
+      ],
+      notes: 'Work HR 90–95% max, rest HR ~70%.',
+    }],
+  },
+  {
+    code: 'Z2',
+    name: 'Zone 2 base',
+    session_kind: 'cardio',
+    slots: [{
+      kind: 'steady',
+      target_duration_s: 2700,
+      target_hr: 128,
+      ceiling_hr: 130,
+      notes: 'Karvonen ceiling, nasal-breathing test.',
+    }],
+  },
+];
+
 export const SEED_PROGRAM = [
   {
     code: 'A',

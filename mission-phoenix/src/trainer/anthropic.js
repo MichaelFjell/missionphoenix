@@ -117,13 +117,32 @@ Reply with 1–3 lines, each: "Exercise name — short rationale".`,
   };
 }
 
+function describeWorkoutLine(w) {
+  const dateCode = `${w.performed_at.slice(0,10)} (${w.code})`;
+  if (w.session_kind === 'cardio') {
+    const block = (w.sets || [])[0];
+    if (!block) return `${dateCode} cardio: (empty)`;
+    if (block.kind === 'intervals') {
+      const blocks = block.blocks || [];
+      const totalS = blocks.reduce((sum, b) => sum + (b.duration_s || 0), 0);
+      const hrs = blocks.map(b => b.avg_hr).filter(Number.isFinite);
+      const avgHr = hrs.length ? Math.round(hrs.reduce((a, b) => a + b, 0) / hrs.length) : null;
+      return `${dateCode} cardio intervals: ${blocks.length} blocks, ${Math.round(totalS / 60)}min total${avgHr ? `, avg HR ${avgHr}` : ''}`;
+    }
+    if (block.kind === 'steady') {
+      const mins = Math.round((block.duration_s || 0) / 60);
+      return `${dateCode} cardio steady: ${mins}min${block.avg_hr ? `, avg HR ${block.avg_hr}` : ''}${block.distance_km ? `, ${block.distance_km}km` : ''}`;
+    }
+    return `${dateCode} cardio`;
+  }
+  const exercises = [...new Set((w.sets || []).map(s => s.exercise_name))].join(', ');
+  return `${dateCode} strength: ${exercises}`;
+}
+
 export function reviewWeekPrompt({ workouts }) {
-  const byDay = workouts.slice(0, 14).map(w => {
-    const exercises = [...new Set((w.sets || []).map(s => s.exercise_name))].join(', ');
-    return `${w.performed_at.slice(0,10)} (${w.code}): ${exercises}`;
-  }).join('\n');
+  const byDay = workouts.slice(0, 14).map(describeWorkoutLine).join('\n');
   return {
-    system: 'You are a strength-training coach. Review the athlete\'s last 7 days. Be specific and brief.',
+    system: 'You are a strength-and-conditioning coach. Review the athlete\'s last 7 days across both strength and cardio. Be specific and brief.',
     messages: [{
       role: 'user',
       content: `Here are the recent workouts:
@@ -131,7 +150,7 @@ export function reviewWeekPrompt({ workouts }) {
 ${byDay || '(no workouts)'}
 
 Give me a concise weekly review (max ~150 words):
-- What went well
+- What went well (strength volume, cardio mix)
 - Plateaus, imbalances, recovery flags you can see
 - One concrete suggestion for next week`,
     }],
@@ -141,11 +160,19 @@ Give me a concise weekly review (max ~150 words):
 
 export function planMesocyclePrompt({ workouts, program }) {
   const recent = workouts.slice(0, 12).map(w => {
+    if (w.session_kind === 'cardio') return describeWorkoutLine(w);
     return `${w.performed_at.slice(0,10)} (${w.code}): ` + (w.sets || []).map(s =>
       `${s.exercise_name} ${s.set_number}×${s.reps}@${s.load_kg ?? '–'}kg`
     ).join('; ');
   }).join('\n');
   const prog = program.map(p => {
+    if (p.session_kind === 'cardio') {
+      const slot = p.slots?.[0] || {};
+      const desc = slot.kind === 'intervals'
+        ? `${(slot.blocks || []).length} blocks`
+        : `steady ${Math.round((slot.target_duration_s || 0) / 60)}min`;
+      return `[${p.code}] ${p.name} (cardio, ${desc})`;
+    }
     return `[${p.code}] ${p.name}\n` + p.slots.map(s =>
       `  - ${s.exercise.name}: ${s.target.sets}×${s.target.reps}@${s.target.load_kg ?? '–'}kg`
     ).join('\n');

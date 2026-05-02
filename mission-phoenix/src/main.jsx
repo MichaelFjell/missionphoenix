@@ -9,6 +9,7 @@ import Tracker from './Tracker.jsx';
 import Trainer from './Trainer.jsx';
 import TrainerSession from './TrainerSession.jsx';
 import TrainerExercise from './TrainerExercise.jsx';
+import TrainerCardio from './TrainerCardio.jsx';
 import TrainerSettings from './TrainerSettings.jsx';
 import Community from './Community.jsx';
 import Journal from './Journal.jsx';
@@ -115,6 +116,7 @@ function App() {
           <Route path="/trainer" element={<Trainer />} />
           <Route path="/trainer/session/:code" element={<TrainerSession />} />
           <Route path="/trainer/exercise/:slug" element={<TrainerExercise />} />
+          <Route path="/trainer/cardio" element={<TrainerCardio />} />
           <Route path="/trainer/settings" element={<TrainerSettings />} />
           <Route path="/community" element={<Community />} />
           <Route path="/journal" element={<Journal />} />

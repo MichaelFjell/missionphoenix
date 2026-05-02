@@ -173,7 +173,7 @@ function Dashboard() {
       </div>
 
       <div className="tr-grid">
-        {program.map(s => {
+        {program.filter(s => (s.session_kind || 'strength') === 'strength').map(s => {
           const needsReview = (s.slots || []).some(sl => sl.needs_review);
           const last = lastByCode[s.code];
           return (
@@ -191,6 +191,35 @@ function Dashboard() {
           );
         })}
       </div>
+
+      {program.some(s => s.session_kind === 'cardio') && (
+        <>
+          <h2 className="tr-row-label">Cardio</h2>
+          <div className="tr-grid tr-grid-cardio">
+            {program.filter(s => s.session_kind === 'cardio').map(s => {
+              const last = lastByCode[s.code];
+              const slot = s.slots?.[0];
+              const meta = slot?.kind === 'intervals'
+                ? `${(slot.blocks || []).length} blocks`
+                : slot?.kind === 'steady'
+                  ? `${Math.round((slot.target_duration_s || 0) / 60)} min steady`
+                  : 'Cardio';
+              return (
+                <div className="tr-card tr-card-cardio" key={s.code}>
+                  <span className="code">{s.code}</span>
+                  <h3>{s.name}</h3>
+                  <div className="meta">
+                    {meta} · last {last ? new Date(last).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : 'never'}
+                  </div>
+                  <Link to={`/trainer/session/${s.code}`} className="start" style={{ textDecoration: 'none' }}>
+                    Start session
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
 
       {workouts.length > 0 && (
         <div className="tr-recent">
@@ -211,6 +240,7 @@ function Dashboard() {
 
       <div className="tr-foot">
         <Link to="/trainer/settings">Settings &amp; program editor</Link>
+        <Link to="/trainer/cardio">Cardio history</Link>
         {!aiOn && <Link to="/trainer/settings">Enable AI features</Link>}
       </div>
     </main>
