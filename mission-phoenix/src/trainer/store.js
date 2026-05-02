@@ -10,10 +10,18 @@ const KEY_PROGRAM = 'mp.trainer.program';
 const KEY_CARDIO = 'mp.trainer.cardio';
 const KEY_WORKOUTS = 'mp.trainer.workouts';
 const KEY_UNSYNCED = 'mp.trainer.unsynced';
-const KEY_API = 'mp.trainer.anthropicKey';
-const KEY_OPENAI = 'mp.trainer.openaiKey';
-const KEY_GEMINI = 'mp.trainer.geminiKey';
-const KEY_PROVIDER = 'mp.trainer.aiProvider';
+
+// Legacy AI/BYOK keys — removed feature. Best-effort cleanup so we don't
+// leave dormant keys sitting in localStorage forever.
+const LEGACY_AI_KEYS = [
+  'mp.trainer.anthropicKey',
+  'mp.trainer.openaiKey',
+  'mp.trainer.geminiKey',
+  'mp.trainer.aiProvider',
+];
+try {
+  for (const k of LEGACY_AI_KEYS) localStorage.removeItem(k);
+} catch {}
 
 function readJSON(k, fallback) {
   try {
@@ -31,21 +39,6 @@ export function uuid() {
   if (crypto?.randomUUID) return crypto.randomUUID();
   return 'cid-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
 }
-
-// ───────── API keys (local only, never round-trip to a backend) ─────────
-// Anthropic
-export const getApiKey = () => localStorage.getItem(KEY_API) || '';
-export const setApiKey = (k) => { if (k) localStorage.setItem(KEY_API, k); else localStorage.removeItem(KEY_API); };
-// OpenAI
-export const getOpenAIKey = () => localStorage.getItem(KEY_OPENAI) || '';
-export const setOpenAIKey = (k) => { if (k) localStorage.setItem(KEY_OPENAI, k); else localStorage.removeItem(KEY_OPENAI); };
-// Gemini
-export const getGeminiKey = () => localStorage.getItem(KEY_GEMINI) || '';
-export const setGeminiKey = (k) => { if (k) localStorage.setItem(KEY_GEMINI, k); else localStorage.removeItem(KEY_GEMINI); };
-
-// Active provider preference: 'anthropic' | 'openai' | 'gemini' | null
-export const getAiProvider = () => localStorage.getItem(KEY_PROVIDER) || '';
-export const setAiProvider = (p) => { if (p) localStorage.setItem(KEY_PROVIDER, p); else localStorage.removeItem(KEY_PROVIDER); };
 
 // ───────── Program (strength A/B/C) ─────────
 export function loadProgramLocal() {

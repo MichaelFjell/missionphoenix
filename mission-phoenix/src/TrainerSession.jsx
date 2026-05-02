@@ -8,7 +8,6 @@ import {
 import { evaluateSlots } from './trainer/rules.js';
 import { isPR, bestSetInWorkoutFor, previousBestSet } from './trainer/oneRm.js';
 import JournalLog, { buildPRPrefill } from './trainer/JournalLog.jsx';
-import { hasKey, stream, suggestSwapPrompt } from './trainer/ai.js';
 import ReadinessCard from './trainer/Readiness.jsx';
 import PlateCalc from './trainer/PlateCalc.jsx';
 import RestTimer, { notifySetSaved } from './trainer/RestTimer.jsx';
@@ -59,27 +58,10 @@ function SetRow({ idx, set, onChange, onRemove }) {
   );
 }
 
-function SwapModal({ slot, recentLogs, onClose, onApply }) {
+function SwapModal({ slot, onClose, onApply }) {
   const [picked, setPicked] = useState(slot.alternatives?.[0] || null);
   const [scope, setScope] = useState('today');
   const [reason, setReason] = useState('');
-  const [aiText, setAiText] = useState('');
-  const [aiBusy, setAiBusy] = useState(false);
-
-  const askAi = async () => {
-    setAiBusy(true);
-    setAiText('');
-    try {
-      const opts = suggestSwapPrompt({ slot, recentLogs, reason });
-      await stream({
-        ...opts,
-        onChunk: (t) => setAiText(prev => prev + t),
-      });
-    } catch (e) {
-      setAiText(`Error: ${e.message}`);
-    }
-    setAiBusy(false);
-  };
 
   return (
     <div className="tr-modal-bg" onClick={onClose}>
@@ -116,15 +98,6 @@ function SwapModal({ slot, recentLogs, onClose, onApply }) {
           <button className={scope === 'today' ? 'on' : ''} onClick={() => setScope('today')}>Today only</button>
           <button className={scope === 'permanent' ? 'on' : ''} onClick={() => setScope('permanent')}>Permanent</button>
         </div>
-
-        {hasKey() && (
-          <>
-            <button className="btn ghost sm" onClick={askAi} disabled={aiBusy} style={{ marginTop: 4 }}>
-              {aiBusy ? 'Asking Claude…' : 'Ask Claude for a suggestion'}
-            </button>
-            {aiText && <div className="tr-ai-out" style={{ marginTop: 10 }}>{aiText}</div>}
-          </>
-        )}
 
         <div className="close-row">
           <button className="btn ghost sm" onClick={onClose}>Cancel</button>
@@ -490,17 +463,6 @@ function SessionView() {
     navigate('/trainer');
   };
 
-  const recentLogsForSlot = (slot) => {
-    const slug = effectiveSlot(slot).exercise.slug;
-    return workouts
-      .filter(w => (w.sets || []).some(s => s.exercise_slug === slug))
-      .slice(0, 5)
-      .map(w => ({
-        date: w.performed_at.slice(0, 10),
-        sets: (w.sets || []).filter(s => s.exercise_slug === slug),
-      }));
-  };
-
   if (loading || !session) {
     return (
       <main className="page narrow">
@@ -631,7 +593,6 @@ function SessionView() {
       {swapModalSlot && (
         <SwapModal
           slot={swapModalSlot}
-          recentLogs={recentLogsForSlot(swapModalSlot)}
           onClose={() => setSwapModalSlot(null)}
           onApply={applySwap}
         />
