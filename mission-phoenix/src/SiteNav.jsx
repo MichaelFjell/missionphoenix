@@ -23,6 +23,9 @@ export default function SiteNav() {
           <Link to="/archive" className={isActive('/archive') ? 'active' : ''}>Archive</Link>
           <Link to="/quiz" className={isActive('/quiz') ? 'active' : ''}>Assessment</Link>
           <Link to="/tracker" className={isActive('/tracker') ? 'active' : ''}>Tracker</Link>
+          {profile?.is_admin && (
+            <Link to="/trainer" className={isActive('/trainer') ? 'active' : ''}>Trainer</Link>
+          )}
           <Link to="/community" className={isActive('/community') ? 'active' : ''}>Community</Link>
           <Link to="/about" className={isActive('/about') ? 'active' : ''}>About</Link>
           <Link to="/contact" className={isActive('/contact') ? 'active' : ''}>Contact</Link>
