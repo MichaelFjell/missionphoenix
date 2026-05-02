@@ -56,3 +56,37 @@ export function isPR(workouts, currentClientId, slug, load_kg, reps) {
   }
   return e > prev;
 }
+
+// Returns the best previous set for this exercise (excluding current workout).
+// { load_kg, reps, est_1rm } or null if no previous data.
+export function previousBestSet(workouts, currentClientId, slug) {
+  let best = null;
+  let bestE = 0;
+  for (const w of workouts) {
+    if ((w.client_id || w.id) === currentClientId) continue;
+    for (const s of w.sets || []) {
+      if (s.exercise_slug !== slug || !s.load_kg) continue;
+      const ee = epley(s.load_kg, s.reps);
+      if (ee > bestE) {
+        bestE = ee;
+        best = { load_kg: s.load_kg, reps: s.reps, est_1rm: ee };
+      }
+    }
+  }
+  return best;
+}
+
+// Best PR-eligible set within a single workout for one slot/exercise.
+export function bestSetInWorkoutFor(workout, slug) {
+  let best = null;
+  let bestE = 0;
+  for (const s of (workout.sets || [])) {
+    if (s.exercise_slug !== slug || !s.load_kg || !s.reps) continue;
+    const ee = epley(s.load_kg, s.reps);
+    if (ee > bestE) {
+      bestE = ee;
+      best = { ...s, est_1rm: ee };
+    }
+  }
+  return best;
+}

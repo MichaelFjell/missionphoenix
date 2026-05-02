@@ -6,7 +6,8 @@ import {
   loadProgram, loadWorkouts, upsertWorkout, saveSession, newWorkoutDraft,
 } from './trainer/store.js';
 import { evaluateSlots } from './trainer/rules.js';
-import { isPR } from './trainer/oneRm.js';
+import { isPR, bestSetInWorkoutFor, previousBestSet } from './trainer/oneRm.js';
+import JournalLog, { buildPRPrefill } from './trainer/JournalLog.jsx';
 import { hasKey, stream, suggestSwapPrompt } from './trainer/anthropic.js';
 import ReadinessCard from './trainer/Readiness.jsx';
 import PlateCalc from './trainer/PlateCalc.jsx';
@@ -334,6 +335,7 @@ function SessionView() {
   const [todaySwaps, setTodaySwaps] = useState({}); // slot_id -> alt
   const [swapModalSlot, setSwapModalSlot] = useState(null);
   const [openPlatesSlot, setOpenPlatesSlot] = useState(null);
+  const [journalLog, setJournalLog] = useState(null); // { exerciseName, load_kg, reps, est_1rm, prev }
   const [syncStatus, setSyncStatus] = useState('');
 
   useEffect(() => {
@@ -563,6 +565,28 @@ function SessionView() {
               </div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 {slotPR && <span className="pr-pill">PR</span>}
+                {slotPR && (
+                  <button
+                    type="button"
+                    className="tr-pr-log"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const best = bestSetInWorkoutFor(draft, eff.exercise.slug);
+                      if (!best) return;
+                      const prev = previousBestSet(workouts, draft.client_id, eff.exercise.slug);
+                      setJournalLog({
+                        exerciseName: eff.exercise.name,
+                        load_kg: best.load_kg,
+                        reps: best.reps,
+                        est_1rm: best.est_1rm,
+                        prev,
+                      });
+                    }}
+                    aria-label="Log PR to journal"
+                  >
+                    Log
+                  </button>
+                )}
                 <span style={{ color: 'var(--ink-3)', fontSize: 18 }}>{isOpen ? '−' : '+'}</span>
               </div>
             </div>
@@ -610,6 +634,15 @@ function SessionView() {
           recentLogs={recentLogsForSlot(swapModalSlot)}
           onClose={() => setSwapModalSlot(null)}
           onApply={applySwap}
+        />
+      )}
+
+      {journalLog && (
+        <JournalLog
+          user={user}
+          prefill={buildPRPrefill(journalLog)}
+          onClose={() => setJournalLog(null)}
+          onSaved={() => {/* leave timer/sets intact */}}
         />
       )}
 
