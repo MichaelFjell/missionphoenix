@@ -1,13 +1,22 @@
 // BYOK Google Gemini client. Streams via SSE using raw fetch — no SDK dependency.
 // Key lives in localStorage and is sent only to generativelanguage.googleapis.com.
+//
+// Models:
+//   primary  = gemini-3-flash-preview  (free tier as of 2026-05; preferred)
+//   fallback = gemini-2.5-flash-lite   (free tier; auto-used on 429 quota errors)
+//
+// On a 429 from the primary, the same call is retried with the fallback model
+// before any text has been streamed to the caller — onChunk never sees a duplicate.
 
 import { getGeminiKey } from './store.js';
 
-export const MODEL = 'gemini-2.5-pro';
+export const PRIMARY_MODEL = 'gemini-3-flash-preview';
+export const FALLBACK_MODEL = 'gemini-2.5-flash-lite';
+export const MODEL = PRIMARY_MODEL;
+
 const BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 // Convert our internal Anthropic-shaped messages to Gemini's contents shape.
-// Gemini uses 'user' and 'model' roles.
 function toGeminiContents(messages) {
   return (messages || []).map(m => ({
     role: m.role === 'assistant' ? 'model' : 'user',
@@ -26,10 +35,15 @@ function buildBody({ system, messages, max_tokens }) {
   return body;
 }
 
-export async function complete({ system, messages, max_tokens = 1024 }) {
+function isQuotaError(err) {
+  // Status 429 surfaces in our error.message, e.g. "Gemini API 429: ..."
+  return err && /\b429\b/.test(err.message || '');
+}
+
+async function completeWithModel(model, { system, messages, max_tokens }) {
   const apiKey = getGeminiKey();
   if (!apiKey) throw new Error('No Gemini API key set');
-  const url = `${BASE}/${MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const url = `${BASE}/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
@@ -44,10 +58,10 @@ export async function complete({ system, messages, max_tokens = 1024 }) {
   return parts.map(p => p.text || '').join('');
 }
 
-export async function stream({ system, messages, max_tokens = 1024, onChunk, signal }) {
+async function streamWithModel(model, { system, messages, max_tokens, onChunk, signal }) {
   const apiKey = getGeminiKey();
   if (!apiKey) throw new Error('No Gemini API key set');
-  const url = `${BASE}/${MODEL}:streamGenerateContent?alt=sse&key=${encodeURIComponent(apiKey)}`;
+  const url = `${BASE}/${model}:streamGenerateContent?alt=sse&key=${encodeURIComponent(apiKey)}`;
   const res = await fetch(url, {
     method: 'POST',
     signal,
@@ -87,4 +101,28 @@ export async function stream({ system, messages, max_tokens = 1024, onChunk, sig
     }
   }
   return full;
+}
+
+export async function complete(opts) {
+  try {
+    return await completeWithModel(PRIMARY_MODEL, opts);
+  } catch (e) {
+    if (!isQuotaError(e)) throw e;
+    // 429 quota — primary exhausted. Try the fallback model with the same payload.
+    console.warn(`Gemini ${PRIMARY_MODEL} quota hit, falling back to ${FALLBACK_MODEL}`);
+    return await completeWithModel(FALLBACK_MODEL, opts);
+  }
+}
+
+export async function stream(opts) {
+  // Try primary first. The fetch either succeeds (and we begin streaming)
+  // or throws before any onChunk is called (status check happens before the
+  // body reader runs), so the fallback can safely retry without dupes.
+  try {
+    return await streamWithModel(PRIMARY_MODEL, opts);
+  } catch (e) {
+    if (!isQuotaError(e)) throw e;
+    console.warn(`Gemini ${PRIMARY_MODEL} quota hit, falling back to ${FALLBACK_MODEL}`);
+    return await streamWithModel(FALLBACK_MODEL, opts);
+  }
 }

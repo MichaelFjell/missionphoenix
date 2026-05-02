@@ -250,6 +250,8 @@
 .tr-ai-provider-name { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
 .tr-ai-provider-model { font-size: 10px; color: var(--ink-3); letter-spacing: 1px; text-transform: uppercase; }
 .tr-ai-provider.on .tr-ai-provider-model { color: var(--copper); }
+.tr-ai-provider-fallback { display: block; font-size: 9px; color: var(--ink-3); letter-spacing: 1px; margin-top: 2px; }
+.tr-ai-provider.on .tr-ai-provider-fallback { color: var(--copper); opacity: 0.7; }
 
 @media (max-width: 700px) {
   .tr-ai-providers-row { grid-template-columns: 1fr; }
