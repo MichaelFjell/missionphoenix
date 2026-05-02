@@ -304,6 +304,119 @@
   letter-spacing: 0; line-height: 1; padding-left: 2px;
 }
 
+/* Plate calculator (per-slot) */
+.tr-plates {
+  margin-top: 12px; padding: 12px 14px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.tr-plates-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px; gap: 8px; flex-wrap: wrap;
+}
+.tr-plates-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--copper);
+}
+.tr-plates-btn {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--ink-3);
+  background: transparent; border: 1px solid var(--line-2);
+  padding: 5px 10px; border-radius: 999px; cursor: pointer; font-family: inherit;
+}
+.tr-plates-btn:hover { color: var(--copper); border-color: var(--copper); }
+.tr-plates-stack {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+}
+.tr-plates-side {
+  font-size: 11px; color: var(--ink-3);
+  letter-spacing: 1px; text-transform: uppercase; margin-right: 4px;
+}
+.tr-plate {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 36px; padding: 4px 8px;
+  background: var(--copper); color: var(--on-accent);
+  border-radius: 6px; font-size: 12px; font-weight: 800;
+}
+.tr-plate.p-25 { background: #b8404a; color: #fff; }
+.tr-plate.p-20 { background: #2c5fb8; color: #fff; }
+.tr-plate.p-15 { background: #d4a23b; color: #1a1208; }
+.tr-plate.p-10 { background: #2d8554; color: #fff; }
+.tr-plate.p-5  { background: var(--ink-3); color: var(--card); }
+.tr-plate.p-2_5 { background: var(--ink-3); color: var(--card); min-width: 30px; padding: 3px 6px; font-size: 11px; }
+.tr-plate.p-1_25 { background: var(--ink-3); color: var(--card); min-width: 28px; padding: 3px 5px; font-size: 10px; }
+.tr-plates-empty, .tr-plates-warn {
+  font-size: 12px; color: var(--ink-3); padding: 4px 0;
+}
+.tr-plates-warn { color: var(--copper); }
+.tr-plates-edit { display: flex; flex-direction: column; }
+
+/* Rest timer (sticky bottom bar) */
+.tr-rest {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: var(--card); border-top: 1px solid var(--line-2);
+  z-index: 40; flex-wrap: wrap;
+  box-shadow: 0 -8px 20px rgba(0,0,0,0.18);
+}
+.tr-rest.running {
+  background: var(--copper-soft);
+  border-top-color: var(--copper);
+}
+.tr-rest-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--copper);
+}
+.tr-rest-clock {
+  font-size: 22px; font-weight: 800; color: var(--ink);
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
+.tr-rest-presets { display: flex; gap: 6px; }
+.tr-rest-preset {
+  font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  background: transparent; border: 1px solid var(--line-2);
+  color: var(--ink-2); padding: 8px 12px; border-radius: 8px;
+  cursor: pointer; font-family: inherit;
+}
+.tr-rest-preset:hover { border-color: var(--copper); color: var(--copper); }
+.tr-rest-input {
+  flex: 0 0 70px; padding: 8px 10px; font-size: 13px;
+  background: var(--bg-2); border: 1px solid var(--line-2);
+  border-radius: 8px; color: var(--ink); font-family: inherit;
+}
+.tr-rest-go, .tr-rest-cancel {
+  font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  background: var(--copper); color: var(--on-accent);
+  border: none; padding: 8px 14px; border-radius: 8px;
+  cursor: pointer; font-family: inherit;
+}
+.tr-rest-go:disabled { opacity: 0.4; cursor: not-allowed; }
+.tr-rest-cancel { background: transparent; color: var(--ink-3); border: 1px solid var(--line-2); }
+.tr-rest-cancel:hover { color: var(--copper); border-color: var(--copper); }
+
+.tr-rest-toast {
+  position: fixed; left: 50%; bottom: 64px; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 8px 14px; background: var(--card);
+  border: 1px solid var(--copper); border-radius: 999px;
+  font-size: 13px; color: var(--ink); z-index: 41;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+}
+.tr-rest-toast-go {
+  font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+  background: var(--copper); color: var(--on-accent); border: none;
+  padding: 5px 12px; border-radius: 999px; cursor: pointer; font-family: inherit;
+}
+.tr-rest-toast-x {
+  font-size: 18px; line-height: 1; background: none; border: none; color: var(--ink-3);
+  cursor: pointer; padding: 0 4px;
+}
+
+/* Push the page up so RestTimer doesn't cover content */
+main.tr-page { padding-bottom: 100px; }
+
 /* Cardio row + cards */
 .tr-row-label {
   font-size: 12px; font-weight: 700; letter-spacing: 2.5px;

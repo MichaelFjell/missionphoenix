@@ -9,6 +9,8 @@ import { evaluateSlots } from './trainer/rules.js';
 import { isPR } from './trainer/oneRm.js';
 import { hasKey, stream, suggestSwapPrompt } from './trainer/anthropic.js';
 import ReadinessCard from './trainer/Readiness.jsx';
+import PlateCalc from './trainer/PlateCalc.jsx';
+import RestTimer, { notifySetSaved } from './trainer/RestTimer.jsx';
 import './trainer.css';
 
 // ───────── helpers ─────────
@@ -331,6 +333,7 @@ function SessionView() {
   const [openSlot, setOpenSlot] = useState(null);
   const [todaySwaps, setTodaySwaps] = useState({}); // slot_id -> alt
   const [swapModalSlot, setSwapModalSlot] = useState(null);
+  const [openPlatesSlot, setOpenPlatesSlot] = useState(null);
   const [syncStatus, setSyncStatus] = useState('');
 
   useEffect(() => {
@@ -368,11 +371,12 @@ function SessionView() {
     setTimeout(() => setSyncStatus(''), 1400);
   }, []);
 
-  const persistDraft = useCallback(async (next) => {
+  const persistDraft = useCallback(async (next, opts = {}) => {
     setDraft(next);
     setSyncStatus('saving');
     await upsertWorkout(user?.id, next);
     flashSync(navigator.onLine ? 'synced' : 'queued');
+    if (opts.setSaved) notifySetSaved();
   }, [user?.id, flashSync]);
 
   const effectiveSlot = (slot) => {
@@ -405,7 +409,8 @@ function SessionView() {
     nextSlotEntries[idx] = merged;
     nextSlotEntries = nextSlotEntries.map((s, i) => ({ ...s, set_number: i + 1 }));
     const next = { ...draft, sets: [...others, ...nextSlotEntries] };
-    await persistDraft(next);
+    const isMeaningfulSave = Number.isFinite(merged.reps) && Number.isFinite(merged.load_kg);
+    await persistDraft(next, { setSaved: isMeaningfulSave });
   };
 
   const addSet = async (slot) => {
@@ -533,6 +538,11 @@ function SessionView() {
         const sets = slotSets(slot.id);
         const isOpen = openSlot === slot.id;
         const isSwapped = !!todaySwaps[slot.id];
+        const isFreeWeight = (eff.exercise.tags || []).includes('free-weight');
+        const showPlates = (openPlatesSlot === slot.id) && isFreeWeight;
+        const platesLoad = sets.length > 0
+          ? (sets[sets.length - 1].load_kg ?? slot.target?.load_kg)
+          : slot.target?.load_kg;
 
         // PR check on the best set in this slot
         const slotPR = sets.some(s => s.load_kg && s.reps && isPR(workouts, draft.client_id, eff.exercise.slug, s.load_kg, s.reps));
@@ -576,10 +586,18 @@ function SessionView() {
                 </button>
                 <div className="tr-slot-actions">
                   <button onClick={() => setSwapModalSlot(slot)}>Swap</button>
+                  {isFreeWeight && (
+                    <button onClick={() => setOpenPlatesSlot(showPlates ? null : slot.id)}>
+                      {showPlates ? 'Hide plates' : 'Plates'}
+                    </button>
+                  )}
                   <Link className="btn ghost sm" to={`/trainer/exercise/${eff.exercise.slug}`} style={{ textTransform: 'uppercase', letterSpacing: 1.5 }}>
                     History
                   </Link>
                 </div>
+                {showPlates && (
+                  <PlateCalc load_kg={platesLoad} onClose={() => setOpenPlatesSlot(null)} />
+                )}
               </div>
             )}
           </div>
@@ -594,6 +612,8 @@ function SessionView() {
           onApply={applySwap}
         />
       )}
+
+      <RestTimer />
     </main>
   );
 }
