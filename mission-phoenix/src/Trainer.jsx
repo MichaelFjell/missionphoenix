@@ -5,6 +5,9 @@ import { isSupabaseConfigured } from './supabase.js';
 import { loadProgram, loadWorkouts, flushUnsynced } from './trainer/store.js';
 import { hasKey } from './trainer/anthropic.js';
 import { ReadinessBadge } from './trainer/Readiness.jsx';
+import {
+  thisWeekVsLast, fmtTonnage, fmtDurationLong, tonnageDirection,
+} from './trainer/volume.js';
 import './trainer.css';
 
 function AuthForm() {
@@ -160,6 +163,7 @@ function Dashboard() {
   }, [user?.id]);
 
   const streak = useMemo(() => computeStreak(workouts), [workouts]);
+  const volume = useMemo(() => thisWeekVsLast(workouts), [workouts]);
   const aiOn = hasKey();
 
   const lastByCode = useMemo(() => {
@@ -187,6 +191,31 @@ function Dashboard() {
         <span className="n">{streak}</span>
         <span className="l">{streak === 1 ? 'week streak' : 'week streak'} <span style={{ color: 'var(--ink-3)', letterSpacing: 1 }}>· A · B · C</span></span>
       </div>
+
+      {(() => {
+        const tw = volume.thisWeek;
+        const lw = volume.lastWeek;
+        const dir = tonnageDirection(tw.strengthTonnage, lw.strengthTonnage);
+        const cardioLine = tw.cardioSeconds > 0
+          ? `+ ${fmtDurationLong(tw.cardioSeconds)} cardio${tw.cardioSessions > 1 ? ` · ${tw.cardioSessions} sessions` : ''}`
+          : null;
+        return (
+          <div className={`tr-volume tr-volume-${dir}`}>
+            <div className="tr-volume-eyebrow">This week</div>
+            <div className="tr-volume-main">
+              <span className="tr-volume-n">{tw.strengthSessions}</span>
+              <span className="tr-volume-unit">{tw.strengthSessions === 1 ? 'session' : 'sessions'}</span>
+              <span className="tr-volume-dot">·</span>
+              <span className="tr-volume-n">{fmtTonnage(tw.strengthTonnage)}</span>
+              <span className="tr-volume-unit">tonnage</span>
+            </div>
+            {cardioLine && <div className="tr-volume-cardio">{cardioLine}</div>}
+            <div className="tr-volume-prev">
+              last week: {lw.strengthSessions} {lw.strengthSessions === 1 ? 'session' : 'sessions'} · {fmtTonnage(lw.strengthTonnage)}
+            </div>
+          </div>
+        );
+      })()}
 
       <div className="tr-grid">
         {program.filter(s => (s.session_kind || 'strength') === 'strength').map(s => {
