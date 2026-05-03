@@ -2,18 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from './main.jsx';
 import { isSupabaseConfigured } from './supabase.js';
-import {
-  loadProgram, loadWorkouts, saveSession,
-  getApiKey, setApiKey,
-  getOpenAIKey, setOpenAIKey,
-  getGeminiKey, setGeminiKey,
-  getAiProvider,
-} from './trainer/store.js';
+import { loadProgram, saveSession } from './trainer/store.js';
 import { newSlotId, slugify, SLOT_TAGS, CONDITIONAL_RULES } from './trainer/seed.js';
-import { reviewWeekPrompt, planMesocyclePrompt } from './trainer/anthropic.js';
-import {
-  PROVIDERS, hasAnyKey, activeProvider, setActiveProvider, stream,
-} from './trainer/ai.js';
 import './trainer.css';
 
 const ALL_TAG_OPTIONS = SLOT_TAGS;
@@ -254,182 +244,17 @@ function ProgramEditor({ user, program, setProgram }) {
   );
 }
 
-function ProviderKeyRow({ id, label, placeholder, value, onChange, onSave, savedFlash }) {
-  return (
-    <div style={{ marginBottom: 12 }}>
-      <label className="field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span>{label}</span>
-        {value && <span style={{ fontSize: 10, color: 'var(--mp-live)', letterSpacing: 1 }}>SAVED</span>}
-      </label>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <input className="input" type="password" placeholder={placeholder}
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          autoComplete="off" spellCheck="false"
-          style={{ flex: 1 }}/>
-        <button className="btn primary sm" onClick={onSave}>{savedFlash || 'Save'}</button>
-      </div>
-    </div>
-  );
-}
-
-function AiPanel({ workouts, program }) {
-  const [anthropicInput, setAnthropicInput] = useState(getApiKey());
-  const [openaiInput, setOpenaiInput] = useState(getOpenAIKey());
-  const [geminiInput, setGeminiInput] = useState(getGeminiKey());
-  const [provider, setProvider] = useState(() => activeProvider());
-  const [flash, setFlash] = useState({});
-  const [activeTask, setActiveTask] = useState(null);
-  const [output, setOutput] = useState('');
-
-  const saveKey = (id) => {
-    const trimmed = (id === 'anthropic' ? anthropicInput
-      : id === 'openai' ? openaiInput
-      : geminiInput).trim();
-    if (id === 'anthropic') setApiKey(trimmed);
-    if (id === 'openai') setOpenAIKey(trimmed);
-    if (id === 'gemini') setGeminiKey(trimmed);
-    setFlash(prev => ({ ...prev, [id]: 'Saved' }));
-    setTimeout(() => setFlash(prev => ({ ...prev, [id]: '' })), 1500);
-
-    // If the user just added their first key, make it the default so
-    // a future key for another provider doesn't silently re-route.
-    // Also handle the "explicitly chosen provider got cleared" case.
-    const stickyChoice = getAiProvider();
-    const currentlyResolved = activeProvider();
-    if (trimmed && !stickyChoice) {
-      setActiveProvider(id);
-    } else if (!currentlyResolved && trimmed) {
-      setActiveProvider(id);
-    }
-    setProvider(activeProvider());
-  };
-
-  const pickProvider = (id) => {
-    setActiveProvider(id);
-    setProvider(id);
-  };
-
-  const runTask = async (taskName, promptOpts) => {
-    setActiveTask(taskName);
-    setOutput('');
-    try {
-      await stream({
-        ...promptOpts,
-        onChunk: (t) => setOutput(prev => prev + t),
-      });
-    } catch (e) {
-      setOutput(`Error: ${e.message}`);
-    }
-    setActiveTask(null);
-  };
-
-  const anyKey = hasAnyKey();
-  const activeLabel = PROVIDERS.find(p => p.id === provider)?.label;
-
-  return (
-    <div className="tr-ai-card">
-      <h3>AI features (BYOK)</h3>
-
-      <ProviderKeyRow
-        id="anthropic" label="Anthropic API key" placeholder="sk-ant-..."
-        value={anthropicInput} onChange={setAnthropicInput}
-        onSave={() => saveKey('anthropic')} savedFlash={flash.anthropic}
-      />
-      <ProviderKeyRow
-        id="openai" label="OpenAI API key" placeholder="sk-..."
-        value={openaiInput} onChange={setOpenaiInput}
-        onSave={() => saveKey('openai')} savedFlash={flash.openai}
-      />
-      <ProviderKeyRow
-        id="gemini" label="Gemini API key" placeholder="AIza..."
-        value={geminiInput} onChange={setGeminiInput}
-        onSave={() => saveKey('gemini')} savedFlash={flash.gemini}
-      />
-
-      <p className="note">
-        Your keys live in this browser only. Mission Phoenix never sees or stores them. Clear a field and save to remove it.
-      </p>
-
-      {anyKey && (
-        <div className="tr-ai-providers">
-          <div className="tr-ai-providers-label">Use for AI features</div>
-          <div className="tr-ai-providers-row" role="radiogroup" aria-label="AI provider">
-            {PROVIDERS.map(p => {
-              const has = p.hasKey();
-              const on = provider === p.id;
-              const titleSuffix = p.fallbackModel
-                ? ` (auto-falls back to ${p.fallbackModel} on quota)`
-                : '';
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={on}
-                  className={`tr-ai-provider ${on ? 'on' : ''}`}
-                  disabled={!has}
-                  onClick={() => pickProvider(p.id)}
-                  title={has ? `${p.label} · ${p.model}${titleSuffix}` : `Add a ${p.label} key first`}
-                >
-                  <span className="tr-ai-provider-name">{p.label}</span>
-                  <span className="tr-ai-provider-model">
-                    {p.model}
-                    {p.fallbackModel && (
-                      <span className="tr-ai-provider-fallback"> · ↳ {p.fallbackModel}</span>
-                    )}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {anyKey ? (
-        <>
-          <div className="tr-ai-row">
-            <button
-              disabled={!!activeTask || !provider}
-              onClick={() => runTask('week', reviewWeekPrompt({ workouts }))}>
-              {activeTask === 'week' ? 'Reviewing…' : 'Review my week'}
-            </button>
-            <button
-              disabled={!!activeTask || !provider}
-              onClick={() => runTask('plan', planMesocyclePrompt({ workouts, program }))}>
-              {activeTask === 'plan' ? 'Planning…' : 'Plan next mesocycle'}
-            </button>
-          </div>
-          {output && <div className="tr-ai-out">{output}</div>}
-          <p className="note" style={{ marginTop: 10 }}>
-            {activeLabel ? `Active: ${activeLabel}. ` : ''}Swap suggestions are available inside the Swap dialog when logging a session.
-          </p>
-        </>
-      ) : (
-        <p className="note" style={{ marginTop: 14 }}>
-          Save at least one key above to unlock weekly review, mesocycle planning, and swap suggestions.
-        </p>
-      )}
-    </div>
-  );
-}
-
 function SettingsView() {
   const { user } = useAuth();
   const [program, setProgram] = useState([]);
-  const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [p, w] = await Promise.all([
-        loadProgram(user?.id),
-        loadWorkouts(user?.id, { limit: 100 }),
-      ]);
+      const p = await loadProgram(user?.id);
       if (cancelled) return;
       setProgram(p);
-      setWorkouts(w);
       setLoading(false);
     })();
     return () => { cancelled = true; };
@@ -448,11 +273,9 @@ function SettingsView() {
       <Link to="/trainer" className="btn ghost sm" style={{ marginBottom: 18 }}>← Back</Link>
       <div className="eyebrow"><span className="d"></span>Trainer settings</div>
       <h1 className="page-title">Tune <em>your program.</em></h1>
-      <p className="page-lede">Edit A/B/C, manage alternatives, set targets, and (optionally) connect Claude.</p>
+      <p className="page-lede">Edit A/B/C sessions, manage alternatives, set targets.</p>
 
       <ProgramEditor user={user} program={program} setProgram={setProgram} />
-
-      <AiPanel workouts={workouts} program={program} />
     </main>
   );
 }
