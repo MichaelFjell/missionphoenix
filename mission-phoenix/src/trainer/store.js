@@ -4,12 +4,13 @@
 // (best-effort — failures are queued and retried on online/focus events).
 
 import { supabase, isSupabaseConfigured } from '../supabase.js';
-import { SEED_PROGRAM, SEED_CARDIO, newSlotId } from './seed.js';
+import { SEED_PROGRAM, SEED_CARDIO, SEED_VERSION, newSlotId } from './seed.js';
 
 const KEY_PROGRAM = 'mp.trainer.program';
 const KEY_CARDIO = 'mp.trainer.cardio';
 const KEY_WORKOUTS = 'mp.trainer.workouts';
 const KEY_UNSYNCED = 'mp.trainer.unsynced';
+const KEY_PROGRAM_VERSION = 'mp.trainer.programVersion';
 
 // Legacy AI/BYOK keys — removed feature. Best-effort cleanup so we don't
 // leave dormant keys sitting in localStorage forever.
@@ -21,6 +22,20 @@ const LEGACY_AI_KEYS = [
 ];
 try {
   for (const k of LEGACY_AI_KEYS) localStorage.removeItem(k);
+} catch {}
+
+// Seed version migration: when SEED_VERSION bumps, drop the cached program
+// and cardio templates so the next loadProgram() call refetches from
+// Supabase (which the operator updates server-side at the same time as
+// the seed file). This avoids users having to clear localStorage manually
+// after a program change.
+try {
+  const cachedSeedVersion = localStorage.getItem(KEY_PROGRAM_VERSION);
+  if (cachedSeedVersion !== SEED_VERSION) {
+    localStorage.removeItem(KEY_PROGRAM);
+    localStorage.removeItem(KEY_CARDIO);
+    localStorage.setItem(KEY_PROGRAM_VERSION, SEED_VERSION);
+  }
 } catch {}
 
 function readJSON(k, fallback) {
