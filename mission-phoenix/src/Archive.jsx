@@ -6,6 +6,11 @@ export default function Archive() {
       url: 'https://buttondown.com/missionphoenix/archive/finding-your-life-purpose/',
     },
     {
+      title: 'Gratitude',
+      date: '08/05/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/gratitude/',
+    },
+    {
       title: 'The importance of your subconscious',
       date: '01/05/2026',
       url: 'https://buttondown.com/missionphoenix/archive/the-importance-of-your-subconscious/',
