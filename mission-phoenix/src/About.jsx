@@ -28,7 +28,7 @@ export default function About() {
 
           <p>I&apos;ve just recently become an apprentice under Erik Sundby of &ldquo;DBK Sverige&rdquo; - Swedens first sexual addiction therapy clinic. On my free time I go to group classes doing Zumba, Aerobics dance and Yoga, as well as running and working out. I completed my first Vipassana meditation retreat in January 2026 (10 days of complete silence, 10 hours of meditating per day). I commute from Norrk&ouml;ping to Stockholm several days per week now to work with Erik and his patients to learn and soon be able to lead group therapy sessions myself. This is something that I am very, very passionate about.</p>
 
-          <p>I&apos;m also training for my first Marathon this year. I started running in early August 2025 and it has become a daily staple for me now. In September I ran my first official race of 5km (I started out not even being able to run 100meters without stopping several times) at 33:11, 3.5 months later I ran my second official 5km race with the time 23:38.</p>
+          <p>I&apos;m also training for my first Marathon this year. I started running in early August 2025 and it has become a daily staple for me now. In September 2025, I ran my first official race of 5km (I started out not even being able to run 100meters without stopping several times) at 33:11. December 31st 2025, I ran my second official 5km race with the time 23:38.</p>
         </div>
 
         <div className="about-more">
