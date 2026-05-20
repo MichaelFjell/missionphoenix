@@ -32,7 +32,7 @@ export default function About() {
         </div>
 
         <div className="about-more">
-          <Link to="/story">Here is the link to a little longer text of my life story if you&rsquo;re interested. →</Link>
+          <Link to="/story">Here is the link to a longer text of my life story if you&rsquo;re interested. →</Link>
         </div>
       </main>
     </>
