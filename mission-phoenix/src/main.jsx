@@ -14,6 +14,7 @@ import TrainerSettings from './TrainerSettings.jsx';
 import Community from './Community.jsx';
 import Journal from './Journal.jsx';
 import About from './About.jsx';
+import Story from './Story.jsx';
 import Contact from './Contact.jsx';
 import Support from './Support.jsx';
 import Archive from './Archive.jsx';
@@ -123,6 +124,7 @@ function App() {
           <Route path="/archive" element={<Archive />} />
           <Route path="/journey-preview" element={<JourneyPreview />} />
           <Route path="/about" element={<About />} />
+          <Route path="/story" element={<Story />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/support" element={<Support />} />
         </Routes>
