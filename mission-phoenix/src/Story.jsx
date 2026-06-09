@@ -65,7 +65,7 @@ export default function Story() {
 
           <p>That is why I believe in myself being open, vulnerable in my story and my addiction, I can help others. I am particularly passionate about helping the younger generation, those who are still in school, to talk to them about pornography addiction and the potential severity and consequences of it. There is nothing free or harmless about pornography, it has an immense cost and trade-off. There are likely many boys who are just as clueless as I was on the harms of pornography when I was their age. My life purpose is to become an adult for them, that I wish existed for me, when I was young.</p>
 
-          <p>I want to end this long journey-post with two sentences that I regularly remind the people I mentor and help, things that I live by and that, by living by it, has helped me immensely in my self esteem and my recovery.
+          <p>I want to end this long journey-post with two sentences that I regularly remind the people I mentor and help, things that I live by and that, through living by it, has helped me immensely in my self esteem, building integrity and my recovering.
            "Live your life as if everyone you love, both alive and dead, are watching you every single day and night" 
           As well as "A creep in the dark will always be a creep in the light". These are two things I live by, because I sincerely belive in them both. And by living after them, I am also becoming a person full of integrity and full of self esteem, which spills out positively in every area of my life.</p>
 
