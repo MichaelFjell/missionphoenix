@@ -1,6 +1,21 @@
 export default function Archive() {
   const newsletters = [
     {
+      title: 'What it feels like to be truly sober',
+      date: '05/06/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/what-it-feels-like-to-be-truly-sober/',
+    },
+    {
+      title: 'How group vulnerability heals you',
+      date: '29/05/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/how-group-vulnerability-heals-you/',
+    },
+    {
+      title: 'What you do when nobody is watching',
+      date: '22/05/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/what-you-do-when-nobody-is-watching/',
+    },
+    {
       title: 'Finding your life purpose',
       date: '15/05/2026',
       url: 'https://buttondown.com/missionphoenix/archive/finding-your-life-purpose/',
