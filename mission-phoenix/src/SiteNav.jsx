@@ -22,14 +22,17 @@ export default function SiteNav() {
         <div className="links">
           <Link to="/archive" className={isActive('/archive') ? 'active' : ''}>Archive</Link>
           <Link to="/quiz" className={isActive('/quiz') ? 'active' : ''}>Assessment</Link>
-          <Link to="/tracker" className={isActive('/tracker') ? 'active' : ''}>Tracker</Link>
-          {profile?.is_admin && (
-            <Link to="/trainer" className={isActive('/trainer') ? 'active' : ''}>Trainer</Link>
-          )}
+          
+          {/* 1. Added your new Coaching package track */}
+          <Link to="/coaching" className={isActive('/coaching') ? 'active' : ''}>Coaching</Link>
+          
+          {/* 2. Direct external link to Discord */}
           <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer">Community</a>
+          
           <Link to="/about" className={isActive('/about') ? 'active' : ''}>About</Link>
           <Link to="/contact" className={isActive('/contact') ? 'active' : ''}>Contact</Link>
           <Link to="/support" className={isActive('/support') ? 'active' : ''}>Donate</Link>
+          
           {user && profile && (
             <span className="user-area">
               <span className="u-name">{profile.username}</span>
