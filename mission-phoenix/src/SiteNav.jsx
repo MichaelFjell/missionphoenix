@@ -26,7 +26,7 @@ export default function SiteNav() {
           {profile?.is_admin && (
             <Link to="/trainer" className={isActive('/trainer') ? 'active' : ''}>Trainer</Link>
           )}
-          <Link to="/community" className={isActive('/community') ? 'active' : ''}>Community</Link>
+          <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer">Community</a>
           <Link to="/about" className={isActive('/about') ? 'active' : ''}>About</Link>
           <Link to="/contact" className={isActive('/contact') ? 'active' : ''}>Contact</Link>
           <Link to="/support" className={isActive('/support') ? 'active' : ''}>Donate</Link>
