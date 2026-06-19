@@ -1,6 +1,16 @@
 export default function Archive() {
   const newsletters = [
     {
+      title: 'We are only as sick as our secrets',
+      date: '19/06/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/we-are-only-as-sick-as-our-secrets/',
+    },
+    {
+      title: 'The myth of the “I’m only harming myself”-excuse',
+      date: '12/06/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/the-myth-of-the-i-m-only-harming-myself-excuse/',
+    },
+    {
       title: 'What it feels like to be truly sober',
       date: '05/06/2026',
       url: 'https://buttondown.com/missionphoenix/archive/what-it-feels-like-to-be-truly-sober/',
