@@ -1,7 +1,7 @@
 export default function Archive() {
   const newsletters = [
      {
-      title: 'Whats Going On In My Life Right Now?',
+      title: 'Whats going on in my life right now?',
       date: '26/06/2026',
       url: 'https://buttondown.com/missionphoenix/archive/whats-going-on-in-my-life-right-now/',
     },
