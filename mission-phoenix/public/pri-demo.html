@@ -64,7 +64,7 @@
       background: var(--ground); flex-shrink: 0;
     }
     .phone img { display: block; width: 100%; height: auto; }
-    .phone-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+    .phone-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 530px; }
     figcaption {
       font-size: 13px; color: var(--ink-soft); text-align: center; margin-top: 10px;
     }
@@ -118,6 +118,15 @@
     }
     .fact h3 { font-size: 18px; margin-bottom: 6px; }
     .fact p { font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Riskskalan (veckosummor) ---- */
+    .risk-scale { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; max-width: 34em; }
+    .risk {
+      flex: 1 1 96px; min-width: 96px; border-radius: 10px;
+      border-top: 3px solid; padding: 8px 10px;
+    }
+    .risk strong { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
+    .risk span { font-size: 12px; color: var(--ink-soft); }
 
     /* ---- Skalan ---- */
     .scale { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 14px; }
@@ -294,9 +303,30 @@
           <p class="detail">
             Varje dag räknas också i poäng enligt arbetsbladets uppföljning:
             en poäng per aktiv signal, och en dag utan incheckning räknas som
-            full poäng. Veckosumman placerar veckan på den femgradiga skalan
-            från optimal hälsa till väldigt hög risk – i ett 12-veckorsschema
-            som även kan skrivas ut.
+            full poäng. Veckosumman visas direkt på översikten och placerar
+            veckan på arbetsbladets femgradiga skala – samlad i ett
+            12-veckorsschema som även kan skrivas ut.
+          </p>
+          <div class="risk-scale" aria-label="Veckosummans fem nivåer">
+            <div class="risk" style="border-top-color: #5f9268; background: #5f926824">
+              <strong>Optimal hälsa</strong><span>0–9 poäng</span>
+            </div>
+            <div class="risk" style="border-top-color: #8fa04f; background: #8fa04f24">
+              <strong>Stabilt trygg</strong><span>10–19 poäng</span>
+            </div>
+            <div class="risk" style="border-top-color: #c9a13f; background: #c9a13f24">
+              <strong>Medelrisk</strong><span>20–29 poäng</span>
+            </div>
+            <div class="risk" style="border-top-color: #c07b3e; background: #c07b3e24">
+              <strong>Högrisk</strong><span>30–39 poäng</span>
+            </div>
+            <div class="risk" style="border-top-color: #b04a3c; background: #b04a3c24">
+              <strong>Väldigt hög risk</strong><span>40–49 poäng</span>
+            </div>
+          </div>
+          <p class="detail" style="margin-top: 12px">
+            Varje nivå följs i appen av PRI-guiden – arbetsbladets beskrivning
+            av hur nivån känns igen i vardagen.
           </p>
           <div class="callout">
             <blockquote>
@@ -317,8 +347,8 @@
             <figcaption>Aktuellt läge med varsel</figcaption>
           </figure>
           <figure>
-            <div class="phone"><img src="pri-demo/05-trend.png" alt="30-dagars färgkarta över alla signaler" /></div>
-            <figcaption>30 dagar som färgkarta</figcaption>
+            <div class="phone"><img src="pri-demo/10-veckosumma.png" alt="30-dagars färgkarta och veckosumma med risknivå" /></div>
+            <figcaption>Färgkartan och veckans poäng</figcaption>
           </figure>
           <figure>
             <div class="phone"><img src="pri-demo/09-schema.png" alt="12-veckorsschema med veckosummor och riskskala" /></div>
