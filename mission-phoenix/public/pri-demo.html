@@ -129,8 +129,8 @@
     .try {
       background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
       padding: 34px 36px; margin: 40px 0;
-      display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center;
     }
+    .try-top { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
     .try h2 { font-size: clamp(22px, 2.6vw, 28px); margin-bottom: 8px; }
     .try p { color: var(--ink-soft); max-width: 30em; }
     .try .btn {
@@ -141,13 +141,28 @@
     .try .qr img { width: 132px; height: 132px; display: block; margin: 0 auto 8px; }
     .try .qr small { font-size: 12.5px; color: var(--ink-soft); }
 
+    /* ---- Installationsinstruktion ---- */
+    .install { border-top: 1px solid var(--line); margin-top: 30px; padding-top: 26px; }
+    .install h3 { font-size: 20px; margin-bottom: 16px; }
+    .install-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .install .os h4 {
+      font-family: var(--sans); font-size: 15px; font-weight: 600; margin-bottom: 6px;
+    }
+    .install ol { padding-left: 20px; font-size: 14.5px; color: var(--ink-soft); }
+    .install ol li + li { margin-top: 4px; }
+    .install .note {
+      margin-top: 20px; font-size: 14px; color: var(--ink); max-width: none;
+      background: var(--sand); border-radius: 12px; padding: 13px 17px;
+    }
+
     footer {
       border-top: 1px solid var(--line); padding: 26px 0 44px;
       font-size: 13.5px; color: var(--ink-soft); text-align: center;
     }
 
     @media (max-width: 880px) {
-      .hero-grid, .flow, .try { grid-template-columns: 1fr; }
+      .hero-grid, .flow, .try-top { grid-template-columns: 1fr; }
+      .install-grid { grid-template-columns: 1fr; }
       .hero-grid .phone-row, .flow .phone-row { justify-content: flex-start; }
       .pillars, .fact-grid { grid-template-columns: 1fr; }
       .hero { padding-top: 40px; }
@@ -365,17 +380,54 @@
       </div>
 
       <div class="try">
-        <div>
-          <h2>Prova själv</h2>
-          <p>
-            Öppna verktyget och gå igenom uppsättningen – det tar några minuter.
-            Allt du skriver stannar på din egen enhet och kan raderas när som helst.
-          </p>
-          <a class="btn" href="/pri/">Öppna PRI</a>
+        <div class="try-top">
+          <div>
+            <h2>Prova själv</h2>
+            <p>
+              Öppna verktyget och gå igenom uppsättningen – det tar några minuter.
+              Allt du skriver stannar på din egen enhet och kan raderas när som helst.
+            </p>
+            <a class="btn" href="/pri/">Öppna PRI</a>
+          </div>
+          <div class="qr">
+            <img src="pri-demo/qr-pri.png" alt="QR-kod till PRI" />
+            <small>Skanna med mobilen<br />missionphoenix.life/PRI.html</small>
+          </div>
         </div>
-        <div class="qr">
-          <img src="pri-demo/qr-pri.png" alt="QR-kod till PRI" />
-          <small>Skanna med mobilen<br />missionphoenix.life/PRI.html</small>
+
+        <div class="install">
+          <h3>Så installeras appen på hemskärmen</h3>
+          <div class="install-grid">
+            <div class="os">
+              <h4>iPhone / iPad</h4>
+              <ol>
+                <li>Öppna länken i <strong>Safari</strong> – det måste vara Safari, Chrome på iPhone kan inte installera</li>
+                <li>Tryck på dela-knappen (fyrkanten med pilen uppåt)</li>
+                <li>Välj <strong>Lägg till på hemskärmen</strong></li>
+              </ol>
+            </div>
+            <div class="os">
+              <h4>Android</h4>
+              <ol>
+                <li>Öppna länken i Chrome</li>
+                <li>Tryck på <strong>Installera</strong> i rutan som visas – eller öppna menyn med tre prickar och välj <strong>Lägg till på startskärmen</strong></li>
+              </ol>
+            </div>
+            <div class="os">
+              <h4>Dator</h4>
+              <ol>
+                <li>Öppna länken i Chrome eller Edge</li>
+                <li>Klicka på <strong>installationsikonen</strong> till höger i adressfältet</li>
+              </ol>
+            </div>
+          </div>
+          <p class="note">
+            iPhone visar ingen egen installationsfråga – stegen görs manuellt via dela-knappen.
+            Installationen är också ett skydd: en app på hemskärmen undantas från Safaris
+            regelbundna rensning av webbplatsdata. Och eftersom all data ligger i appen på
+            enheten gäller: raderas appikonen raderas datan – påminn gärna om säkerhetskopian
+            under fliken Mer.
+          </p>
         </div>
       </div>
     </div>
