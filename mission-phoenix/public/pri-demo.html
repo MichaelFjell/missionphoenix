@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <meta name="description" content="Genomgång av PRI – Personlig Riskbenägenhets Index: flöden, varningslogik, integritet och teknik." />
+  <title>PRI – genomgång av verktyget</title>
+  <style>
+    :root {
+      --ground: #faf7f2;
+      --surface: #ffffff;
+      --ink: #2e2a26;
+      --ink-soft: #6f675e;
+      --accent: #47563f;
+      --line: #e2dccd;
+      --sand: #ece5d8;
+      --ok: #5f9268;
+      --warn: #c9a13f;
+      --alert: #b55445;
+      --serif: Georgia, "Times New Roman", Times, serif;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color-scheme: light;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { background: var(--ground); }
+    body {
+      font-family: var(--sans);
+      color: var(--ink);
+      line-height: 1.6;
+      font-size: 17px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+    a { color: var(--accent); }
+
+    h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.2; text-wrap: balance; }
+    .eyebrow {
+      font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink-soft); font-weight: 600;
+    }
+    .step-eyebrow { color: var(--accent); }
+
+    /* ---- Hero ---- */
+    .hero { padding: 56px 0 40px; }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: clamp(32px, 5vw, 72px); align-items: center;
+    }
+    .hero img.wordmark { width: min(300px, 70%); height: auto; display: block; margin-bottom: 22px; }
+    .hero h1 { font-size: clamp(26px, 3.4vw, 36px); margin-bottom: 14px; }
+    .hero p.lead { max-width: 34em; color: var(--ink-soft); font-size: 18px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .chip {
+      background: var(--sand); border-radius: 999px; padding: 6px 14px;
+      font-size: 14px; color: var(--ink);
+    }
+
+    /* ---- Telefonramar ---- */
+    .phone {
+      width: 250px; max-width: 100%; border-radius: 30px; overflow: hidden;
+      border: 1px solid rgba(46, 42, 38, 0.14);
+      box-shadow: 0 22px 44px -20px rgba(46, 42, 38, 0.30);
+      background: var(--ground); flex-shrink: 0;
+    }
+    .phone img { display: block; width: 100%; height: auto; }
+    .phone-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+    figcaption {
+      font-size: 13px; color: var(--ink-soft); text-align: center; margin-top: 10px;
+    }
+    figure { margin: 0; }
+
+    /* ---- Pelare ---- */
+    .pillars {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      margin: 26px 0 0;
+    }
+    .pillar {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 16px; padding: 20px 22px;
+    }
+    .pillar h3 { font-size: 19px; margin-bottom: 6px; }
+    .pillar p { font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Stegsektioner ---- */
+    .steps { padding: 26px 0 8px; }
+    .steps > .wrap > h2 { font-size: clamp(24px, 3vw, 30px); margin-bottom: 6px; }
+    .steps > .wrap > p.intro { color: var(--ink-soft); max-width: 38em; }
+    .flow {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto;
+      gap: clamp(28px, 5vw, 64px); align-items: center;
+      padding: 40px 0; border-bottom: 1px solid var(--line);
+    }
+    .flow:last-of-type { border-bottom: none; }
+    .flow h3 { font-size: clamp(21px, 2.4vw, 26px); margin: 6px 0 10px; }
+    .flow p { color: var(--ink-soft); max-width: 32em; }
+    .flow p + p { margin-top: 10px; }
+    .flow .detail { font-size: 15px; }
+
+    /* ---- Varsel-citat ---- */
+    .callout {
+      background: #f5eed9; border: 1px solid rgba(201, 161, 63, 0.45);
+      border-radius: 18px; padding: 26px 30px; margin: 14px 0 4px;
+    }
+    .callout blockquote {
+      font-family: var(--serif); font-size: clamp(18px, 2.2vw, 22px);
+      line-height: 1.45; text-wrap: balance;
+    }
+    .callout p { margin-top: 12px; font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Fakta ---- */
+    .facts { padding: 48px 0 16px; }
+    .facts h2 { font-size: clamp(24px, 3vw, 30px); margin-bottom: 20px; }
+    .fact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .fact {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 16px; padding: 20px 22px;
+    }
+    .fact h3 { font-size: 18px; margin-bottom: 6px; }
+    .fact p { font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Skalan ---- */
+    .scale { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 14px; }
+    .scale span { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: var(--ink-soft); }
+    .dot { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
+    .dot.g { background: var(--ok); } .dot.y { background: var(--warn); } .dot.r { background: var(--alert); }
+
+    /* ---- Prova ---- */
+    .try {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+      padding: 34px 36px; margin: 40px 0;
+      display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center;
+    }
+    .try h2 { font-size: clamp(22px, 2.6vw, 28px); margin-bottom: 8px; }
+    .try p { color: var(--ink-soft); max-width: 30em; }
+    .try .btn {
+      display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+      border-radius: 12px; padding: 13px 26px; font-weight: 600; margin-top: 18px;
+    }
+    .try .qr { text-align: center; }
+    .try .qr img { width: 132px; height: 132px; display: block; margin: 0 auto 8px; }
+    .try .qr small { font-size: 12.5px; color: var(--ink-soft); }
+
+    footer {
+      border-top: 1px solid var(--line); padding: 26px 0 44px;
+      font-size: 13.5px; color: var(--ink-soft); text-align: center;
+    }
+
+    @media (max-width: 880px) {
+      .hero-grid, .flow, .try { grid-template-columns: 1fr; }
+      .hero-grid .phone-row, .flow .phone-row { justify-content: flex-start; }
+      .pillars, .fact-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 40px; }
+    }
+    @media print {
+      .flow, .try, .callout, .fact, .pillar { break-inside: avoid; }
+      .phone { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Genomgång · för personalmöte</p>
+        <img class="wordmark" src="pri-demo/logo.png" alt="PRI" />
+        <h1>Personlig Riskbenägenhets Index</h1>
+        <p class="lead">
+          Ett självskattningsverktyg för klienter i tillfrisknande från beroende.
+          Klienten kartlägger sina egna varningssignaler – tecknen på att fotfästet
+          håller på att tappas – och följer dem över tid, i lugn och ro.
+        </p>
+        <div class="chips">
+          <span class="chip">Bygger på Erik Sundbys arbetsblad</span>
+          <span class="chip">All data stannar på enheten</span>
+          <span class="chip">Installeras som app · funkar offline</span>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <h3>Kliniskt förankrat</h3>
+            <p>Digitaliserar det befintliga arbetsbladet: tio livsområden, egna ord, de sju viktigaste signalerna.</p>
+          </div>
+          <div class="pillar">
+            <h3>Värderingsfritt</h3>
+            <p>Inga poäng, inga streaks, ingen gamification. Lugn ton och dova färger – ett kliniskt verktyg, inte en vaneapp.</p>
+          </div>
+          <div class="pillar">
+            <h3>Privat</h3>
+            <p>Inga konton och ingen server. Allt sparas lokalt på klientens egen telefon.</p>
+          </div>
+        </div>
+      </div>
+      <figure>
+        <div class="phone"><img src="pri-demo/01-valkommen.png" alt="Startskärmen med integritetslöftet" /></div>
+        <figcaption>Startskärmen – integritetslöftet först av allt</figcaption>
+      </figure>
+    </div>
+  </header>
+
+  <section class="steps">
+    <div class="wrap">
+      <h2>Så fungerar det</h2>
+      <p class="intro">Fem steg, från kartläggning till samtalsunderlag. Skärmdumparna visar fiktiv exempeldata.</p>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">Steg 1 · Uppsättning</p>
+          <h3>Tio livsområden, ett i taget</h3>
+          <p>
+            En guidad genomgång: fysisk hälsa, nära relationer, ekonomi, arbete,
+            sociala livet, andliga livet, intressen, miljö, förflyttning samt andra
+            beroenden och symptombeteenden. Varje område förklaras med exempel,
+            och klienten skriver sina egna tecken i fritext.
+          </p>
+          <p class="detail">
+            Inget är obligatoriskt – områden kan lämnas tomma, och egna områden
+            kan läggas till.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="pri-demo/02-omraden.png" alt="Wizard: området Fysisk hälsa med inskrivna signaler" /></div>
+            <figcaption>Ett område i taget, med exempel</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">Steg 2 · Urval</p>
+          <h3>Välj de sju viktigaste</h3>
+          <p>
+            Alla inskrivna signaler samlas, och klienten väljer de sju som känns
+            igen tidigast och tydligast. De blir klientens PRI-lista – det som
+            följs vid varje incheckning.
+          </p>
+          <p class="detail">
+            Listan kan redigeras när som helst. Byts en signal ut arkiveras den
+            gamla, så att historiken aldrig går förlorad.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="pri-demo/03-valj-sju.png" alt="Urvalsskärmen med sju valda signaler" /></div>
+            <figcaption>Räknaren stannar på sju</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">Steg 3 · Incheckning</p>
+          <h3>Under en minut om dagen</h3>
+          <p>
+            Varje signal skattas med trafikljus, med en valfri kort anteckning.
+            Dagligen som standard, veckovis som inställning. En ny skattning
+            samma dag uppdaterar den gamla.
+          </p>
+          <div class="scale">
+            <span><i class="dot g"></i>Grön – inte närvarande</span>
+            <span><i class="dot y"></i>Gul – börjar visa sig</span>
+            <span><i class="dot r"></i>Röd – fullt närvarande</span>
+          </div>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="pri-demo/06-incheckning.png" alt="Incheckningen med trafikljusskattning per signal" /></div>
+            <figcaption>Sju snabba skattningar</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">Steg 4 · Översikt</p>
+          <h3>Mönstret framträder</h3>
+          <p>
+            Översikten visar aktuellt läge per signal och de senaste 30 dagarna
+            som en färgkarta – dagar gånger signaler. Mönster som smyger sig på
+            blir synliga innan de hunnit bli stora.
+          </p>
+          <div class="callout">
+            <blockquote>
+              »Flera varningssignaler är aktiva just nu. Vad är nästa rätta
+              handling? Överväg att höra av dig till din terapeut, sponsor
+              eller ditt nätverk.«
+            </blockquote>
+            <p>
+              Varningslogiken: när tre eller fler signaler är gula eller röda i
+              senaste incheckningen visas detta meddelande. Ingen skam, ingen
+              alarmism – en stillsam påminnelse om nästa rätta handling.
+            </p>
+          </div>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="pri-demo/04-oversikt.png" alt="Översikten med varselmeddelande och aktuellt läge" /></div>
+            <figcaption>Aktuellt läge med varsel</figcaption>
+          </figure>
+          <figure>
+            <div class="phone"><img src="pri-demo/05-trend.png" alt="30-dagars färgkarta över alla signaler" /></div>
+            <figcaption>30 dagar som färgkarta</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">Steg 5 · Till samtalet</p>
+          <h3>Ta med till terapeut eller sponsor</h3>
+          <p>
+            En textsammanfattning av de senaste 30 dagarna – incheckningar,
+            färgfördelning per signal, varningsdagar och anteckningar – klar att
+            visa upp, kopiera eller ladda ner inför ett samtal.
+          </p>
+          <p class="detail">
+            Här finns också säkerhetskopian: eftersom all data bara finns på
+            enheten kan klienten exportera och importera allt som en fil, samt
+            radera allt med ett bekräftelsesteg.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="pri-demo/07-export.png" alt="Mer-fliken med export och säkerhetskopia" /></div>
+            <figcaption>Export och säkerhetskopia</figcaption>
+          </figure>
+          <figure>
+            <div class="phone"><img src="pri-demo/08-sammanfattning.png" alt="Textsammanfattning av 30 dagar" /></div>
+            <figcaption>Samtalsunderlag i textform</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="facts">
+    <div class="wrap">
+      <h2>Integritet och teknik</h2>
+      <div class="fact-grid">
+        <div class="fact">
+          <h3>Ingenting lämnar enheten</h3>
+          <p>All data sparas i telefonens lokala databas. Inga konton, ingen server, ingen analytics, inga tredjepartsskript.</p>
+        </div>
+        <div class="fact">
+          <h3>Installeras som app</h3>
+          <p>Läggs till på hemskärmen direkt från webbläsaren och fungerar helt offline efter första besöket.</p>
+        </div>
+        <div class="fact">
+          <h3>Dold adress</h3>
+          <p>Sidan är inte länkad någonstans på sajten och indexeras inte av sökmotorer. Bara den som får länken hittar dit.</p>
+        </div>
+        <div class="fact">
+          <h3>Egen säkerhetskopia</h3>
+          <p>Klienten äger sin data: allt kan exporteras som en fil och läsas in igen – till exempel vid telefonbyte.</p>
+        </div>
+        <div class="fact">
+          <h3>Historik bevaras</h3>
+          <p>Signaler som byts ut arkiveras i stället för att raderas. Incheckningshistoriken förblir komplett.</p>
+        </div>
+        <div class="fact">
+          <h3>Statisk webbapp</h3>
+          <p>Byggd med React, Vite och Tailwind. Serveras som statiska filer från missionphoenix.life – ingen drift utöver sajten.</p>
+        </div>
+      </div>
+
+      <div class="try">
+        <div>
+          <h2>Prova själv</h2>
+          <p>
+            Öppna verktyget och gå igenom uppsättningen – det tar några minuter.
+            Allt du skriver stannar på din egen enhet och kan raderas när som helst.
+          </p>
+          <a class="btn" href="/pri/">Öppna PRI</a>
+        </div>
+        <div class="qr">
+          <img src="pri-demo/qr-pri.png" alt="QR-kod till PRI" />
+          <small>Skanna med mobilen<br />missionphoenix.life/PRI.html</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      PRI · Personlig Riskbenägenhets Index · Bygger på ett arbetsblad av terapeuten Erik Sundby.<br />
+      Demosida för intern genomgång – skärmdumparna visar fiktiv exempeldata.
+    </div>
+  </footer>
+
+</body>
+</html>
