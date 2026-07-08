@@ -1,6 +1,10 @@
 export default function Archive() {
   const newsletters = [
      {
+      title: 'What porn addiction does to your self esteem, and how to rebuild it',
+      date: '03/07/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/what-porn-addiction-does-to-your-self-esteem-and/',
+     {
       title: 'Whats going on in my life right now?',
       date: '26/06/2026',
       url: 'https://buttondown.com/missionphoenix/archive/whats-going-on-in-my-life-right-now/',
