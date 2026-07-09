@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <meta name="description" content="Guide till Ärlighetsinventeringen: så fungerar verktyget, steg för steg." />
+  <title>Ärlighetsinventeringen – så fungerar verktyget</title>
+  <style>
+    :root {
+      --ground: #faf7f2;
+      --surface: #ffffff;
+      --ink: #2e2a26;
+      --ink-soft: #6f675e;
+      --accent: #47563f;
+      --sage: #66785e;
+      --line: #e2dccd;
+      --sand: #ece5d8;
+      --ok: #5f9268;
+      --ok-soft: #e4efe5;
+      --warn: #c9a13f;
+      --alert: #b55445;
+      --serif: Georgia, "Times New Roman", Times, serif;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color-scheme: light;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { background: var(--ground); }
+    body {
+      font-family: var(--sans);
+      color: var(--ink);
+      line-height: 1.6;
+      font-size: 17px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+    a { color: var(--accent); }
+
+    h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.2; text-wrap: balance; }
+    .eyebrow {
+      font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink-soft); font-weight: 600;
+    }
+    .step-eyebrow { color: var(--accent); }
+
+    /* ---- Språkväxlare ---- */
+    body.en .sv { display: none !important; }
+    body:not(.en) .en { display: none !important; }
+    .langbar { display: flex; justify-content: flex-end; padding-top: 18px; }
+    .lang {
+      display: inline-flex; border: 1px solid var(--line); border-radius: 999px;
+      overflow: hidden; background: var(--surface);
+    }
+    .lang button {
+      border: 0; background: transparent; color: var(--ink-soft);
+      font: 600 13px var(--sans); padding: 6px 14px; cursor: pointer;
+      text-transform: uppercase;
+    }
+    .lang button.on { background: var(--accent); color: #fff; }
+
+    /* ---- Hero ---- */
+    .hero { padding: 30px 0 40px; }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: clamp(32px, 5vw, 72px); align-items: center;
+    }
+    .wordmark { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .wordmark svg { flex-shrink: 0; }
+    .wordmark span { font-family: var(--serif); font-size: 24px; }
+    .hero h1 { font-size: clamp(26px, 3.4vw, 36px); margin-bottom: 14px; }
+    .hero p.lead { max-width: 34em; color: var(--ink-soft); font-size: 18px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .chip {
+      background: var(--sand); border-radius: 999px; padding: 6px 14px;
+      font-size: 14px; color: var(--ink);
+    }
+
+    /* ---- Pelare ---- */
+    .pillars {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+      margin: 26px 0 0;
+    }
+    .pillar {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 16px; padding: 20px 22px;
+    }
+    .pillar h3 { font-size: 19px; margin-bottom: 6px; }
+    .pillar p { font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Telefonramar med CSS-mockups ---- */
+    .phone {
+      width: 262px; max-width: 100%; border-radius: 32px;
+      border: 1px solid rgba(46, 42, 38, 0.14);
+      box-shadow: 0 22px 44px -20px rgba(46, 42, 38, 0.30);
+      background: var(--ground); flex-shrink: 0; padding: 12px 10px 16px;
+    }
+    .phone .speaker {
+      width: 54px; height: 5px; border-radius: 999px; background: var(--sand);
+      margin: 0 auto 10px;
+    }
+    .screen { padding: 6px 6px 0; font-size: 12.5px; line-height: 1.45; }
+    .phone-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 560px; }
+    figcaption { font-size: 13px; color: var(--ink-soft); text-align: center; margin-top: 10px; }
+    figure { margin: 0; }
+
+    /* Mock-byggstenar */
+    .m-title { font-family: var(--serif); font-size: 17px; }
+    .m-sub { font-size: 10.5px; color: var(--ink-soft); }
+    .m-eyebrow {
+      font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); font-weight: 600;
+    }
+    .m-card {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 12px; padding: 10px 12px; margin-top: 8px;
+    }
+    .m-card.sand { background: var(--sand); border-color: var(--sand); }
+    .m-btn {
+      background: var(--accent); color: #fff; border-radius: 10px;
+      padding: 8px 10px; text-align: center; font-size: 11.5px; font-weight: 600;
+      margin-top: 8px;
+    }
+    .m-btn.ghost { background: var(--surface); border: 1px solid var(--line); color: var(--ink); }
+    .m-btnrow { display: flex; gap: 6px; }
+    .m-btnrow .m-btn { flex: 1; }
+    .m-opt {
+      border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+      padding: 6px 10px; margin-top: 5px; font-size: 11.5px;
+    }
+    .m-opt.sel { border-color: var(--sage); background: var(--ok-soft); }
+    .m-progress { height: 5px; border-radius: 999px; background: var(--sand); margin-top: 8px; overflow: hidden; }
+    .m-progress i { display: block; height: 100%; background: var(--sage); }
+    .m-bar { height: 7px; border-radius: 999px; background: var(--sand); margin: 4px 0 8px; overflow: hidden; }
+    .m-bar i { display: block; height: 100%; border-radius: 999px; background: var(--sage); }
+    .m-barlabel { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; }
+    .m-barlabel b { font-family: var(--serif); font-weight: 400; font-size: 14px; }
+    .m-big { font-family: var(--serif); font-size: 26px; line-height: 1.1; }
+    .m-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .m-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; margin-top: 8px; }
+    .m-cell { aspect-ratio: 1; border-radius: 3px; background: rgba(236, 229, 216, 0.7); }
+    .m-cell.k { background: var(--ok); }
+    .m-cell.b { background: var(--alert); }
+    .m-cell.e { background: var(--line); }
+    .m-legend { display: flex; gap: 10px; font-size: 9.5px; color: var(--ink-soft); margin-top: 7px; flex-wrap: wrap; }
+    .m-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+    .m-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+    .m-chip {
+      border: 1px solid var(--line); background: var(--surface); border-radius: 999px;
+      padding: 3px 9px; font-size: 10.5px; color: var(--ink-soft);
+    }
+    .m-chip.on { border-color: var(--sage); background: var(--ok-soft); color: var(--ink); }
+    .m-nav {
+      display: flex; border-top: 1px solid var(--line); margin-top: 12px;
+      padding-top: 8px; font-size: 9.5px; color: var(--ink-soft); text-align: center;
+    }
+    .m-nav span { flex: 1; }
+    .m-nav .on { color: var(--accent); font-weight: 600; }
+    .m-mono {
+      font-family: ui-monospace, Consolas, monospace; font-size: 9px; line-height: 1.5;
+      background: var(--ground); border: 1px solid var(--line); border-radius: 8px;
+      padding: 8px; white-space: pre-wrap; margin-top: 8px; color: var(--ink);
+    }
+    .m-quote { font-size: 11px; color: var(--ink); }
+
+    /* ---- Stegsektioner ---- */
+    .steps { padding: 26px 0 8px; }
+    .steps > .wrap > h2 { font-size: clamp(24px, 3vw, 30px); margin-bottom: 6px; }
+    .steps > .wrap > p.intro { color: var(--ink-soft); max-width: 38em; }
+    .flow {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto;
+      gap: clamp(28px, 5vw, 64px); align-items: center;
+      padding: 40px 0; border-bottom: 1px solid var(--line);
+    }
+    .flow:last-of-type { border-bottom: none; }
+    .flow h3 { font-size: clamp(21px, 2.4vw, 26px); margin: 6px 0 10px; }
+    .flow p { color: var(--ink-soft); max-width: 32em; }
+    .flow p + p { margin-top: 10px; }
+    .flow .detail { font-size: 15px; }
+
+    /* ---- Citat ---- */
+    .callout {
+      background: #f5eed9; border: 1px solid rgba(201, 161, 63, 0.45);
+      border-radius: 18px; padding: 26px 30px; margin: 14px 0 4px;
+    }
+    .callout blockquote {
+      font-family: var(--serif); font-size: clamp(18px, 2.2vw, 22px);
+      line-height: 1.45; text-wrap: balance;
+    }
+    .callout p { margin-top: 12px; font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Fakta ---- */
+    .facts { padding: 48px 0 16px; }
+    .facts h2 { font-size: clamp(24px, 3vw, 30px); margin-bottom: 20px; }
+    .fact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .fact {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 16px; padding: 20px 22px;
+    }
+    .fact h3 { font-size: 18px; margin-bottom: 6px; }
+    .fact p { font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Prova ---- */
+    .try {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+      padding: 34px 36px; margin: 40px 0;
+    }
+    .try-top { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
+    .try h2 { font-size: clamp(22px, 2.6vw, 28px); margin-bottom: 8px; }
+    .try p { color: var(--ink-soft); max-width: 30em; }
+    .try .btn {
+      display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+      border-radius: 12px; padding: 13px 26px; font-weight: 600; margin-top: 18px;
+    }
+    .try .qr { text-align: center; }
+    .try .qr img { width: 132px; height: 132px; display: block; margin: 0 auto 8px; }
+    .try .qr small { font-size: 12.5px; color: var(--ink-soft); }
+
+    /* ---- Installationsinstruktion ---- */
+    .install { border-top: 1px solid var(--line); margin-top: 30px; padding-top: 26px; }
+    .install h3 { font-size: 20px; margin-bottom: 16px; }
+    .install-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .install .os h4 {
+      font-family: var(--sans); font-size: 15px; font-weight: 600; margin-bottom: 6px;
+    }
+    .install ol { padding-left: 20px; font-size: 14.5px; color: var(--ink-soft); }
+    .install ol li + li { margin-top: 4px; }
+    .install .note {
+      margin-top: 20px; font-size: 14px; color: var(--ink); max-width: none;
+      background: var(--sand); border-radius: 12px; padding: 13px 17px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line); padding: 26px 0 44px;
+      font-size: 13.5px; color: var(--ink-soft); text-align: center;
+    }
+
+    @media (max-width: 880px) {
+      .hero-grid, .flow, .try-top { grid-template-columns: 1fr; }
+      .install-grid { grid-template-columns: 1fr; }
+      .hero-grid .phone-row, .flow .phone-row { justify-content: flex-start; }
+      .pillars, .fact-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 24px; }
+    }
+    @media print {
+      .flow, .try, .callout, .fact, .pillar { break-inside: avoid; }
+      .phone { box-shadow: none; }
+      .langbar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap langbar">
+    <div class="lang" role="group" aria-label="Språk / Language">
+      <button id="btn-sv" class="on" onclick="setLang('sv')">SV</button>
+      <button id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="wordmark">
+          <svg width="44" height="44" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <circle cx="24" cy="24" r="19" stroke="#47563f" stroke-width="3"/>
+            <path d="M15.5 24.5l6 6 11-12.5" stroke="#47563f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="sv">Ärlighetsinventeringen</span>
+          <span class="en">The Honesty Inventory</span>
+        </div>
+        <h1 class="sv">Vad händer med självkänslan när löften till en själv bryts?</h1>
+        <h1 class="en">What happens to self-esteem when promises to yourself keep breaking?</h1>
+        <p class="lead sv">
+          Ett självreflektionsverktyg för tillfrisknande: mät gapet mellan vad du
+          säger till dig själv och vad du gör – och bygg sedan upp tilliten igen,
+          ett litet hållet löfte om dagen.
+        </p>
+        <p class="lead en">
+          A self-reflection tool for recovery: measure the gap between what you
+          tell yourself and what you do — then rebuild the trust, one small kept
+          promise a day.
+        </p>
+        <div class="chips">
+          <span class="chip sv">Inspirerad av Nathaniel Brandens ramverk</span>
+          <span class="chip en">Inspired by Nathaniel Branden's framework</span>
+          <span class="chip sv">All data stannar på enheten</span>
+          <span class="chip en">All data stays on the device</span>
+          <span class="chip sv">Installeras som app · funkar offline</span>
+          <span class="chip en">Installs as an app · works offline</span>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <h3 class="sv">Psykologiskt förankrad</h3>
+            <h3 class="en">Psychologically grounded</h3>
+            <p class="sv">Bygger på Brandens pelare självtillit och självrespekt: varje brutet privat löfte – ”imorgon slutar jag” – minskar tilliten till det egna ordet. Det är mätbart, och läkningen är det också.</p>
+            <p class="en">Built on Branden's pillars of self-efficacy and self-respect: every broken private promise — “tomorrow I'll stop” — erodes trust in your own word. That is measurable, and so is the healing.</p>
+          </div>
+          <div class="pillar">
+            <h3 class="sv">Privat</h3>
+            <h3 class="en">Private</h3>
+            <p class="sv">Inga konton och ingen server. Allt sparas lokalt på din egen telefon.</p>
+            <p class="en">No accounts and no server. Everything is stored locally on your own phone.</p>
+          </div>
+        </div>
+      </div>
+      <figure>
+        <div class="phone"><div class="speaker"></div><div class="screen">
+          <div style="text-align:center; padding: 26px 6px 10px;">
+            <svg width="56" height="56" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <circle cx="24" cy="24" r="19" stroke="#47563f" stroke-width="3"/>
+              <path d="M15.5 24.5l6 6 11-12.5" stroke="#47563f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="m-title" style="margin-top:10px;">
+              <span class="sv">Ärlighetsinventeringen</span>
+              <span class="en">The Honesty Inventory</span>
+            </div>
+            <p class="m-sub" style="margin-top:8px;">
+              <span class="sv">Ett självreflektionsverktyg om löften till dig själv.</span>
+              <span class="en">A self-reflection tool about the promises you make yourself.</span>
+            </p>
+            <div class="m-card sand" style="font-size:10.5px; margin-top:12px;">
+              <span class="sv">All data sparas endast på din enhet. Ingenting skickas till någon server.</span>
+              <span class="en">All data stays on your device. Nothing is ever sent to a server.</span>
+            </div>
+            <div class="m-btn">
+              <span class="sv">Kom igång</span>
+              <span class="en">Get started</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="sv">Startskärmen – integritetslöftet först av allt</figcaption>
+        <figcaption class="en">The start screen — the privacy promise before anything else</figcaption>
+      </figure>
+    </div>
+  </header>
+
+  <section class="steps">
+    <div class="wrap">
+      <h2 class="sv">Så fungerar det</h2>
+      <h2 class="en">How it works</h2>
+      <p class="intro sv">Fem steg, från mätning till samtalsunderlag. Mockuperna visar fiktiv exempeldata.</p>
+      <p class="intro en">Five steps, from measurement to conversation notes. The mockups show fictional sample data.</p>
+
+      <!-- Steg 1 · Inventeringen -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 1 · Inventeringen</span><span class="en">Step 1 · The inventory</span></p>
+          <h3 class="sv">Tjugo konkreta vardagsfrågor</h3>
+          <h3 class="en">Twenty concrete, everyday questions</h3>
+          <p class="sv">
+            En engångsinventering på 5–7 minuter, en fråga i taget. Tio frågor mäter
+            självtillit – hur ofta små privata löften bryts: skärmen, sömnen, samtalen,
+            ”sista gången”. Tio mäter självrespekt – hur du möter dig själv efteråt:
+            inre dialog, undvikande av sanningen, handling i linje med värderingar.
+          </p>
+          <p class="en">
+            A one-time inventory of 5–7 minutes, one question at a time. Ten questions
+            measure self-trust — how often small private promises break: the screen,
+            sleep, that conversation, “the last time.” Ten measure self-respect — how
+            you meet yourself afterwards: inner dialogue, avoiding the truth, acting
+            in line with your values.
+          </p>
+          <p class="detail sv">
+            Svarsskala i fem steg, från Aldrig till Nästan alltid. Det går alltid att backa.
+          </p>
+          <p class="detail en">
+            A five-step frequency scale, from Never to Almost always. You can always go back.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--ink-soft);">
+                <u><span class="sv">Tillbaka</span><span class="en">Back</span></u>
+                <span class="sv">Fråga 7 av 20</span><span class="en">Question 7 of 20</span>
+              </div>
+              <div class="m-progress"><i style="width:35%"></i></div>
+              <p class="m-eyebrow" style="margin-top:12px;"><span class="sv">Del 1 · Dina löften till dig själv</span><span class="en">Part 1 · Your promises to yourself</span></p>
+              <p class="m-title" style="margin-top:4px; font-size:14.5px;">
+                <span class="sv">Jag säger ”det här är sista gången” om något jag vill sluta med – och gör om det ändå.</span>
+                <span class="en">I say “this is the last time” about something I want to stop — and then do it again.</span>
+              </p>
+              <div style="margin-top:10px;">
+                <div class="m-opt"><span class="sv">Aldrig</span><span class="en">Never</span></div>
+                <div class="m-opt"><span class="sv">Sällan</span><span class="en">Rarely</span></div>
+                <div class="m-opt"><span class="sv">Ibland</span><span class="en">Sometimes</span></div>
+                <div class="m-opt sel"><span class="sv">Ofta</span><span class="en">Often</span></div>
+                <div class="m-opt"><span class="sv">Nästan alltid</span><span class="en">Almost always</span></div>
+              </div>
+            </div></div>
+            <figcaption class="sv">En fråga i taget, med progressbar</figcaption>
+            <figcaption class="en">One question at a time, with a progress bar</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Steg 2 · Profilen -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 2 · Din profil</span><span class="en">Step 2 · Your profile</span></p>
+          <h3 class="sv">En karta, inte en dom</h3>
+          <h3 class="en">A map, not a verdict</h3>
+          <p class="sv">
+            Två delpoäng – självtillit och självrespekt – placerar dig i en av fyra
+            profiler: Fast mark, Säker hand, sträng röst, Varm röst, löst grepp eller
+            Lågvatten. Varje profil pekar ut var skadan är störst och var styrkan
+            finns, och avslutas med samma första övning: löftesloggen.
+          </p>
+          <p class="en">
+            Two scores — self-trust and self-respect — place you in one of four
+            profiles: Firm Ground, Steady Hand Stern Voice, Warm Voice Loose Grip,
+            or Low Tide. Each profile points out where the damage is greatest and
+            where the strength remains, and ends with the same first exercise: the
+            promise log.
+          </p>
+          <p class="detail sv">
+            Resultatet sparas med datum, så att en ominventering kan jämföras senare.
+          </p>
+          <p class="detail en">
+            Results are saved with their date, so a retake can be compared later.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <p class="m-title"><span class="sv">Din profil</span><span class="en">Your profile</span></p>
+              <p class="m-sub"><span class="sv">Inventering 12 maj 2026</span><span class="en">Inventory 12 May 2026</span></p>
+              <div class="m-card">
+                <div class="m-barlabel"><span class="sv">Självtillit</span><span class="en">Self-trust</span><b>38</b></div>
+                <div class="m-bar"><i style="width:38%"></i></div>
+                <div class="m-barlabel"><span class="sv">Självrespekt</span><span class="en">Self-respect</span><b>64</b></div>
+                <div class="m-bar"><i style="width:64%"></i></div>
+              </div>
+              <p class="m-title" style="margin-top:12px; font-size:15px;">
+                <span class="sv">Varm röst, löst grepp</span>
+                <span class="en">Warm Voice, Loose Grip</span>
+              </p>
+              <p style="font-size:11px; margin-top:6px;">
+                <span class="sv">Du behandlar dig själv med en rimlig, ofta varm ton – du kan se sanningen utan att slå dig själv för den. Skadan sitter i stället i tilliten till ditt eget ord … Det är inte ett karaktärsfel. Det är ett konto som tömts, och konton går att fylla igen.</span>
+                <span class="en">You treat yourself with a reasonable, often warm tone — you can look at the truth without beating yourself up over it. The damage sits instead in the trust you place in your own word … That is not a character flaw. It's an account that has been emptied, and accounts can be refilled.</span>
+              </p>
+              <div class="m-btn"><span class="sv">Vidare till löftesloggen</span><span class="en">On to the promise log</span></div>
+            </div></div>
+            <figcaption class="sv">Fyra profiler – specifika, varma, handlingsbara</figcaption>
+            <figcaption class="en">Four profiles — specific, warm, actionable</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Steg 3 · Ett löfte om dagen -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 3 · Ett löfte om dagen</span><span class="en">Step 3 · One promise a day</span></p>
+          <h3 class="sv">Ett – inte tre</h3>
+          <h3 class="en">One — not three</h3>
+          <p class="sv">
+            Kärnan i appen är löftesloggen: ett enda litet löfte per dag, valt ur ett
+            bibliotek med trettio mikrolöften (kropp, ordning, relation, digital,
+            stillhet) eller skrivet med egna ord. Alla är små, binära och vardagsnära –
+            kvällens svar är ett enkelt ja eller nej.
+          </p>
+          <p class="en">
+            The core of the app is the promise log: one single small promise per day,
+            picked from a library of thirty micro-promises (body, order, connection,
+            digital, stillness) or written in your own words. All are small, binary
+            and everyday — the evening answer is a simple yes or no.
+          </p>
+          <div class="callout">
+            <blockquote class="sv">»Ett brutet löfte är information, inte en dom. Vad gjorde det svårt?«</blockquote>
+            <blockquote class="en">“A broken promise is information, not a verdict. What made it hard?”</blockquote>
+            <p class="sv">Så låter appen vid ett ”nej”. Ingen bestraffande copy – ett anteckningsfält, sedan vidare.</p>
+            <p class="en">That's the app's voice on a “no.” No punishing copy — a note field, then onwards.</p>
+          </div>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <p class="m-title"><span class="sv">Checka in</span><span class="en">Check in</span></p>
+              <p class="m-sub"><span class="sv">12 maj 2026</span><span class="en">12 May 2026</span></p>
+              <div class="m-card">
+                <p class="m-eyebrow"><span class="sv">Dagens löfte</span><span class="en">Today's promise</span></p>
+                <p class="m-title" style="font-size:14px; margin-top:3px;">
+                  <span class="sv">Telefonen utanför sovrummet i natt.</span>
+                  <span class="en">Phone outside the bedroom tonight.</span>
+                </p>
+              </div>
+              <p class="m-title" style="font-size:13.5px; margin-top:12px;">
+                <span class="sv">Höll du dagens löfte?</span>
+                <span class="en">Did you keep today's promise?</span>
+              </p>
+              <div class="m-btnrow" style="margin-top:2px;">
+                <div class="m-btn ghost" style="border-color:var(--sage); background:var(--ok-soft);"><span class="sv">Ja</span><span class="en">Yes</span></div>
+                <div class="m-btn ghost"><span class="sv">Nej</span><span class="en">No</span></div>
+              </div>
+              <div class="m-card sand m-quote">
+                <span class="sv">En insättning på kontot.</span>
+                <span class="en">A deposit in the account.</span>
+              </div>
+              <div class="m-nav">
+                <span><span class="sv">Översikt</span><span class="en">Overview</span></span>
+                <span class="on"><span class="sv">Checka in</span><span class="en">Check in</span></span>
+                <span><span class="sv">Mer</span><span class="en">More</span></span>
+              </div>
+            </div></div>
+            <figcaption class="sv">Kvällscheckin: ja eller nej, med valfri anteckning</figcaption>
+            <figcaption class="en">Evening check-in: yes or no, with an optional note</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Steg 4 · Kontot växer -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 4 · Kontot växer</span><span class="en">Step 4 · The account grows</span></p>
+          <h3 class="sv">Läkningen blir synlig</h3>
+          <h3 class="en">The healing becomes visible</h3>
+          <p class="sv">
+            Översikten visar två räknare: hållna löften i rad och hållna totalt. Bryts
+            en svit nollas raden – men totalen består och lyfts fram. Kontot töms inte
+            av en dålig dag. En 30-dagars färgkarta visar mönstret: hållet, brutet
+            eller ingen incheckning.
+          </p>
+          <p class="en">
+            The overview shows two counters: promises kept in a row and kept in total.
+            If a run breaks, the row resets — but the total stands, and it's the total
+            the app points to. One bad day doesn't empty the account. A 30-day colour
+            map shows the pattern: kept, broken, or no check-in.
+          </p>
+          <p class="detail sv">
+            Efter 30 dagar med loggen föreslår appen – lugnt, en gång, avvisbart – en
+            ominventering, och visar sedan förra profilen mot den nya, delpoäng sida
+            vid sida.
+          </p>
+          <p class="detail en">
+            After 30 days with the log, the app suggests — calmly, once, dismissibly —
+            retaking the inventory, then shows the old profile against the new one,
+            scores side by side.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <p class="m-title"><span class="sv">Översikt</span><span class="en">Overview</span></p>
+              <div class="m-card">
+                <div class="m-cols">
+                  <div><div class="m-big">6</div><div class="m-sub"><span class="sv">hållna i rad</span><span class="en">kept in a row</span></div></div>
+                  <div><div class="m-big">23</div><div class="m-sub"><span class="sv">hållna totalt</span><span class="en">kept in total</span></div></div>
+                </div>
+                <p class="m-sub" style="margin-top:6px;"><span class="sv">Ditt konto växer.</span><span class="en">Your account is growing.</span></p>
+              </div>
+              <p class="m-title" style="font-size:14px; margin-top:12px;"><span class="sv">Senaste 30 dagarna</span><span class="en">Last 30 days</span></p>
+              <div class="m-card">
+                <div class="m-grid">
+                  <i class="m-cell"></i><i class="m-cell"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell b"></i><i class="m-cell k"></i><i class="m-cell"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell k"></i>
+                  <i class="m-cell b"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell b"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell k"></i>
+                  <i class="m-cell k"></i><i class="m-cell"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell k"></i><i class="m-cell k"></i>
+                </div>
+                <div class="m-legend">
+                  <span><i style="background:var(--ok)"></i><span class="sv">Hållet</span><span class="en">Kept</span></span>
+                  <span><i style="background:var(--alert)"></i><span class="sv">Brutet</span><span class="en">Broken</span></span>
+                  <span><i style="background:var(--sand)"></i><span class="sv">Ingen incheckning</span><span class="en">No check-in</span></span>
+                </div>
+              </div>
+              <div class="m-nav">
+                <span class="on"><span class="sv">Översikt</span><span class="en">Overview</span></span>
+                <span><span class="sv">Checka in</span><span class="en">Check in</span></span>
+                <span><span class="sv">Mer</span><span class="en">More</span></span>
+              </div>
+            </div></div>
+            <figcaption class="sv">Raden kan nollas – kontot består</figcaption>
+            <figcaption class="en">The row can reset — the account remains</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Steg 5 · Till samtalet -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 5 · Till samtalet</span><span class="en">Step 5 · To the conversation</span></p>
+          <h3 class="sv">Ta med till terapeut, sponsor eller mentor</h3>
+          <h3 class="en">Bring it to a therapist, sponsor or mentor</h3>
+          <p class="sv">
+            En textsammanfattning av de senaste 30 dagarna – inventeringsresultat,
+            löftesstatistik och anteckningar – klar att visa upp, kopiera eller ladda
+            ner inför ett samtal.
+          </p>
+          <p class="en">
+            A text summary of the last 30 days — inventory results, promise statistics
+            and notes — ready to show, copy or download before a conversation.
+          </p>
+          <p class="detail sv">
+            Här finns också säkerhetskopian: eftersom all data bara finns på enheten
+            kan du exportera och importera allt som en fil, samt radera allt med ett
+            bekräftelsesteg.
+          </p>
+          <p class="detail en">
+            The backup lives here too: since all data exists only on the device, you
+            can export and import everything as a single file, and delete everything
+            with a confirmation step.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <p class="m-title"><span class="sv">Sammanfattning – 30 dagar</span><span class="en">Summary – 30 days</span></p>
+              <div class="m-mono sv">ÄRLIGHETSINVENTERINGEN
+Sammanfattning – senaste 30 dagarna
+
+INVENTERING
+Senaste: 12 maj 2026 · Profil: Varm röst, löst grepp
+Självtillit 38 av 100 · Självrespekt 64 av 100
+
+LÖFTESLOGGEN – 30 DAGAR
+Dagar med valt löfte: 26 av 30
+Hållna: 23 · Brutna: 3 · Utan svar: 0
+Nuvarande svit: 6 hållna i rad
+Hållna totalt sedan start: 23</div>
+              <div class="m-mono en">THE HONESTY INVENTORY
+Summary – last 30 days
+
+INVENTORY
+Latest: 12 May 2026 · Profile: Warm Voice, Loose Grip
+Self-trust 38 of 100 · Self-respect 64 of 100
+
+PROMISE LOG – 30 DAYS
+Days with a chosen promise: 26 of 30
+Kept: 23 · Broken: 3 · Unanswered: 0
+Current run: 6 kept in a row
+Kept in total since start: 23</div>
+              <div class="m-btnrow">
+                <div class="m-btn ghost"><span class="sv">Stäng</span><span class="en">Close</span></div>
+                <div class="m-btn"><span class="sv">Kopiera text</span><span class="en">Copy text</span></div>
+              </div>
+            </div></div>
+            <figcaption class="sv">Samtalsunderlag i textform – visa, kopiera eller ladda ner</figcaption>
+            <figcaption class="en">Conversation notes as text — view, copy or download</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="facts">
+    <div class="wrap">
+      <h2 class="sv">Integritet och teknik</h2>
+      <h2 class="en">Privacy and technology</h2>
+      <div class="fact-grid">
+        <div class="fact">
+          <h3 class="sv">Ingenting lämnar enheten</h3>
+          <h3 class="en">Nothing leaves the device</h3>
+          <p class="sv">All data sparas i telefonens lokala databas. Inga konton, ingen server, ingen analytics, inga tredjepartsskript.</p>
+          <p class="en">All data is stored in the phone's local database. No accounts, no server, no analytics, no third-party scripts.</p>
+        </div>
+        <div class="fact">
+          <h3 class="sv">Installeras som app</h3>
+          <h3 class="en">Installs as an app</h3>
+          <p class="sv">Läggs till på hemskärmen direkt från webbläsaren och fungerar helt offline efter första besöket.</p>
+          <p class="en">Added to the home screen straight from the browser, and works fully offline after the first visit.</p>
+        </div>
+        <div class="fact">
+          <h3 class="sv">Dold adress</h3>
+          <h3 class="en">Hidden address</h3>
+          <p class="sv">Sidan är inte länkad någonstans på sajten och indexeras inte av sökmotorer. Bara den som får länken hittar dit.</p>
+          <p class="en">The page isn't linked anywhere on the site and isn't indexed by search engines. Only someone given the link will find it.</p>
+        </div>
+        <div class="fact">
+          <h3 class="sv">Egen säkerhetskopia</h3>
+          <h3 class="en">Your own backup</h3>
+          <p class="sv">Du äger din data: allt kan exporteras som en fil och läsas in igen – till exempel vid telefonbyte.</p>
+          <p class="en">You own your data: everything can be exported as a file and imported again — when changing phones, for example.</p>
+        </div>
+        <div class="fact">
+          <h3 class="sv">Historik bevaras</h3>
+          <h3 class="en">History is kept</h3>
+          <p class="sv">Varje inventering sparas med datum och kan jämföras med nästa. Löftesloggen och totalen består – även när en svit bryts.</p>
+          <p class="en">Every inventory is saved with its date and can be compared with the next. The promise log and the total remain — even when a run breaks.</p>
+        </div>
+        <div class="fact">
+          <h3 class="sv">Statisk webbapp</h3>
+          <h3 class="en">Static web app</h3>
+          <p class="sv">Byggd med React, Vite och Tailwind. Serveras som statiska filer från missionphoenix.life – ingen drift utöver sajten.</p>
+          <p class="en">Built with React, Vite and Tailwind. Served as static files from missionphoenix.life — no infrastructure beyond the site.</p>
+        </div>
+      </div>
+
+      <div class="try">
+        <div class="try-top">
+          <div>
+            <h2 class="sv">Kom igång</h2>
+            <h2 class="en">Get started</h2>
+            <p class="sv">
+              Öppna verktyget och gör inventeringen – den tar 5–7 minuter. Allt du
+              svarar stannar på din egen enhet och kan raderas när som helst.
+            </p>
+            <p class="en">
+              Open the tool and take the inventory — it takes 5–7 minutes. Everything
+              you answer stays on your own device and can be deleted at any time.
+            </p>
+            <a class="btn" href="/inventory/"><span class="sv">Öppna Ärlighetsinventeringen</span><span class="en">Open The Honesty Inventory</span></a>
+          </div>
+          <div class="qr">
+            <img src="inventory-demo/qr-inventory.png" alt="QR-kod till Ärlighetsinventeringen" />
+            <small><span class="sv">Skanna med mobilen</span><span class="en">Scan with your phone</span><br />missionphoenix.life/inventory</small>
+          </div>
+        </div>
+
+        <div class="install">
+          <h3 class="sv">Så installeras appen på hemskärmen</h3>
+          <h3 class="en">How to install the app on your home screen</h3>
+          <div class="install-grid">
+            <div class="os">
+              <h4>iPhone / iPad</h4>
+              <ol class="sv">
+                <li>Öppna länken i <strong>Safari</strong> – det måste vara Safari, Chrome på iPhone kan inte installera</li>
+                <li>Tryck på dela-knappen (fyrkanten med pilen uppåt)</li>
+                <li>Välj <strong>Lägg till på hemskärmen</strong></li>
+              </ol>
+              <ol class="en">
+                <li>Open the link in <strong>Safari</strong> — it has to be Safari; Chrome on iPhone can't install</li>
+                <li>Tap the share button (the square with the arrow pointing up)</li>
+                <li>Choose <strong>Add to Home Screen</strong></li>
+              </ol>
+            </div>
+            <div class="os">
+              <h4>Android</h4>
+              <ol class="sv">
+                <li>Öppna länken i Chrome</li>
+                <li>Tryck på <strong>Installera</strong> i rutan som visas – eller öppna menyn med tre prickar och välj <strong>Lägg till på startskärmen</strong></li>
+              </ol>
+              <ol class="en">
+                <li>Open the link in Chrome</li>
+                <li>Tap <strong>Install</strong> in the prompt — or open the three-dot menu and choose <strong>Add to Home screen</strong></li>
+              </ol>
+            </div>
+            <div class="os">
+              <h4><span class="sv">Dator</span><span class="en">Computer</span></h4>
+              <ol class="sv">
+                <li>Öppna länken i Chrome eller Edge</li>
+                <li>Klicka på <strong>installationsikonen</strong> till höger i adressfältet</li>
+              </ol>
+              <ol class="en">
+                <li>Open the link in Chrome or Edge</li>
+                <li>Click the <strong>install icon</strong> at the right of the address bar</li>
+              </ol>
+            </div>
+          </div>
+          <p class="note sv">
+            iPhone visar ingen egen installationsfråga – stegen görs manuellt via dela-knappen.
+            Installationen är också ett skydd: en app på hemskärmen undantas från Safaris
+            regelbundna rensning av webbplatsdata. Och eftersom all data ligger i appen på
+            enheten gäller: raderas appikonen raderas datan – kom ihåg säkerhetskopian
+            under fliken Mer.
+          </p>
+          <p class="note en">
+            iPhone shows no install prompt of its own — the steps are done manually via the
+            share button. Installing is also a safeguard: an app on the home screen is exempt
+            from Safari's periodic clearing of website data. And since all data lives in the
+            app on the device: delete the app icon and the data goes with it — remember the
+            backup under the More tab.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span class="sv">Ärlighetsinventeringen · Inspirerad av Nathaniel Brandens arbete om självkänslans sex pelare · Ett självreflektionsverktyg, inte ett psykologiskt test.</span>
+      <span class="en">The Honesty Inventory · Inspired by Nathaniel Branden's work on the six pillars of self-esteem · A self-reflection tool, not a psychological test.</span>
+      <br />
+      <span class="sv">Mockuperna på sidan visar fiktiv exempeldata.</span>
+      <span class="en">The mockups on this page show fictional sample data.</span>
+    </div>
+  </footer>
+
+  <script>
+    function setLang(l) {
+      document.body.classList.toggle('en', l === 'en');
+      document.documentElement.lang = l;
+      document.getElementById('btn-sv').classList.toggle('on', l === 'sv');
+      document.getElementById('btn-en').classList.toggle('on', l === 'en');
+      try { localStorage.setItem('inv-demo-lang', l); } catch (e) {}
+    }
+    try {
+      var saved = localStorage.getItem('inv-demo-lang');
+      if (saved === 'en') setLang('en');
+    } catch (e) {}
+  </script>
+
+</body>
+</html>
