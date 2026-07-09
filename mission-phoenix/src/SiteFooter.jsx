@@ -14,6 +14,7 @@ export default function SiteFooter() {
         <div className="foot-col">
           <h4>The work</h4>
           <Link to="/quiz">Self-assessment</Link>
+          <a href="/inventory-demo.html">Honesty Inventory</a>
           <Link to="/tracker">Recovery tracker</Link>
           <Link to="/community">Community</Link>
           <Link to="/archive">Newsletter archive</Link>

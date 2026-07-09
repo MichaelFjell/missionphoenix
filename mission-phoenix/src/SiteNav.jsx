@@ -22,7 +22,10 @@ export default function SiteNav() {
         <div className="links">
           <Link to="/archive" className={isActive('/archive') ? 'active' : ''}>Archive</Link>
           <Link to="/quiz" className={isActive('/quiz') ? 'active' : ''}>Assessment</Link>
-          
+
+          {/* Fristående statisk sida (utanför SPA-routern) – vanlig länk med avsikt */}
+          <a href="/inventory-demo.html">Honesty Inventory</a>
+
           {/* 1. Added your new Coaching package track */}
           <Link to="/coaching" className={isActive('/coaching') ? 'active' : ''}>Coaching</Link>
           
