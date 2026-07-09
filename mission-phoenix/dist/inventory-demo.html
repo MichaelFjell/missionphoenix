@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex" />
-  <meta name="description" content="Guide till Ärlighetsinventeringen: så fungerar verktyget, steg för steg." />
+  <meta name="description" content="The Honesty Inventory / Ärlighetsinventeringen – a free, private self-reflection tool for recovery. How it works, step by step, and how to install it." />
+  <meta property="og:title" content="The Honesty Inventory – how it works" />
+  <meta property="og:description" content="A free, private self-reflection tool for recovery: measure the gap between what you tell yourself and what you do, then rebuild trust one kept promise a day." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://missionphoenix.life/inventory-demo.html" />
   <title>Ärlighetsinventeringen – så fungerar verktyget</title>
   <style>
     :root {
@@ -784,8 +787,10 @@ Kept in total since start: 23</div>
       try { localStorage.setItem('inv-demo-lang', l); } catch (e) {}
     }
     try {
+      var qs = new URLSearchParams(window.location.search).get('lang');
       var saved = localStorage.getItem('inv-demo-lang');
-      if (saved === 'en') setLang('en');
+      if (qs === 'en' || qs === 'sv') setLang(qs);
+      else if (saved === 'en') setLang('en');
     } catch (e) {}
   </script>
 

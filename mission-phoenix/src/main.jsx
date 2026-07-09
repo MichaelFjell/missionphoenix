@@ -17,6 +17,7 @@ import About from './About.jsx';
 import Story from './Story.jsx';
 import Contact from './Contact.jsx';
 import Support from './Support.jsx';
+import HonestyInventory from './HonestyInventory.jsx';
 import Archive from './Archive.jsx';
 import JourneyPreview from './JourneyPreview.jsx';
 import SiteNav from './SiteNav.jsx';
@@ -127,6 +128,7 @@ function App() {
           <Route path="/story" element={<Story />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/honesty-inventory" element={<HonestyInventory />} />
         </Routes>
         <SiteFooter />
       </AuthProvider>
