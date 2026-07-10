@@ -27,7 +27,7 @@ export default function HonestyInventory() {
           <p>
             The Honesty Inventory is a free self-reflection tool for recovery. It
             measures the gap between what you tell yourself and what you actually
-            do &mdash; and then helps you close it, one small kept promise a day.
+            do, and then helps you close it, one small kept promise a day.
           </p>
           <p>
             It&apos;s grounded in Nathaniel Branden&apos;s work on self-esteem.
@@ -35,13 +35,13 @@ export default function HonestyInventory() {
             &ldquo;tomorrow I&apos;ll stop&rdquo; that doesn&apos;t hold teaches
             you that your own word is worth nothing. The inventory makes that
             damage visible through twenty concrete, everyday questions across two
-            scales &mdash; self-trust and self-respect. You get one of four
+            scales: self-trust and self-respect. You get one of four
             profiles: a map of where the damage is greatest and where your
             strength still is. A map, not a verdict.
           </p>
           <p>
-            Then comes the real work: the promise log. One small promise a day
-            &mdash; five to fifteen minutes, kept or not kept, no gray zone. Every
+            Then comes the real work: the promise log. One small promise a day.
+            Five to fifteen minutes, kept or not kept, no gray zone. Every
             kept promise is a deposit in an account that never resets, and
             watching that account grow is watching self-trust come back.
           </p>
@@ -49,7 +49,7 @@ export default function HonestyInventory() {
 
         <div className="hi-personal">
           <p>
-            I built this because I needed it, and I use it personally &mdash; one
+            I built this because I needed it, and I use it personally: one
             promise in the morning, one honest answer at night. Rebuilding trust
             in my own word has been some of the most important work of my
             recovery, and this is the tool I do it with.
@@ -57,7 +57,7 @@ export default function HonestyInventory() {
         </div>
 
         <ul className="hi-facts">
-          <li><strong>Completely free.</strong> No account, no login, no ads &mdash; and it always will be.</li>
+          <li><strong>Completely free.</strong> No account, no login, no ads, and it always will be.</li>
           <li><strong>Fully private.</strong> Everything stays on your device. Nothing is ever sent to a server.</li>
           <li><strong>Works like an app.</strong> Installs on your home screen and works offline.</li>
           <li><strong>Two languages.</strong> Available in English and Swedish.</li>
