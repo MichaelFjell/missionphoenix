@@ -15,6 +15,7 @@ export default function SiteFooter() {
           <h4>The work</h4>
           <Link to="/quiz">Self-assessment</Link>
           <Link to="/honesty-inventory">Honesty Inventory</Link>
+          <Link to="/coaching">Coaching</Link>
           <Link to="/tracker">Recovery tracker</Link>
           <Link to="/community">Community</Link>
           <Link to="/archive">Newsletter archive</Link>
