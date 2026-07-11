@@ -20,6 +20,9 @@ import Support from './Support.jsx';
 import HonestyInventory from './HonestyInventory.jsx';
 import Coaching from './Coaching.jsx';
 import CoachingAdmin from './CoachingAdmin.jsx';
+import Portal from './Portal.jsx';
+import PortalWelcome from './PortalWelcome.jsx';
+import PortalReset from './PortalReset.jsx';
 import Archive from './Archive.jsx';
 import JourneyPreview from './JourneyPreview.jsx';
 import SiteNav from './SiteNav.jsx';
@@ -133,6 +136,9 @@ function App() {
           <Route path="/honesty-inventory" element={<HonestyInventory />} />
           <Route path="/coaching" element={<Coaching />} />
           <Route path="/coaching/admin" element={<CoachingAdmin />} />
+          <Route path="/portal" element={<Portal />} />
+          <Route path="/portal/welcome" element={<PortalWelcome />} />
+          <Route path="/portal/reset" element={<PortalReset />} />
         </Routes>
         <SiteFooter />
       </AuthProvider>

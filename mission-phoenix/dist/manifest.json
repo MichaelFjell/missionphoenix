@@ -1,0 +1,13 @@
+{
+  "name": "Mission Phoenix",
+  "short_name": "Phoenix",
+  "description": "Mission Phoenix coaching portal — daily check-ins and progress.",
+  "start_url": "/portal",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#170c0c",
+  "theme_color": "#170c0c",
+  "icons": [
+    { "src": "/phoenix.png", "sizes": "any", "type": "image/png", "purpose": "any" }
+  ]
+}

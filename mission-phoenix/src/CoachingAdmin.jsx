@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from './main.jsx';
 import { supabase, isSupabaseConfigured } from './supabase.js';
+import CoachingClients from './CoachingClients.jsx';
+import { ADMIN } from './coachingContent.js';
 
 const WEEKDAYS = [
   { v: 1, label: 'Monday' }, { v: 2, label: 'Tuesday' }, { v: 3, label: 'Wednesday' },
@@ -284,7 +286,7 @@ function Availability() {
 
 export default function CoachingAdmin() {
   const { user, profile, loading } = useAuth() || {};
-  const [tab, setTab] = useState('bookings');
+  const [tab, setTab] = useState('clients');
 
   if (!isSupabaseConfigured()) return <main className="page narrow"><p className="muted">Supabase is not configured.</p></main>;
 
@@ -325,7 +327,7 @@ export default function CoachingAdmin() {
         .ca-add select,.ca-add input{width:auto;padding:10px 12px;font-size:14px;}
       `}</style>
       <main className="page narrow">
-        <h1 className="ca-title">Booking admin</h1>
+        <h1 className="ca-title">Coaching admin</h1>
         <div className="ca-sep"></div>
         {loading ? (
           <p className="muted">Loading…</p>
@@ -336,10 +338,11 @@ export default function CoachingAdmin() {
         ) : (
           <>
             <div className="ca-tabs">
+              <button type="button" className={'ca-tab' + (tab === 'clients' ? ' on' : '')} onClick={() => setTab('clients')}>{ADMIN.tab}</button>
               <button type="button" className={'ca-tab' + (tab === 'bookings' ? ' on' : '')} onClick={() => setTab('bookings')}>Bookings</button>
               <button type="button" className={'ca-tab' + (tab === 'availability' ? ' on' : '')} onClick={() => setTab('availability')}>Availability</button>
             </div>
-            {tab === 'bookings' ? <Bookings /> : <Availability />}
+            {tab === 'clients' ? <CoachingClients /> : tab === 'bookings' ? <Bookings /> : <Availability />}
           </>
         )}
       </main>

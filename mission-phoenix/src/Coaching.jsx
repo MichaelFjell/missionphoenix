@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom';
 import BookingWidget from './BookingWidget.jsx';
+import { PRIVACY } from './coachingContent.js';
 
 export default function Coaching() {
   return (
@@ -143,6 +145,13 @@ export default function Coaching() {
         </section>
 
         <section className="co-sec">
+          <div className="card co-card" style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', justifyContent: 'space-between' }}>
+            <p style={{ margin: 0 }}>Already a client? Your daily check-in lives in your portal.</p>
+            <Link to="/portal" className="btn sm primary">Open client portal</Link>
+          </div>
+        </section>
+
+        <section className="co-sec">
           <h2 className="sec-title">FAQ</h2>
           <div className="card" style={{ paddingTop: 10, paddingBottom: 10 }}>
             <div className="co-faq-item">
@@ -167,6 +176,13 @@ export default function Coaching() {
                 you run yourself.
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="co-sec">
+          <h2 className="sec-title">{PRIVACY.title}</h2>
+          <div className="card co-card">
+            {PRIVACY.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
           </div>
         </section>
       </main>
