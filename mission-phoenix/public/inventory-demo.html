@@ -140,7 +140,7 @@
     .m-big { font-family: var(--serif); font-size: 26px; line-height: 1.1; }
     .m-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .m-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; margin-top: 8px; }
-    .m-cell { aspect-ratio: 1; border-radius: 3px; background: rgba(236, 229, 216, 0.7); }
+    .m-cell { aspect-ratio: 1; border-radius: 3px; background: var(--warn); }
     .m-cell.k { background: var(--ok); }
     .m-cell.b { background: var(--alert); }
     .m-cell.e { background: var(--line); }
@@ -462,13 +462,16 @@
             Kärnan i appen är löftesloggen: ett enda litet löfte per dag, valt ur ett
             bibliotek med trettio mikrolöften (kropp, ordning, relation, digital,
             stillhet) eller skrivet med egna ord. Alla är små, binära och vardagsnära –
-            kvällens svar är ett enkelt ja eller nej.
+            kvällens svar är ett enkelt ja eller nej. Att svara är en del av
+            löftet: ett obesvarat löfte räknas som brutet när dagen passerat.
           </p>
           <p class="en">
             The core of the app is the promise log: one single small promise per day,
             picked from a library of thirty micro-promises (body, order, connection,
             digital, stillness) or written in your own words. All are small, binary
-            and everyday: the evening answer is a simple yes or no.
+            and everyday: the evening answer is a simple yes or no. Answering is
+            part of the promise: an unanswered promise counts as broken once
+            the day has passed.
           </p>
           <div class="callout">
             <blockquote class="sv">»Ett brutet löfte är information, inte en dom. Vad gjorde det svårt?«</blockquote>
@@ -563,7 +566,7 @@
                 <div class="m-legend">
                   <span><i style="background:var(--ok)"></i><span class="sv">Hållet</span><span class="en">Kept</span></span>
                   <span><i style="background:var(--alert)"></i><span class="sv">Brutet</span><span class="en">Broken</span></span>
-                  <span><i style="background:var(--sand)"></i><span class="sv">Ingen incheckning</span><span class="en">No check-in</span></span>
+                  <span><i style="background:var(--warn)"></i><span class="sv">Ingen incheckning</span><span class="en">No check-in</span></span>
                 </div>
               </div>
               <div class="m-nav">
