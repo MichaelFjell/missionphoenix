@@ -33,9 +33,6 @@ export default function About() {
           <p> I have a very clear life mission and life purpose, which is to spread awareness of the cost of pornography addiction, especially to younger men and boys in school. To travel around and talk about my life experience and what porn really costed me and took from me, as well as inspiring people struggling with it, through my own recovery. I want to be a person that I wish existed for me when I first found pornography.</p>
         </div>
 
-        <div className="about-more">
-          <Link to="/story">Here is the link to a longer text of my life story if you&rsquo;re interested. →</Link>
-        </div>
       </main>
     </>
   );
