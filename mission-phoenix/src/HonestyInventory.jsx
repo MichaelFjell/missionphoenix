@@ -58,7 +58,7 @@ export default function HonestyInventory() {
 
         <ul className="hi-facts">
           <li><strong>Completely free.</strong> No account, no login, no ads, and it always will be.</li>
-          <li><strong>Fully private.</strong> Everything stays on your device. Nothing is ever sent to a server.</li>
+          <li><strong>Fully private.</strong> Your answers stay on your device.</li>
           <li><strong>Works like an app.</strong> Installs on your home screen and works offline.</li>
           <li><strong>Two languages.</strong> Available in English and Swedish.</li>
         </ul>
