@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <meta name="description" content="Guide till DBK Uppgifter – den digitala arbetsboken för Vägvalsprogrammet: så fungerar appen, steg för steg." />
+  <title>DBK Uppgifter – så fungerar appen</title>
+  <style>
+    :root {
+      --ground: #faf7f2;
+      --surface: #ffffff;
+      --ink: #2e2a26;
+      --ink-soft: #6f675e;
+      --accent: #96543a;
+      --accent-deep: #7c4530;
+      --line: #e2dccd;
+      --sand: #ece5d8;
+      --green: #47563f;
+      --serif: Georgia, "Times New Roman", Times, serif;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color-scheme: light;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { background: var(--ground); }
+    body {
+      font-family: var(--sans);
+      color: var(--ink);
+      line-height: 1.6;
+      font-size: 17px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+    a { color: var(--accent-deep); }
+
+    h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.2; text-wrap: balance; }
+    .eyebrow {
+      font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink-soft); font-weight: 600;
+    }
+    .step-eyebrow { color: var(--accent); }
+
+    /* ---- Hero ---- */
+    .hero { padding: 56px 0 40px; }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: clamp(32px, 5vw, 72px); align-items: center;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .brand img { width: 56px; height: 56px; border-radius: 14px; display: block; }
+    .brand span { font-family: var(--serif); font-size: 28px; }
+    .hero h1 { font-size: clamp(26px, 3.4vw, 36px); margin-bottom: 14px; }
+    .hero p.lead { max-width: 34em; color: var(--ink-soft); font-size: 18px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .chip {
+      background: var(--sand); border-radius: 999px; padding: 6px 14px;
+      font-size: 14px; color: var(--ink);
+    }
+
+    /* ---- Telefonramar ---- */
+    .phone {
+      width: 250px; max-width: 100%; border-radius: 30px; overflow: hidden;
+      border: 1px solid rgba(46, 42, 38, 0.14);
+      box-shadow: 0 22px 44px -20px rgba(46, 42, 38, 0.30);
+      background: var(--ground); flex-shrink: 0;
+    }
+    .phone img { display: block; width: 100%; height: auto; }
+    .phone-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 530px; }
+    figcaption {
+      font-size: 13px; color: var(--ink-soft); text-align: center; margin-top: 10px;
+    }
+    figure { margin: 0; }
+
+    /* ---- Pappersram för utskriftsvyn ---- */
+    .paper {
+      width: 340px; max-width: 100%; border-radius: 6px; overflow: hidden;
+      border: 1px solid rgba(46, 42, 38, 0.16);
+      box-shadow: 0 18px 38px -18px rgba(46, 42, 38, 0.28);
+      background: #fff; flex-shrink: 0;
+    }
+    .paper img { display: block; width: 100%; height: auto; }
+
+    /* ---- Pelare ---- */
+    .pillars {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+      margin: 26px 0 0;
+    }
+    .pillar {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 16px; padding: 20px 22px;
+    }
+    .pillar h3 { font-size: 19px; margin-bottom: 6px; }
+    .pillar p { font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Stegsektioner ---- */
+    .steps { padding: 26px 0 8px; }
+    .steps > .wrap > h2 { font-size: clamp(24px, 3vw, 30px); margin-bottom: 6px; }
+    .steps > .wrap > p.intro { color: var(--ink-soft); max-width: 38em; }
+    .flow {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto;
+      gap: clamp(28px, 5vw, 64px); align-items: center;
+      padding: 40px 0; border-bottom: 1px solid var(--line);
+    }
+    .flow:last-of-type { border-bottom: none; }
+    .flow h3 { font-size: clamp(21px, 2.4vw, 26px); margin: 6px 0 10px; }
+    .flow p { color: var(--ink-soft); max-width: 32em; }
+    .flow p + p { margin-top: 10px; }
+    .flow .detail { font-size: 15px; }
+
+    /* ---- Statusrad ---- */
+    .statuses { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .status {
+      border-radius: 999px; padding: 5px 13px; font-size: 13.5px; font-weight: 500;
+      border: 1px solid var(--line); background: var(--surface); color: var(--ink-soft);
+    }
+    .status.pagaende { background: #f3e3d3; border-color: #d9b28f; color: #7c4530; }
+    .status.klar { background: #e4ead9; border-color: #b8c4a4; color: #47563f; }
+
+    /* ---- Varsel-citat ---- */
+    .callout {
+      background: #f5eed9; border: 1px solid rgba(201, 161, 63, 0.45);
+      border-radius: 18px; padding: 26px 30px; margin: 34px 0 4px;
+    }
+    .callout blockquote {
+      font-family: var(--serif); font-size: clamp(18px, 2.2vw, 22px);
+      line-height: 1.45; text-wrap: balance;
+    }
+    .callout p { margin-top: 12px; font-size: 15px; color: var(--ink-soft); max-width: none; }
+
+    /* ---- Fakta ---- */
+    .facts { padding: 48px 0 16px; }
+    .facts h2 { font-size: clamp(24px, 3vw, 30px); margin-bottom: 20px; }
+    .fact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .fact {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 16px; padding: 20px 22px;
+    }
+    .fact h3 { font-size: 18px; margin-bottom: 6px; }
+    .fact p { font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Prova ---- */
+    .try {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+      padding: 34px 36px; margin: 40px 0;
+    }
+    .try-top { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
+    .try h2 { font-size: clamp(22px, 2.6vw, 28px); margin-bottom: 8px; }
+    .try p { color: var(--ink-soft); max-width: 30em; }
+    .try .btn {
+      display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+      border-radius: 12px; padding: 13px 26px; font-weight: 600; margin-top: 18px;
+    }
+    .try .btn:hover { background: var(--accent-deep); }
+    .try .qr { text-align: center; }
+    .try .qr img { width: 132px; height: 132px; display: block; margin: 0 auto 8px; }
+    .try .qr small { font-size: 12.5px; color: var(--ink-soft); }
+
+    /* ---- Installationsinstruktion ---- */
+    .install { border-top: 1px solid var(--line); margin-top: 30px; padding-top: 26px; }
+    .install h3 { font-size: 20px; margin-bottom: 16px; }
+    .install-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .install .os h4 {
+      font-family: var(--sans); font-size: 15px; font-weight: 600; margin-bottom: 6px;
+    }
+    .install ol { padding-left: 20px; font-size: 14.5px; color: var(--ink-soft); }
+    .install ol li + li { margin-top: 4px; }
+    .install .note {
+      margin-top: 20px; font-size: 14px; color: var(--ink); max-width: none;
+      background: var(--sand); border-radius: 12px; padding: 13px 17px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line); padding: 26px 0 44px;
+      font-size: 13.5px; color: var(--ink-soft); text-align: center;
+    }
+
+    @media (max-width: 880px) {
+      .hero-grid, .flow, .try-top { grid-template-columns: 1fr; }
+      .install-grid { grid-template-columns: 1fr; }
+      .hero-grid .phone-row, .flow .phone-row { justify-content: flex-start; }
+      .pillars, .fact-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 40px; }
+    }
+    @media print {
+      .flow, .try, .callout, .fact, .pillar { break-inside: avoid; }
+      .phone, .paper { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="brand">
+          <img src="dbkuppgifter-demo/ikon.png" alt="" />
+          <span>DBK Uppgifter</span>
+        </div>
+        <h1>Vägvalsprogrammets arbetsböcker, i fickformat</h1>
+        <p class="lead">
+          En digital version av arbetsböckerna i Vägvalsprogrammet. Samma
+          uppgifter som i pärmen, men alltid med i telefonen: svaren sparas
+          medan du skriver, och varje uppgift kan skrivas ut för redovisning
+          i grupp precis som förut.
+        </p>
+        <div class="chips">
+          <span class="chip">Bygger på Erik Sundbys arbetsböcker</span>
+          <span class="chip">All data stannar på enheten</span>
+          <span class="chip">Installeras som app · funkar offline</span>
+          <span class="chip">Svenska och engelska</span>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <h3>Trogen pappersboken</h3>
+            <p>Tre arbetsböcker, uppgift för uppgift: Startpunkten, Vägvalsprogrammet med alla faser, samt de 16 fördjupningsartiklarna.</p>
+          </div>
+          <div class="pillar">
+            <h3>Privat</h3>
+            <p>Inga konton och ingen server. Allt du skriver sparas lokalt på din egen telefon eller dator.</p>
+          </div>
+        </div>
+      </div>
+      <figure>
+        <div class="phone"><img src="dbkuppgifter-demo/01-hem.png" alt="Hemskärmen med de tre arbetsböckerna och förlopp per bok" /></div>
+        <figcaption>Hemskärmen: tre böcker, förloppet syns direkt</figcaption>
+      </figure>
+    </div>
+  </header>
+
+  <section class="steps">
+    <div class="wrap">
+      <h2>Så fungerar appen</h2>
+      <p class="intro">Sex nedslag, från bokmenyn till utskriften. Skärmdumparna visar fiktiv exempeldata.</p>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">1 · Boken som meny</p>
+          <h3>Välj uppgiften du arbetar med</h3>
+          <p>
+            Varje bok visar sina uppgifter i den ordning de har i pärmen.
+            Arbetsboken är indelad i faserna Fångad i tvånget, Ur tvånget
+            och Fri från tvånget samt Parprocessen, med förlopp per fas.
+          </p>
+          <p class="detail">
+            Statusen sköter sig själv: en uppgift blir Pågående så fort du
+            börjat skriva och Klar när du markerar den som klar.
+          </p>
+          <div class="statuses" aria-hidden="true">
+            <span class="status">Ej påbörjad</span>
+            <span class="status pagaende">Pågående</span>
+            <span class="status klar">Klar</span>
+          </div>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="dbkuppgifter-demo/02-bok.png" alt="Arbetsbokens meny med Fas 1 klar och Fas 2 pågående" /></div>
+            <figcaption>Fas 1 klar, Fas 2 pågår</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">2 · Skrivuppgifterna</p>
+          <h3>Skriv direkt i telefonen, sparas medan du skriver</h3>
+          <p>
+            Skrivfälten följer bokens mallar, här triggersinventeringen med
+            trigger, beskrivning, tanke, känsla, impuls och motkraft. Allt
+            autosparas lokalt efter varje tangenttryckning, och uppe till
+            höger står det stilla lilla kvittot: Sparad.
+          </p>
+          <p class="detail">
+            Inget skickas iväg och inget går förlorat om samtalet ringer
+            mitt i en mening.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="dbkuppgifter-demo/03-uppgift.png" alt="Triggersinventeringen med ifyllda skrivfält" /></div>
+            <figcaption>Bokens mall, dina egna ord</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">3 · Lästexterna</p>
+          <h3>Fördjupningarna är en egen bok, och länkarna leder rätt</h3>
+          <p>
+            De 16 fördjupningsartiklarna ligger som en egen bok med Läst-markering.
+            När Startpunkten eller Arbetsboken hänvisar till en artikel är
+            hänvisningen en klickbar länk som tar dig rakt in i rätt text,
+            och tillbaka igen.
+          </p>
+          <p class="detail">
+            Lästexter ingår bara där de hör till uppgifterna, precis som i
+            pärmen. Ordalydelsen är bokens egen, även där bokens numrering
+            spretar.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="dbkuppgifter-demo/04-lastext.png" alt="Lästext med klickbar korsreferens till en fördjupningsartikel" /></div>
+            <figcaption>Korsreferensen är en länk</figcaption>
+          </figure>
+          <figure>
+            <div class="phone"><img src="dbkuppgifter-demo/05-fordjupningar.png" alt="Fördjupningsartiklarna som egen bok med lässtatus" /></div>
+            <figcaption>16 artiklar med lässtatus</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">4 · Kvällsinventeringen</p>
+          <h3>Tre gånger tre rader innan du lägger dig</h3>
+          <p>
+            Släpp taget-uppgiften har en egen flik i bottenmenyn: tre saker
+            du gjort bra idag, tre saker du är tacksam för och tre saker du
+            behöver hjälp med. Varje kväll blir en egen post, och historiken
+            samlas dag för dag under formuläret.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="dbkuppgifter-demo/06-inventering.png" alt="Kvällsinventeringen med dagens ifyllda rader" /></div>
+            <figcaption>Dagens inventering, historiken därunder</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">5 · Redovisningen</p>
+          <h3>Skriv ut uppgiften, som ur pärmen</h3>
+          <p>
+            Varje uppgift kan skrivas ut eller sparas som PDF för redovisning
+            i grupp. Utskriften har bokens rubriker, dina ifyllda svar och
+            tomma skrivlinjer för det som inte är ifyllt än, så att pappret
+            fungerar även för den som vill fortsätta för hand.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="paper"><img src="dbkuppgifter-demo/08-utskrift.png" alt="Utskriftsvyn i A4-format med ifyllda svar och tomma skrivlinjer" /></div>
+            <figcaption>Utskriftsvyn: rubriker, svar och skrivlinjer</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">6 · Två språk, två lägen</p>
+          <h3>Svenska och engelska, ljust och mörkt</h3>
+          <p>
+            Språket växlas med knappen uppe till höger eller under
+            Inställningar. Svaren är gemensamma: det du skrivit finns kvar
+            när du byter språk. Utseendet följer systemet eller väljs fast,
+            ljust eller mörkt.
+          </p>
+          <p class="detail">
+            Under Inställningar finns också säkerhetskopieringen: exportera
+            allt som en fil och läs in den igen på en annan enhet.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="dbkuppgifter-demo/09-english.png" alt="Hemskärmen på engelska" /></div>
+            <figcaption>Engelska, samma svar</figcaption>
+          </figure>
+          <figure>
+            <div class="phone"><img src="dbkuppgifter-demo/10-morkt.png" alt="Hemskärmen i mörkt läge" /></div>
+            <figcaption>Mörkt läge</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="callout">
+        <blockquote>
+          »Du är viktig. Om du har tankar på att inte orka leva: ring 112
+          vid akut fara, eller Mind Självmordslinjen på 90101.«
+        </blockquote>
+        <p>
+          Säkerheten är inbyggd: veckoavstämningen ställer frågan om livslust,
+          och vid ett förhöjt svar visas omedelbart en stödpanel med svenska
+          krisresurser (112, Mind 90101, 1177 samt uppmaningen att kontakta
+          terapeut eller grupp). Panelen kan inte stängas förrän den
+          bekräftats, och stödet ligger kvar så länge svaret är förhöjt.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="facts">
+    <div class="wrap">
+      <h2>Integritet och teknik</h2>
+      <div class="fact-grid">
+        <div class="fact">
+          <h3>Ingenting lämnar enheten</h3>
+          <p>Svaren sparas i telefonens lokala databas (IndexedDB). Inga konton, ingen server, ingen analytics, inga externa anrop.</p>
+        </div>
+        <div class="fact">
+          <h3>Installeras som app</h3>
+          <p>Läggs till på hemskärmen direkt från webbläsaren och fungerar helt offline efter första besöket.</p>
+        </div>
+        <div class="fact">
+          <h3>Dold adress</h3>
+          <p>Sidan är inte länkad någonstans på sajten och indexeras inte av sökmotorer. Bara den som får länken hittar dit.</p>
+        </div>
+        <div class="fact">
+          <h3>Egen säkerhetskopia</h3>
+          <p>Du äger din data: allt kan exporteras som en JSON-fil och läsas in igen, till exempel vid telefonbyte. Rensa all data kräver dubbel bekräftelse.</p>
+        </div>
+        <div class="fact">
+          <h3>Utskrift till papper eller PDF</h3>
+          <p>Varje uppgift har en utskriftsvy med bokens rubriker, dina svar och tomma skrivlinjer, redo för gruppens redovisning.</p>
+        </div>
+        <div class="fact">
+          <h3>Statisk webbapp</h3>
+          <p>Byggd med React, Vite och Tailwind. Serveras som statiska filer från missionphoenix.life, ingen drift utöver sajten.</p>
+        </div>
+      </div>
+
+      <div class="try">
+        <div class="try-top">
+          <div>
+            <h2>Kom igång</h2>
+            <p>
+              Öppna appen och välj en bok att börja i. Allt du skriver
+              stannar på din egen enhet och kan raderas när som helst.
+            </p>
+            <a class="btn" href="/dbkuppgifter/">Öppna DBK Uppgifter</a>
+          </div>
+          <div class="qr">
+            <img src="dbkuppgifter-demo/qr-dbk.png" alt="QR-kod till DBK Uppgifter" />
+            <small>Skanna med mobilen<br />missionphoenix.life/dbkuppgifter</small>
+          </div>
+        </div>
+
+        <div class="install">
+          <h3>Så installeras appen på hemskärmen</h3>
+          <div class="install-grid">
+            <div class="os">
+              <h4>iPhone / iPad</h4>
+              <ol>
+                <li>Öppna länken i <strong>Safari</strong> – det måste vara Safari, Chrome på iPhone kan inte installera</li>
+                <li>Tryck på dela-knappen (fyrkanten med pilen uppåt)</li>
+                <li>Välj <strong>Lägg till på hemskärmen</strong></li>
+              </ol>
+            </div>
+            <div class="os">
+              <h4>Android</h4>
+              <ol>
+                <li>Öppna länken i Chrome</li>
+                <li>Tryck på <strong>Installera</strong> i rutan som visas – eller öppna menyn med tre prickar och välj <strong>Lägg till på startskärmen</strong></li>
+              </ol>
+            </div>
+            <div class="os">
+              <h4>Dator</h4>
+              <ol>
+                <li>Öppna länken i Chrome eller Edge</li>
+                <li>Klicka på <strong>installationsikonen</strong> till höger i adressfältet</li>
+              </ol>
+            </div>
+          </div>
+          <p class="note">
+            iPhone visar ingen egen installationsfråga – stegen görs manuellt via dela-knappen.
+            Installationen är också ett skydd: en app på hemskärmen undantas från Safaris
+            regelbundna rensning av webbplatsdata. Och eftersom all data ligger i appen på
+            enheten gäller: raderas appikonen raderas datan – kom ihåg säkerhetskopian
+            under Inställningar.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      DBK Uppgifter · Digital arbetsbok för Vägvalsprogrammet · © Erik Sundby, Introspektivförlaget.<br />
+      Endast för internt bruk inom DBK Sverige. Skärmdumparna på sidan visar fiktiv exempeldata.
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f3ec" />
+    <meta name="description" content="Digitala arbetsuppgifter ur Vägvalsprogrammet. All data stannar på din enhet." />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <title>DBK Uppgifter</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem('dbk:theme');
+          var dark =
+            theme === 'dark' ||
+            ((theme === null || theme === 'system') &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) document.documentElement.classList.add('dark');
+          var lang = localStorage.getItem('dbk:lang');
+          if (lang === 'en') document.documentElement.lang = 'en';
+        } catch (e) {}
+      })();
+    </script>
+    <script type="module" crossorigin src="./assets/index-BXGw9lDU.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CHJ6VQE_.css">
+  <link rel="manifest" href="./manifest.webmanifest"></head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
