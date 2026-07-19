@@ -216,7 +216,7 @@
           </div>
           <div class="pillar">
             <h3>Privat</h3>
-            <p>Inga konton och ingen server. Allt du skriver sparas lokalt på din egen telefon eller dator.</p>
+            <p>Allt sparas lokalt på din egen enhet, utan krav på konto. Den som vill kan skapa ett frivilligt synkkonto där svaren krypteras innan de lämnar enheten.</p>
           </div>
         </div>
       </div>
@@ -359,8 +359,11 @@
             ljust eller mörkt.
           </p>
           <p class="detail">
-            Under Inställningar finns också säkerhetskopieringen: exportera
-            allt som en fil och läs in den igen på en annan enhet.
+            Under Inställningar finns också säkerhetskopieringen (exportera
+            allt som en fil och läs in den igen) samt det frivilliga
+            synkkontot: skriv på datorn hemma, läs upp från mobilen i
+            gruppen. Svaren krypteras på enheten innan de laddas upp och
+            bara den som kan lösenordet kan låsa upp dem.
           </p>
         </div>
         <div class="phone-row">
@@ -396,8 +399,12 @@
       <h2>Integritet och teknik</h2>
       <div class="fact-grid">
         <div class="fact">
-          <h3>Ingenting lämnar enheten</h3>
-          <p>Svaren sparas i telefonens lokala databas (IndexedDB). Inga konton, ingen server, ingen analytics, inga externa anrop.</p>
+          <h3>Lokalt först</h3>
+          <p>Svaren sparas i telefonens lokala databas (IndexedDB). Utan konto lämnar ingenting enheten: ingen server, ingen analytics, inga externa anrop.</p>
+        </div>
+        <div class="fact">
+          <h3>Frivillig synk med nollinsyn</h3>
+          <p>Med ett synkkonto kan samma svar nås från flera enheter. Allt krypteras på enheten före uppladdning (AES-GCM, lösenordshärledd nyckel); servern lagrar bara oläsbar text och inte ens driftansvarig kan läsa svaren.</p>
         </div>
         <div class="fact">
           <h3>Installeras som app</h3>
@@ -414,10 +421,6 @@
         <div class="fact">
           <h3>Utskrift till papper eller PDF</h3>
           <p>Varje uppgift har en utskriftsvy med bokens rubriker, dina svar och tomma skrivlinjer, redo för gruppens redovisning.</p>
-        </div>
-        <div class="fact">
-          <h3>Statisk webbapp</h3>
-          <p>Byggd med React, Vite och Tailwind. Serveras som statiska filer från missionphoenix.life, ingen drift utöver sajten.</p>
         </div>
       </div>
 
