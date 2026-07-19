@@ -1,4 +1,7 @@
 {
+  "redirects": [
+    { "source": "/dbkuppgifter", "destination": "/dbkuppgifter/", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]
