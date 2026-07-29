@@ -69,7 +69,7 @@ export default function Support() {
 
         <h2 className="sp-h2">Why a laptop</h2>
         <p className="sp-lead">My laptop is the tool I do all of this work on. The screen is broken and the rest of the machine is in poor condition, so I am working on borrowed time with it. Everything Mission Phoenix puts out runs through that one machine: recording and editing the YouTube videos, hosting the online group therapy sessions, writing the articles, and building and maintaining this site and the recovery apps.</p>
-        <p className="sp-lead">If it stops working, all of that stops with it. That is why every donation right now goes straight to this goal, and nowhere else. Every contribution that comes in through Ko-fi goes into the laptop fund until the {usd(GOAL_USD)} is covered, and the counter above is kept updated as it moves.</p>
+        <p className="sp-lead">Every contribution that comes in through Ko-fi goes into the laptop fund until the {usd(GOAL_USD)} is covered</p>
 
         <h2 className="sp-h2">Why support matters right now</h2>
         <p className="sp-lead">I am currently on <strong>skuldsanering</strong>, the Swedish debt relief programme, sometimes translated as debt sanitization. It runs for the next five years, until 2030, when all of my debts will finally be cleared.</p>
