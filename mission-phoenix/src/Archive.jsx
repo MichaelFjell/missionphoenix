@@ -1,5 +1,20 @@
 export default function Archive() {
   const newsletters = [
+    {
+      title: 'Changing your old beliefs that still form your self image',
+      date: '24/07/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/changing-your-old-beliefs-that-still-form-your/',
+    },
+    {
+      title: 'Faith',
+      date: '17/07/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/faith/',
+    },
+    {
+      title: 'Sobering up solo vs. community healing',
+      date: '10/07/2026',
+      url: 'https://buttondown.com/missionphoenix/archive/sobering-up-solo-vs-community-healing/',
+    },
      {
       title: 'What porn addiction does to your self esteem, and how to rebuild it',
       date: '03/07/2026',
