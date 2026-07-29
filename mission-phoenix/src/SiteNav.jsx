@@ -20,7 +20,7 @@ export default function SiteNav() {
           <span>Mission Phoenix</span>
         </Link>
         <div className="links">
-          <Link to="/archive" className={isActive('/archive') ? 'active' : ''}>Archive</Link>
+          <Link to="/archive" className={isActive('/archive') ? 'active' : ''}>Newsletters</Link>
           <Link to="/quiz" className={isActive('/quiz') ? 'active' : ''}>Assessment</Link>
 
           <Link to="/honesty-inventory" className={isActive('/honesty-inventory') ? 'active' : ''}>Honesty Inventory</Link>
