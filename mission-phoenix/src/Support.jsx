@@ -68,7 +68,7 @@ export default function Support() {
         </div>
 
         <h2 className="sp-h2">Why a laptop</h2>
-        <p className="sp-lead">My laptop is the tool I do all of this work on. The screen is broken and the rest of the machine is in poor condition, so I am working on borrowed time with it. Everything Mission Phoenix puts out runs through that one machine: recording and editing the YouTube videos, hosting the online group therapy sessions, writing the articles, and building and maintaining this site and the recovery apps.</p>
+        <p className="sp-lead">My laptop is the tool I do all of this work on. The screen is broken and the rest of the computer is in poor condition</p>
         <p className="sp-lead">Every contribution that comes in through Ko-fi goes into the laptop fund until the {usd(GOAL_USD)} is covered</p>
 
         <h2 className="sp-h2">Why support matters right now</h2>
