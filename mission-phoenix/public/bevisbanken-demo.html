@@ -1,0 +1,1117 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Bevisbanken (the Proof Bank): a free, private recovery app. Replace the old beliefs your addiction wrote about you with new decisions, and collect dated proof that makes them true." />
+  <meta property="og:title" content="Bevisbanken: how it works" />
+  <meta property="og:description" content="Write the old belief verbatim, phrase the new decision, then collect proof: real events with dates. A morning ritual, a quick catch and a two minute evening check keep the evidence flowing." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://missionphoenix.life/bevisbanken-demo.html" />
+  <meta property="og:image" content="https://missionphoenix.life/bevisbanken-demo/icon.png" />
+  <link rel="canonical" href="https://missionphoenix.life/bevisbanken-demo.html" />
+  <link rel="icon" type="image/png" href="/bevisbanken-demo/icon.png" />
+  <title>Bevisbanken: så fungerar appen</title>
+  <style>
+    :root {
+      --ground: #faf7f2;
+      --surface: #ffffff;
+      --ink: #2e2a26;
+      --ink-soft: #6f675e;
+      --accent: #47563f;
+      --sage: #66785e;
+      --line: #e2dccd;
+      --sand: #ece5d8;
+      --ok: #5f9268;
+      --ok-soft: #e4efe5;
+      --warn: #c9a13f;
+      --alert: #b55445;
+      --serif: Georgia, "Times New Roman", Times, serif;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color-scheme: light;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { background: var(--ground); }
+    body {
+      font-family: var(--sans);
+      color: var(--ink);
+      line-height: 1.6;
+      font-size: 17px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+    a { color: var(--accent); }
+
+    h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.2; text-wrap: balance; }
+    .eyebrow {
+      font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink-soft); font-weight: 600;
+    }
+    .step-eyebrow { color: var(--accent); }
+
+    /* ---- Språkväxlare ---- */
+    body.en .sv { display: none !important; }
+    body:not(.en) .en { display: none !important; }
+    .langbar { display: flex; justify-content: flex-end; padding-top: 18px; }
+    .lang {
+      display: inline-flex; border: 1px solid var(--line); border-radius: 999px;
+      overflow: hidden; background: var(--surface);
+    }
+    .lang button {
+      border: 0; background: transparent; color: var(--ink-soft);
+      font: 600 13px var(--sans); padding: 6px 14px; cursor: pointer;
+      text-transform: uppercase;
+    }
+    .lang button.on { background: var(--accent); color: #fff; }
+
+    /* ---- Hero ---- */
+    .hero { padding: 30px 0 40px; }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: clamp(32px, 5vw, 72px); align-items: center;
+    }
+    .wordmark { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .wordmark img { width: 46px; height: 46px; flex-shrink: 0; }
+    .wordmark span { font-family: var(--serif); font-size: 24px; }
+    .hero h1 { font-size: clamp(26px, 3.4vw, 36px); margin-bottom: 14px; }
+    .hero p.lead { max-width: 34em; color: var(--ink-soft); font-size: 18px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .chip {
+      background: var(--sand); border-radius: 999px; padding: 6px 14px;
+      font-size: 14px; color: var(--ink);
+    }
+
+    /* ---- Pelare ---- */
+    .pillars {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+      margin: 26px 0 0;
+    }
+    .pillar {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 16px; padding: 20px 22px;
+    }
+    .pillar h3 { font-size: 19px; margin-bottom: 6px; }
+    .pillar p { font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Idén ---- */
+    .idea { padding: 10px 0 6px; }
+    .idea h2 { font-size: clamp(24px, 3vw, 30px); margin-bottom: 6px; }
+    .idea p.intro { color: var(--ink-soft); max-width: 40em; }
+    .idea p.intro + p.intro { margin-top: 12px; }
+
+    /* ---- Telefonramar med CSS-mockups ---- */
+    .phone {
+      width: 262px; max-width: 100%; border-radius: 32px;
+      border: 1px solid rgba(46, 42, 38, 0.14);
+      box-shadow: 0 22px 44px -20px rgba(46, 42, 38, 0.30);
+      background: var(--ground); flex-shrink: 0; padding: 12px 10px 16px;
+    }
+    .phone .speaker {
+      width: 54px; height: 5px; border-radius: 999px; background: var(--sand);
+      margin: 0 auto 10px;
+    }
+    .screen { padding: 6px 6px 0; font-size: 12.5px; line-height: 1.45; }
+    .phone-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 560px; }
+    figcaption { font-size: 13px; color: var(--ink-soft); text-align: center; margin-top: 10px; }
+    figure { margin: 0; }
+
+    /* Mock-byggstenar */
+    .m-title { font-family: var(--serif); font-size: 17px; }
+    .m-sub { font-size: 10.5px; color: var(--ink-soft); }
+    .m-eyebrow {
+      font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); font-weight: 600;
+    }
+    .m-card {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 12px; padding: 10px 12px; margin-top: 8px;
+    }
+    .m-card.sand { background: var(--sand); border-color: var(--sand); }
+    .m-card.ok { background: var(--ok-soft); border-color: var(--ok-soft); }
+    .m-btn {
+      background: var(--accent); color: #fff; border-radius: 10px;
+      padding: 8px 10px; text-align: center; font-size: 11.5px; font-weight: 600;
+      margin-top: 8px;
+    }
+    .m-btn.ghost { background: var(--surface); border: 1px solid var(--line); color: var(--ink); }
+    .m-btnrow { display: flex; gap: 6px; }
+    .m-btnrow .m-btn { flex: 1; }
+    .m-field {
+      border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+      padding: 8px 10px; margin-top: 6px; font-size: 11.5px; color: var(--ink-soft);
+    }
+    .m-progress { height: 5px; border-radius: 999px; background: var(--sand); margin-top: 8px; overflow: hidden; }
+    .m-progress i { display: block; height: 100%; background: var(--sage); }
+    .m-big { font-family: var(--serif); font-size: 26px; line-height: 1.1; }
+    .m-mark { width: 46px; height: 46px; margin: 0 auto; display: block; }
+    .m-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+    .m-chip {
+      border: 1px solid var(--line); background: var(--surface); border-radius: 999px;
+      padding: 3px 9px; font-size: 10.5px; color: var(--ink-soft);
+    }
+    .m-chip.on { border-color: var(--sage); background: var(--ok-soft); color: var(--ink); }
+    .m-nav {
+      display: flex; border-top: 1px solid var(--line); margin-top: 12px;
+      padding-top: 8px; font-size: 9.5px; color: var(--ink-soft); text-align: center;
+    }
+    .m-nav span { flex: 1; }
+    .m-nav .on { color: var(--accent); font-weight: 600; }
+    .m-mono {
+      font-family: ui-monospace, Consolas, monospace; font-size: 9px; line-height: 1.5;
+      background: var(--ground); border: 1px solid var(--line); border-radius: 8px;
+      padding: 8px; white-space: pre-wrap; margin-top: 8px; color: var(--ink);
+    }
+    .m-quote { font-size: 11px; color: var(--ink); }
+    .m-old { color: var(--ink-soft); text-decoration: line-through; font-size: 11px; }
+    .m-decision { font-family: var(--serif); font-size: 15px; line-height: 1.35; margin-top: 4px; }
+    .m-breath {
+      width: 26px; height: 26px; border-radius: 50%; background: rgba(102, 120, 94, 0.5);
+      margin: 10px auto 4px;
+    }
+    .m-spark { display: inline-flex; align-items: flex-end; gap: 2px; height: 20px; }
+    .m-spark i { display: inline-block; width: 5px; border-radius: 2px; background: var(--sage); }
+    .m-spark i.z { background: var(--sand); height: 3px !important; }
+    .m-dotrow { display: flex; align-items: center; gap: 6px; font-size: 10.5px; margin-top: 4px; }
+    .m-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sage); flex-shrink: 0; }
+    .m-dot.off { background: var(--surface); border: 1px solid var(--line); }
+    .m-fab {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--accent);
+      color: #fff; font-size: 10px; font-weight: 600; display: flex;
+      align-items: center; justify-content: center; text-align: center;
+      margin-left: auto; margin-top: 10px; line-height: 1.1;
+    }
+
+    /* ---- Stegsektioner ---- */
+    .steps { padding: 26px 0 8px; }
+    .steps > .wrap > h2 { font-size: clamp(24px, 3vw, 30px); margin-bottom: 6px; }
+    .steps > .wrap > p.intro { color: var(--ink-soft); max-width: 40em; }
+    .steps > .wrap > p.intro + p.intro { margin-top: 10px; }
+    .flow {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto;
+      gap: clamp(28px, 5vw, 64px); align-items: center;
+      padding: 40px 0; border-bottom: 1px solid var(--line);
+    }
+    .flow:last-of-type { border-bottom: none; }
+    .flow h3 { font-size: clamp(21px, 2.4vw, 26px); margin: 6px 0 10px; }
+    .flow p { color: var(--ink-soft); max-width: 32em; }
+    .flow p + p { margin-top: 10px; }
+    .flow .detail { font-size: 15px; }
+
+    /* ---- Citat ---- */
+    .callout {
+      background: #f5eed9; border: 1px solid rgba(201, 161, 63, 0.45);
+      border-radius: 18px; padding: 26px 30px; margin: 14px 0 4px;
+    }
+    .callout blockquote {
+      font-family: var(--serif); font-size: clamp(18px, 2.2vw, 22px);
+      line-height: 1.45; text-wrap: balance;
+    }
+    .callout p { margin-top: 12px; font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Fakta ---- */
+    .facts { padding: 48px 0 16px; }
+    .facts h2 { font-size: clamp(24px, 3vw, 30px); margin-bottom: 20px; }
+    .fact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .fact {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 16px; padding: 20px 22px;
+    }
+    .fact h3 { font-size: 18px; margin-bottom: 6px; }
+    .fact p { font-size: 15px; color: var(--ink-soft); }
+
+    /* ---- Prova ---- */
+    .try {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+      padding: 34px 36px; margin: 40px 0;
+    }
+    .try-top { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
+    .try h2 { font-size: clamp(22px, 2.6vw, 28px); margin-bottom: 8px; }
+    .try p { color: var(--ink-soft); max-width: 30em; }
+    .try .btn {
+      display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+      border-radius: 12px; padding: 13px 26px; font-weight: 600; margin-top: 18px;
+    }
+    .try .qr { text-align: center; }
+    .try .qr img { width: 132px; height: 132px; display: block; margin: 0 auto 8px; }
+    .try .qr small { font-size: 12.5px; color: var(--ink-soft); }
+
+    /* ---- Installationsinstruktion ---- */
+    .install { border-top: 1px solid var(--line); margin-top: 30px; padding-top: 26px; }
+    .install h3 { font-size: 20px; margin-bottom: 16px; }
+    .install-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .install .os h4 {
+      font-family: var(--sans); font-size: 15px; font-weight: 600; margin-bottom: 6px;
+    }
+    .install ol { padding-left: 20px; font-size: 14.5px; color: var(--ink-soft); }
+    .install ol li + li { margin-top: 4px; }
+    .install .note {
+      margin-top: 20px; font-size: 14px; color: var(--ink); max-width: none;
+      background: var(--sand); border-radius: 12px; padding: 13px 17px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line); padding: 26px 0 44px;
+      font-size: 13.5px; color: var(--ink-soft); text-align: center;
+    }
+    footer span { display: block; }
+    footer span + span { margin-top: 6px; }
+
+    @media (max-width: 880px) {
+      .hero-grid, .flow, .try-top { grid-template-columns: 1fr; }
+      .install-grid { grid-template-columns: 1fr; }
+      .hero-grid .phone-row, .flow .phone-row { justify-content: flex-start; }
+      .pillars, .fact-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 24px; }
+    }
+    @media print {
+      .flow, .try, .callout, .fact, .pillar { break-inside: avoid; }
+      .phone { box-shadow: none; }
+      .langbar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap langbar">
+    <div class="lang" role="group" aria-label="Språk / Language">
+      <button id="btn-sv" class="on" onclick="setLang('sv')">SV</button>
+      <button id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="wordmark">
+          <img src="/bevisbanken-demo/mark.png" alt="" />
+          <span class="sv">Bevisbanken</span>
+          <span class="en">The Proof Bank</span>
+        </div>
+        <h1 class="sv">Nykterheten stoppar drickandet. Vem säger åt berättelsen om dig att sluta?</h1>
+        <h1 class="en">Sobriety stops the drinking. Who tells the story about you to stop?</h1>
+        <p class="lead sv">
+          Bevisbanken är en gratis och privat app för tillfrisknande. Du skriver
+          in de gamla övertygelserna ordagrant, formulerar nya beslut i presens,
+          och samlar sedan bevis: verkliga händelser med datum som bara kan vara
+          sanna om det nya beslutet stämmer. En morgonritual, en snabbfångst
+          mitt i dagen och två minuter på kvällen håller bevisen flödande.
+        </p>
+        <p class="lead en">
+          The Proof Bank is a free, private recovery app. You write the old
+          beliefs down verbatim, phrase new decisions in the present tense, and
+          then collect proof: real events with dates that could only be true if
+          the new decision holds. A morning ritual, a quick catch in the middle
+          of the day and two minutes at night keep the evidence flowing.
+        </p>
+        <div class="chips">
+          <span class="chip sv">Gratis · utan konto</span>
+          <span class="chip en">Free · no account</span>
+          <span class="chip sv">All data stannar på enheten</span>
+          <span class="chip en">All data stays on the device</span>
+          <span class="chip sv">Installeras som app · funkar offline</span>
+          <span class="chip en">Installs as an app · works offline</span>
+          <span class="chip sv">Svenska och engelska</span>
+          <span class="chip en">Swedish and English</span>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <h3 class="sv">Metoden</h3>
+            <h3 class="en">The method</h3>
+            <p class="sv">Bygger på David Bayers arbete med att identifiera och ersätta begränsande övertygelser, anpassat för tillfrisknande och beroendets identitetsskador.</p>
+            <p class="en">Built on David Bayer's work on identifying and replacing limiting beliefs, adapted for recovery and the identity damage addiction leaves behind.</p>
+          </div>
+          <div class="pillar">
+            <h3 class="sv">Privat</h3>
+            <h3 class="en">Private</h3>
+            <p class="sv">Inget konto, ingen inloggning, ingen analytics. Allt du skriver sparas lokalt på din egen telefon och skickas aldrig till någon server.</p>
+            <p class="en">No account, no login, no analytics. Everything you write is stored locally on your own phone and never sent to any server.</p>
+          </div>
+        </div>
+      </div>
+      <figure>
+        <div class="phone"><div class="speaker"></div><div class="screen">
+          <div style="text-align:center; padding: 26px 6px 10px;">
+            <img class="m-mark" src="/bevisbanken-demo/mark.png" alt="" />
+            <div class="m-title" style="margin-top:10px;">
+              <span class="sv">Bevisbanken</span>
+              <span class="en">The Proof Bank</span>
+            </div>
+            <p class="m-sub" style="margin-top:8px;">
+              <span class="sv">Ett verktyg för att byta gamla övertygelser mot nya beslut. Du samlar bevis för att det nya är sant, läser dem varje morgon och låter det gamla tystna.</span>
+              <span class="en">A tool for trading old beliefs for new decisions. You collect proof that the new is true, read it every morning and let the old go quiet.</span>
+            </p>
+            <div class="m-card sand" style="font-size:10.5px; margin-top:12px;">
+              <span class="sv">All data sparas endast på din enhet och skickas aldrig till någon server.</span>
+              <span class="en">All data stays on your device and is never sent to any server.</span>
+            </div>
+            <div class="m-btn">
+              <span class="sv">Kom igång</span>
+              <span class="en">Get started</span>
+            </div>
+            <p style="font-size:10px; margin-top:8px; color:var(--ink-soft);">
+              <span class="sv">Du börjar med dina första bevis. Det tar bara några minuter.</span>
+              <span class="en">You begin with your first proofs. It only takes a few minutes.</span>
+            </p>
+          </div>
+        </div></div>
+        <figcaption class="sv">Startskärmen: integritetslöftet först</figcaption>
+        <figcaption class="en">The start screen: the privacy promise first</figcaption>
+      </figure>
+    </div>
+  </header>
+
+  <section class="idea">
+    <div class="wrap">
+      <h2 class="sv">Varför bevis, och inte affirmationer</h2>
+      <h2 class="en">Why proof, and not affirmations</h2>
+      <p class="intro sv">
+        Beroendet skriver en berättelse om vem du är. ”Jag går inte att lita
+        på.” ”Jag förstör allt jag rör vid.” ”Folk lämnar när de ser den
+        riktiga mig.” Meningarna låter som sanningar därför att de en gång
+        stämde med hur du levde. Nykterheten stoppar drickandet eller
+        användandet, men den skriver inte om meningarna av sig själv. Många gör
+        rätt saker i månader och känner sig ändå som samma person inuti.
+      </p>
+      <p class="intro en">
+        Addiction writes a story about who you are. "I can't be trusted." "I
+        ruin everything I touch." "People leave when they see the real me." The
+        sentences sound like facts because they once matched how you lived.
+        Sobriety stops the drinking or the using, but it does not rewrite the
+        sentences by itself. Plenty of people do the right things for months
+        and still feel like the same person underneath.
+      </p>
+      <p class="intro sv">
+        Att säga något du inte tror på hjälper inte. Det skapar kognitiv
+        dissonans, och sinnet kastar tyst ut det nya påståendet. Bevis är det
+        som stänger glappet. När du kan peka på verkliga, daterade händelser
+        som bara kan vara sanna om det nya stämmer, finns det inget kvar att
+        argumentera med. Beslutet slutar vara en fras och blir något du bär.
+        Det är hela appens uppgift: att göra bevisen lätta att samla, och sedan
+        lägga dem framför dig varje morgon.
+      </p>
+      <p class="intro en">
+        Saying something you do not believe does not help. It creates cognitive
+        dissonance, and your mind quietly throws the new statement out.
+        Evidence is what closes the gap. When you can point to real, dated
+        events that could only be true if the new belief holds, there is
+        nothing left to argue with. The decision stops being a phrase and
+        becomes something you carry. That is the whole job of this app: make
+        proof easy to collect, then put it in front of you every morning.
+      </p>
+    </div>
+  </section>
+
+  <section class="steps">
+    <div class="wrap">
+      <h2 class="sv">Så fungerar appen</h2>
+      <h2 class="en">How the app works</h2>
+      <p class="intro sv">Sex steg, från den första kvällen till månaderna efteråt. Mockuperna visar fiktiv exempeldata.</p>
+      <p class="intro en">Six steps, from the first evening to the months that follow. The mockups show fictional sample data.</p>
+
+      <!-- Steg 1 · Dina första bevis -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 1 · Dina första bevis</span><span class="en">Step 1 · Your first proofs</span></p>
+          <h3 class="sv">Banken ska inte öppnas tom</h3>
+          <h3 class="en">The bank should not open empty</h3>
+          <p class="sv">
+            Appen börjar inte med en tom lista. Den börjar med sju frivilliga
+            frågor som jämför dig med den du var för ett år sedan, eller under
+            din värsta period: vad du klarar nu, hur du är med människor, vad du
+            har byggt, hur du tar hand om kroppen. Varje svar blir ett bevis, så
+            banken har innehåll redan första morgonen du ska läsa ur den.
+          </p>
+          <p class="en">
+            The app does not open with an empty list. It opens with seven
+            optional questions that compare you to who you were a year ago, or
+            during your worst period: what you manage now, how you are with
+            people, what you have built, how you care for your body. Every
+            answer becomes a proof, so the bank has content the very first
+            morning you read from it.
+          </p>
+          <p class="detail sv">
+            Den första frågan gäller ditt senaste återfall eller utagerande. Väljer
+            du ett datum blir det ett levande bevis: texten räknas fram på nytt varje
+            dag, ”Det har gått 214 dagar sedan jag senast agerade ut”, och datumet
+            kan justeras om det behövs. Jämförelsen går att göra om när som helst
+            under Mer, och nya svar läggs till i banken.
+          </p>
+          <p class="detail en">
+            The first question is about your last relapse or acting out. Pick a
+            date and it becomes a living proof: the text is recalculated every
+            day, "It has been 214 days since I last acted out," and the date can
+            be adjusted if you need to. The comparison can be redone any time
+            under More, and new answers are added to the bank.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--ink-soft);">
+                <u><span class="sv">Avsluta</span><span class="en">Exit</span></u>
+                <span class="sv">3 av 7</span><span class="en">3 of 7</span>
+              </div>
+              <div class="m-progress"><i style="width:43%"></i></div>
+              <p class="m-eyebrow" style="margin-top:12px;"><span class="sv">Dina första bevis</span><span class="en">Your first proofs</span></p>
+              <p class="m-title" style="margin-top:4px; font-size:14.5px;">
+                <span class="sv">Vad kan du göra i dag som du inte klarade för ett år sedan?</span>
+                <span class="en">What can you do today that you could not manage a year ago?</span>
+              </p>
+              <div class="m-field" style="min-height:56px; color:var(--ink);">
+                <span class="sv">Jag går upp klockan sex och gör det jag sagt, även dagar då ingen ser mig</span>
+                <span class="en">I get up at six and do what I said I would, even on days when nobody sees me</span>
+              </div>
+              <p class="m-sub" style="margin-top:6px;">
+                <span class="sv">Om du kan, förankra med ett konkret minne eller exempel. Konkreta bevis landar djupare.</span>
+                <span class="en">If you can, anchor it with a concrete memory or example. Concrete proof lands deeper.</span>
+              </p>
+              <div class="m-btn"><span class="sv">Spara som bevis</span><span class="en">Save as proof</span></div>
+              <div class="m-btn ghost"><span class="sv">Hoppa över</span><span class="en">Skip</span></div>
+            </div></div>
+            <figcaption class="sv">Sju frågor, alla frivilliga, alla svar blir bevis</figcaption>
+            <figcaption class="en">Seven questions, all optional, every answer becomes proof</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Steg 2 · Övertygelser -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 2 · Övertygelser</span><span class="en">Step 2 · Beliefs</span></p>
+          <h3 class="sv">Den gamla struken, det nya i fokus</h3>
+          <h3 class="en">The old struck through, the new in focus</h3>
+          <p class="sv">
+            Varje övertygelse har två rader: den gamla, ordagrant och
+            genomstruken, och det nya beslutet som ersätter den. Ordagrant är
+            viktigt. Det är den exakta meningen du ska känna igen när den dyker
+            upp mitt i en dag. Det nya beslutet skrivs i presens, som något som
+            redan är sant. Ett valfritt kroppsankare beskriver hur det känns när
+            det är sant: rak rygg, lugn andning.
+          </p>
+          <p class="en">
+            Each belief has two lines: the old one, verbatim and struck through,
+            and the new decision that replaces it. Verbatim matters. It is the
+            exact sentence you need to recognize when it shows up in the middle
+            of a day. The new decision is written in the present tense, as
+            something already true. An optional body anchor describes how it
+            feels when it is: straight back, calm breath.
+          </p>
+          <p class="detail sv">
+            Sex kategorier följer med från start, alla redigerbara: Självtillit,
+            Värde jag skapar, Ekonomi och värdighet, Hälsa och styrka, Relationer
+            och attraktion, Mission och mål. Appen föreslår stillsamt att hålla
+            listan kort: färre beslut ger fler repetitioner per beslut.
+          </p>
+          <p class="detail en">
+            Six categories come seeded, all editable: Self-trust, Value I create,
+            Money and dignity, Health and strength, Relationships and attraction,
+            Mission and goals. The app quietly suggests keeping the list short:
+            fewer decisions means more repetitions per decision.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <p class="m-title"><span class="sv">Övertygelser</span><span class="en">Beliefs</span></p>
+              <p class="m-sub"><span class="sv">Den gamla ordagrant, och beslutet som ersätter den. Bevisen gör beslutet sant.</span><span class="en">The old one verbatim, and the decision that replaces it. The proofs make the decision true.</span></p>
+              <div class="m-card">
+                <p class="m-old"><span class="sv">Jag går inte att lita på</span><span class="en">I can't be trusted</span></p>
+                <p class="m-decision"><span class="sv">Jag är en man som håller sitt ord, bevisen finns i banken</span><span class="en">I am a man who keeps his word, the proof is in the bank</span></p>
+                <p class="m-sub" style="margin-top:5px;"><span class="sv">Rak rygg, lugn andning · Självtillit</span><span class="en">Straight back, calm breath · Self-trust</span></p>
+              </div>
+              <div class="m-card">
+                <p class="m-old"><span class="sv">Jag förstör allt jag rör vid</span><span class="en">I ruin everything I touch</span></p>
+                <p class="m-decision"><span class="sv">Det jag bygger nyktert håller</span><span class="en">What I build sober lasts</span></p>
+                <p class="m-sub" style="margin-top:5px;"><span class="sv">Värde jag skapar</span><span class="en">Value I create</span></p>
+              </div>
+              <div class="m-btn"><span class="sv">Ny övertygelse</span><span class="en">New belief</span></div>
+              <div class="m-nav">
+                <span><span class="sv">I dag</span><span class="en">Today</span></span>
+                <span><span class="sv">Bevis</span><span class="en">Proofs</span></span>
+                <span class="on"><span class="sv">Övertygelser</span><span class="en">Beliefs</span></span>
+                <span><span class="sv">Vecka</span><span class="en">Week</span></span>
+              </div>
+            </div></div>
+            <figcaption class="sv">Gammal tanke struken, nytt beslut i serif</figcaption>
+            <figcaption class="en">Old thought struck through, new decision in serif</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Steg 3 · Morgonritualen -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 3 · Morgonritualen</span><span class="en">Step 3 · The morning ritual</span></p>
+          <h3 class="sv">Läs, känn, lova</h3>
+          <h3 class="en">Read, feel, promise</h3>
+          <p class="sv">
+            En övertygelse i taget i helskärm, lugnt tempo. Det nya beslutet
+            stort, de senaste bevisen ur banken under, sedan tre lugna andetag:
+            ”Andas. Känn att det är sant.” Bevisen som är kopplade till just den
+            övertygelsen kommer först, och appen ser till att du inte får samma
+            bevis två gånger i samma pass.
+          </p>
+          <p class="en">
+            One belief at a time, full screen, calm pace. The new decision
+            large, the latest proofs from the bank beneath it, then three slow
+            breaths: "Breathe. Feel that it is true." Proofs linked to that
+            particular belief come first, and the app makes sure you are not
+            handed the same proof twice in one pass.
+          </p>
+          <p class="detail sv">
+            Nästa-knappen är låst i tio sekunder medan en tunn stapel fylls.
+            Det låter sig inte hastas igenom, och det är hela poängen: ritualen
+            är repetitionen. Passet avslutas med dagens löften, ett till tre små
+            åtaganden, och en svit som räknar morgnarna. Inga poäng, inga
+            märken: bara morgnar i rad.
+          </p>
+          <p class="detail en">
+            The Next button stays locked for ten seconds while a thin bar fills.
+            It cannot be rushed, and that is the point: the ritual is the
+            repetition. The pass ends with today's promises, one to three small
+            commitments, and a streak that counts the mornings. No points, no
+            badges: just mornings in a row.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--ink-soft);">
+                <u><span class="sv">Avbryt</span><span class="en">Exit</span></u>
+                <span class="sv">1 av 2</span><span class="en">1 of 2</span>
+              </div>
+              <p class="m-eyebrow" style="margin-top:14px;"><span class="sv">Självtillit</span><span class="en">Self-trust</span></p>
+              <p class="m-decision" style="font-size:17px; margin-top:6px;">
+                <span class="sv">Jag är en man som håller sitt ord, bevisen finns i banken</span>
+                <span class="en">I am a man who keeps his word, the proof is in the bank</span>
+              </p>
+              <p class="m-sub" style="margin-top:6px;">
+                <span class="sv">Läs beslutet och bevisen högt för dig själv.</span>
+                <span class="en">Read the decision and its proofs aloud to yourself.</span>
+              </p>
+              <p class="m-eyebrow" style="margin-top:12px; color:var(--ink-soft);"><span class="sv">Ur banken</span><span class="en">From the bank</span></p>
+              <div class="m-card sand m-quote">
+                <span class="sv">Erik tackade mig för att jag ställde upp och sa att han litar på mig</span>
+                <span class="en">Erik thanked me for showing up and said he trusts me</span>
+              </div>
+              <div class="m-card sand m-quote">
+                <span class="sv">Jag höll mitt löfte: Ringde tillbaka före lunch</span>
+                <span class="en">I kept my promise: Called back before noon</span>
+              </div>
+              <div class="m-breath"></div>
+              <p class="m-sub" style="text-align:center;"><span class="sv">Andas. Känn att det är sant.</span><span class="en">Breathe. Feel that it is true.</span></p>
+              <div class="m-progress"><i style="width:62%"></i></div>
+              <div class="m-btn ghost" style="color:var(--ink-soft);"><span class="sv">Nästa</span><span class="en">Next</span></div>
+            </div></div>
+            <figcaption class="sv">Beslut, bevis, tre andetag, och tio sekunder som inte går att hoppa över</figcaption>
+            <figcaption class="en">Decision, proof, three breaths, and ten seconds you cannot skip</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Steg 4 · Snabbfångst -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 4 · Snabbfångst</span><span class="en">Step 4 · Quick catch</span></p>
+          <h3 class="sv">Fånga tanken när den hugger</h3>
+          <h3 class="en">Catch the thought when it strikes</h3>
+          <p class="sv">
+            Gamla övertygelser dyker inte upp på schema. När en hugger tag mitt
+            i dagen är den nya reflexen två tryck bort: en flytande knapp öppnar
+            listan, ett tryck på den gamla tanken loggar fångsten och visar det
+            nya beslutet i helskärm i fem sekunder, med kroppsankaret. Sedan
+            tillbaka till dagen.
+          </p>
+          <p class="en">
+            Old beliefs do not show up on schedule. When one takes hold in the
+            middle of the day, the new reflex is two taps away: a floating
+            button opens the list, one tap on the old thought logs the catch and
+            shows the new decision full screen for five seconds, body anchor
+            included. Then back to the day.
+          </p>
+          <p class="detail sv">
+            Varje fångst är en repetition: lägg märke till, byt ut, gå vidare.
+            Fångsterna räknas per vecka och per övertygelse, och det är nedgången
+            över tid som är intressant, inte talen i sig.
+          </p>
+          <p class="detail en">
+            Every catch is a rep: notice, replace, move on. Catches are counted
+            per week and per belief, and it is the decline over time that
+            matters, not the numbers themselves.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <p class="m-title"><span class="sv">Snabbfångst</span><span class="en">Quick catch</span></p>
+              <p class="m-sub"><span class="sv">Vilken gammal tanke högg tag? Tryck på den, så byter vi.</span><span class="en">Which old thought took hold? Tap it, and we trade it.</span></p>
+              <div class="m-card"><p class="m-old" style="font-size:12px;"><span class="sv">Jag går inte att lita på</span><span class="en">I can't be trusted</span></p></div>
+              <div class="m-card"><p class="m-old" style="font-size:12px;"><span class="sv">Jag förstör allt jag rör vid</span><span class="en">I ruin everything I touch</span></p></div>
+              <div class="m-fab"><span class="sv">Fånga</span><span class="en">Catch</span></div>
+            </div></div>
+            <figcaption class="sv">Tryck ett: listan över gamla tankar</figcaption>
+            <figcaption class="en">Tap one: the list of old thoughts</figcaption>
+          </figure>
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <div style="text-align:center; padding: 30px 4px 12px;">
+                <p class="m-eyebrow"><span class="sv">Fångad. Nu gäller:</span><span class="en">Caught. This holds now:</span></p>
+                <p class="m-decision" style="font-size:18px; margin-top:12px;">
+                  <span class="sv">Jag är en man som håller sitt ord, bevisen finns i banken</span>
+                  <span class="en">I am a man who keeps his word, the proof is in the bank</span>
+                </p>
+                <p class="m-sub" style="margin-top:12px;">
+                  <span class="sv">Rak rygg, lugn andning</span>
+                  <span class="en">Straight back, calm breath</span>
+                </p>
+                <div class="m-btn ghost" style="margin-top:22px; display:inline-block; padding:8px 18px;">
+                  <span class="sv">Stäng</span><span class="en">Close</span>
+                </div>
+              </div>
+            </div></div>
+            <figcaption class="sv">Tryck två: fem sekunder med det nya beslutet</figcaption>
+            <figcaption class="en">Tap two: five seconds with the new decision</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Steg 5 · Kvällscheck -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 5 · Kvällscheck</span><span class="en">Step 5 · Evening check</span></p>
+          <h3 class="sv">Två minuter, sedan god natt</h3>
+          <h3 class="en">Two minutes, then good night</h3>
+          <p class="sv">
+            Först dagens löften: hållet, delvis eller inte hållet, i neutral ton,
+            med plats för en rad om vad som gjorde det svårt. Sedan en enda
+            fråga: vad hände i dag som bekräftar något av dina beslut? En
+            komplimang, en prestation, en yttre händelse. Grå eller fyllda
+            prickar visar vilka kategorier som fått bevis i dag, utan någon
+            värdering.
+          </p>
+          <p class="en">
+            First today's promises: kept, partly, or not kept, in neutral
+            language, with room for one line about what made it hard. Then a
+            single question: what happened today that confirms one of your
+            decisions? A compliment, an achievement, an outside event. Grey or
+            filled dots show which categories got proof today, with no judgment
+            attached.
+          </p>
+          <div class="callout">
+            <blockquote class="sv">»Ett hållet löfte blir automatiskt ett bevis i Självtillit: din disciplin förvandlas bokstavligen till bevismaterial.«</blockquote>
+            <blockquote class="en">"A kept promise automatically becomes a proof in Self-trust: your discipline literally turns into evidence."</blockquote>
+            <p class="sv">Det är så loopen sluts: nykter vardag skapar händelserna, kvällen bokför dem, morgonen läser dem.</p>
+            <p class="en">That is how the loop closes: sober days create the events, the evening records them, the morning reads them.</p>
+          </div>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <p class="m-title"><span class="sv">Dagens bevis</span><span class="en">Today's proofs</span></p>
+              <p class="m-sub"><span class="sv">Vad hände i dag som bekräftar något av dina beslut?</span><span class="en">What happened today that confirms one of your decisions?</span></p>
+              <div class="m-card sand m-quote">
+                <span class="sv">Tränade 30 minuter fast jag inte ville</span>
+                <span class="en">Worked out 30 minutes even though I didn't feel like it</span>
+              </div>
+              <div class="m-card sand m-quote">
+                <span class="sv">Jag höll mitt löfte: Ringde Erik före lunch</span>
+                <span class="en">I kept my promise: Called Erik before noon</span>
+              </div>
+              <p class="m-eyebrow" style="margin-top:10px; color:var(--ink-soft);"><span class="sv">Kategorier med bevis i dag</span><span class="en">Categories with proof today</span></p>
+              <div style="margin-top:4px;">
+                <div class="m-dotrow"><span class="m-dot"></span><span class="sv">Självtillit</span><span class="en">Self-trust</span></div>
+                <div class="m-dotrow"><span class="m-dot"></span><span class="sv">Hälsa och styrka</span><span class="en">Health and strength</span></div>
+                <div class="m-dotrow"><span class="m-dot off"></span><span class="sv" style="color:var(--ink-soft);">Ekonomi och värdighet</span><span class="en" style="color:var(--ink-soft);">Money and dignity</span></div>
+                <div class="m-dotrow"><span class="m-dot off"></span><span class="sv" style="color:var(--ink-soft);">Relationer och attraktion</span><span class="en" style="color:var(--ink-soft);">Relationships and attraction</span></div>
+              </div>
+              <div class="m-btn"><span class="sv">Klar för i kväll</span><span class="en">Done for tonight</span></div>
+            </div></div>
+            <figcaption class="sv">Grå eller fylld prick, aldrig mer värdering än så</figcaption>
+            <figcaption class="en">Grey or filled dot, never more judgment than that</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Steg 6 · Veckan och integreringen -->
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Steg 6 · Veckan och integreringen</span><span class="en">Step 6 · The week and integration</span></p>
+          <h3 class="sv">Utsläckning, synlig och stillsam</h3>
+          <h3 class="en">Extinction, visible and quiet</h3>
+          <p class="sv">
+            Veckoöversikten samlar veckans bevis per kategori, visar löftena som
+            ett enkelt bråk (hållna av totalt, aldrig procent eller poäng) och
+            ritar fångsterna per övertygelse över åtta veckor. Trenden ska nedåt:
+            färre fångster betyder att den gamla övertygelsen tystnar. Bredvid
+            står veckans morgonritualer, så att du kan skilja utsläckning från
+            att du slutat titta.
+          </p>
+          <p class="en">
+            The weekly review gathers the week's proofs by category, shows the
+            promises as a simple fraction (kept of total, never a percentage or
+            a score) and draws the catches per belief across eight weeks. The
+            trend should point down: fewer catches means the old belief is going
+            quiet. Next to it stand the week's morning rituals, so you can tell
+            extinction apart from having stopped looking.
+          </p>
+          <p class="detail sv">
+            När ett beslut känns självklart sant markeras det som integrerat och
+            flyttas till ett stilla arkiv, Integrerade beslut, med hela sin
+            bevishistorik. En gång i månaden, avvisbart, frågar appen om något
+            beslut är redo, och om en ny övertygelse vill in.
+          </p>
+          <p class="detail en">
+            When a decision feels obviously true, you mark it as integrated and
+            it moves to a quiet archive, Integrated decisions, with its full
+            proof history. Once a month, dismissibly, the app asks whether a
+            decision is ready, and whether a new belief wants in.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <p class="m-title"><span class="sv">Veckoöversikt</span><span class="en">Week in review</span></p>
+              <div class="m-card">
+                <p class="m-eyebrow" style="color:var(--ink-soft);"><span class="sv">Veckans löften</span><span class="en">The week's promises</span></p>
+                <div class="m-big" style="font-size:20px; margin-top:2px;"><span class="sv">9 av 12 hållna</span><span class="en">9 of 12 kept</span></div>
+                <p class="m-sub"><span class="sv">2 delvis</span><span class="en">2 partly</span></p>
+              </div>
+              <p class="m-title" style="font-size:13.5px; margin-top:10px;"><span class="sv">Fångster per övertygelse</span><span class="en">Catches per belief</span></p>
+              <div class="m-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                  <div style="min-width:0;">
+                    <p style="font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      <span class="sv">Jag är en man som håller sitt ord ...</span>
+                      <span class="en">I am a man who keeps his word ...</span>
+                    </p>
+                    <p class="m-sub"><span class="sv">Totalt: 34</span><span class="en">Total: 34</span></p>
+                  </div>
+                  <span class="m-spark">
+                    <i style="height:18px"></i><i style="height:15px"></i><i style="height:16px"></i><i style="height:11px"></i><i style="height:9px"></i><i style="height:6px"></i><i class="z"></i><i style="height:4px"></i>
+                  </span>
+                </div>
+              </div>
+              <p class="m-sub" style="margin-top:6px;">
+                <span class="sv">Morgonritualer samma vecka: 6 av 7. Så länge morgnarna görs betyder färre fångster att det gamla släpper, inte att du slutat titta.</span>
+                <span class="en">Morning rituals the same week: 6 of 7. As long as the mornings happen, fewer catches means the old is letting go, not that you stopped looking.</span>
+              </p>
+              <div class="m-card ok" style="margin-top:8px;">
+                <p class="m-eyebrow"><span class="sv">Integrerade beslut</span><span class="en">Integrated decisions</span></p>
+                <p class="m-quote" style="margin-top:3px;">
+                  <span class="sv">Det jag bygger nyktert håller</span>
+                  <span class="en">What I build sober lasts</span>
+                </p>
+              </div>
+            </div></div>
+            <figcaption class="sv">Trenden nedåt är målet: det gamla släpper</figcaption>
+            <figcaption class="en">The downward trend is the goal: the old lets go</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="steps">
+    <div class="wrap">
+      <h2 class="sv">Två bevis du inte kan skriva själv</h2>
+      <h2 class="en">Two proofs you cannot write yourself</h2>
+      <p class="intro sv">
+        De flesta bevis skriver du för hand. Två gör appen åt dig, och just
+        därför går de inte att prata bort.
+      </p>
+      <p class="intro en">
+        You write most proofs by hand. Two of them the app writes for you, and
+        that is exactly why they are hard to argue with.
+      </p>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Levande bevis</span><span class="en">Living proof</span></p>
+          <h3 class="sv">Din egen historik, läst tillbaka till dig</h3>
+          <h3 class="en">Your own track record, read back to you</h3>
+          <p class="sv">
+            När du har hållit löften stadigt i några veckor dyker ett bevis upp
+            som du inte har skrivit: ”Jag håller nästan alltid mitt ord till mig
+            själv.” Det räknas fram ur dina egna löften i ett rullande
+            trettiodagarsfönster och uppdaterar sig tyst medan veckorna går.
+            Det går inte att redigera för hand, och det är hela poängen.
+          </p>
+          <p class="en">
+            Once you have kept promises steadily for a few weeks, a proof shows
+            up that you did not write: "I almost always keep my word to myself."
+            It is computed from your own promises in a rolling thirty day
+            window, and it updates quietly as the weeks roll. It cannot be
+            edited by hand, and that is the whole point.
+          </p>
+          <p class="detail sv">
+            Kravet är data från minst fjorton skilda dagar, så det säger något.
+            Under tröskeln finns beviset helt enkelt inte: ingen nedgradering,
+            inget grått kort, ingen tillrättavisning. Det som inte förtjänats
+            visas inte, och det som förtjänats står kvar.
+          </p>
+          <p class="detail en">
+            It needs data from at least fourteen separate days, so it means
+            something. Below that threshold the proof simply does not exist: no
+            downgrade, no greyed out card, no telling off. What has not been
+            earned is not shown, and what has been earned stays.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <p class="m-title"><span class="sv">Bevis</span><span class="en">Proofs</span></p>
+              <p class="m-sub"><span class="sv">Konkreta händelser, ordagrant och med datum.</span><span class="en">Concrete events, verbatim and dated.</span></p>
+              <div class="m-chips">
+                <span class="m-chip on"><span class="sv">Alla</span><span class="en">All</span></span>
+                <span class="m-chip"><span class="sv">Självtillit</span><span class="en">Self-trust</span></span>
+                <span class="m-chip"><span class="sv">Hälsa</span><span class="en">Health</span></span>
+              </div>
+              <div class="m-card ok">
+                <p class="m-quote"><span class="sv">Jag håller nästan alltid mitt ord till mig själv</span><span class="en">I almost always keep my word to myself</span></p>
+                <p class="m-sub" style="margin-top:4px;"><span class="sv">levande · Självtillit</span><span class="en">living · Self-trust</span></p>
+              </div>
+              <div class="m-card ok">
+                <p class="m-quote"><span class="sv">Det har gått 214 dagar sedan jag senast agerade ut</span><span class="en">It has been 214 days since I last acted out</span></p>
+                <p class="m-sub" style="margin-top:4px;"><span class="sv">levande · Jämförelse</span><span class="en">living · Comparison</span></p>
+              </div>
+              <div class="m-card">
+                <p class="m-quote"><span class="sv">Erik tackade mig för att jag ställde upp</span><span class="en">Erik thanked me for showing up</span></p>
+                <p class="m-sub" style="margin-top:4px;"><span class="sv">12 maj · Komplimang · Självtillit</span><span class="en">12 May · Compliment · Self-trust</span></p>
+              </div>
+              <div class="m-nav">
+                <span><span class="sv">I dag</span><span class="en">Today</span></span>
+                <span class="on"><span class="sv">Bevis</span><span class="en">Proofs</span></span>
+                <span><span class="sv">Övertygelser</span><span class="en">Beliefs</span></span>
+                <span><span class="sv">Vecka</span><span class="en">Week</span></span>
+              </div>
+            </div></div>
+            <figcaption class="sv">Levande bevis märks stilla med ”levande”</figcaption>
+            <figcaption class="en">Living proofs are marked quietly with "living"</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow"><span class="sv">Bevisboken</span><span class="en">The proof book</span></p>
+          <h3 class="sv">Hela banken på papper</h3>
+          <h3 class="en">The whole bank on paper</h3>
+          <p class="sv">
+            Alla bevis, samlade per kategori och formaterade för utskrift eller
+            PDF. Bra att ta med till terapeuten, sponsorn eller mentorn, och bra
+            att ha i en låda den dagen huvudet påstår att ingenting har hänt.
+          </p>
+          <p class="en">
+            All proofs, gathered by category and formatted for print or PDF.
+            Good to bring to a therapist, a sponsor or a mentor, and good to
+            keep in a drawer for the day your head claims nothing has happened.
+          </p>
+          <p class="detail sv">
+            Under Mer finns också säkerhetskopian: eftersom all data bara finns
+            på enheten kan du exportera och läsa in allt som en fil, till
+            exempel vid telefonbyte, och radera allt med ett bekräftelsesteg.
+          </p>
+          <p class="detail en">
+            The backup lives under More: since all data exists only on the
+            device, you can export and import everything as a single file, when
+            changing phones for example, and delete everything with a
+            confirmation step.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><div class="speaker"></div><div class="screen">
+              <p class="m-title"><span class="sv">Bevisbok</span><span class="en">Proof book</span></p>
+              <p class="m-sub"><span class="sv">Alla bevis, samlade per kategori.</span><span class="en">All proofs, gathered by category.</span></p>
+              <div class="m-mono sv">BEVISBOK
+Utskriven 12 maj 2026
+
+SJÄLVTILLIT · 14 bevis
+12 maj · Erik tackade mig för att jag
+  ställde upp och sa att han litar på mig
+11 maj · Jag höll mitt löfte: Ringde
+  tillbaka före lunch
+09 maj · Sa nej till en kväll jag visste
+  skulle bli fel
+
+HÄLSA OCH STYRKA · 6 bevis
+12 maj · Tränade 30 minuter fast jag
+  inte ville</div>
+              <div class="m-mono en">PROOF BOOK
+Printed 12 May 2026
+
+SELF-TRUST · 14 proofs
+12 May · Erik thanked me for showing up
+  and said he trusts me
+11 May · I kept my promise: Called back
+  before noon
+09 May · Said no to an evening I knew
+  would go wrong
+
+HEALTH AND STRENGTH · 6 proofs
+12 May · Worked out 30 minutes even
+  though I didn't feel like it</div>
+              <div class="m-btn"><span class="sv">Skriv ut eller spara som PDF</span><span class="en">Print or save as PDF</span></div>
+            </div></div>
+            <figcaption class="sv">Bevisboken: banken i en form du kan hålla i</figcaption>
+            <figcaption class="en">The proof book: the bank in a form you can hold</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="facts">
+    <div class="wrap">
+      <h2 class="sv">Integritet och teknik</h2>
+      <h2 class="en">Privacy and technology</h2>
+      <div class="fact-grid">
+        <div class="fact">
+          <h3 class="sv">Allt stannar på enheten</h3>
+          <h3 class="en">Everything stays on the device</h3>
+          <p class="sv">Övertygelser, bevis, löften och fångster sparas i telefonens lokala databas. Inga konton, ingen analytics, inga tredjepartsskript.</p>
+          <p class="en">Beliefs, proofs, promises and catches are stored in the phone's local database. No accounts, no analytics, no third-party scripts.</p>
+        </div>
+        <div class="fact">
+          <h3 class="sv">Installeras som app</h3>
+          <h3 class="en">Installs as an app</h3>
+          <p class="sv">Läggs till på hemskärmen direkt från webbläsaren och fungerar helt offline efter första besöket.</p>
+          <p class="en">Added to the home screen straight from the browser, and works fully offline after the first visit.</p>
+        </div>
+        <div class="fact">
+          <h3 class="sv">Gratis och utan konto</h3>
+          <h3 class="en">Free and account-free</h3>
+          <p class="sv">Appen är gratis, kräver ingen inloggning och indexeras inte av sökmotorer. Utvecklad av Michael inom Mission Phoenix.</p>
+          <p class="en">The app is free, needs no login, and isn't indexed by search engines. Developed by Michael as part of Mission Phoenix.</p>
+        </div>
+        <div class="fact">
+          <h3 class="sv">Din data är din</h3>
+          <h3 class="en">Your data is yours</h3>
+          <p class="sv">Exportera allt som en fil under Mer och läs in den igen när du vill. Har du en gammal säkerhetskopia från Ärlighetsinventeringen tar appen emot den och plockar ut bevisdelen.</p>
+          <p class="en">Export everything as a file under More and import it again whenever you want. If you have an old backup from the Honesty Inventory, the app accepts it and picks out the proof part.</p>
+        </div>
+        <div class="fact">
+          <h3 class="sv">Svenska och engelska</h3>
+          <h3 class="en">Swedish and English</h3>
+          <p class="sv">Hela appen finns på båda språken och språket kan bytas när som helst, både på välkomstskärmen och under Mer.</p>
+          <p class="en">The whole app exists in both languages, and the language can be switched at any time, on the welcome screen and under More.</p>
+        </div>
+        <div class="fact">
+          <h3 class="sv">Statisk webbapp</h3>
+          <h3 class="en">Static web app</h3>
+          <p class="sv">Byggd med React, Vite och Tailwind. Serveras som statiska filer från missionphoenix.life, ingen drift utöver sajten.</p>
+          <p class="en">Built with React, Vite and Tailwind. Served as static files from missionphoenix.life, with no infrastructure beyond the site.</p>
+        </div>
+      </div>
+
+      <div class="try">
+        <div class="try-top">
+          <div>
+            <h2 class="sv">Kom igång</h2>
+            <h2 class="en">Get started</h2>
+            <p class="sv">
+              Du börjar med jämförelsen mellan den du är nu och den du var, så
+              att banken har innehåll från första dagen. Sedan skriver du din
+              första övertygelse: den som kostar dig mest. Allt du skriver
+              stannar på din egen enhet och kan raderas när som helst.
+            </p>
+            <p class="en">
+              You start with the comparison between who you are now and who you
+              were, so the bank has content from day one. Then you write your
+              first belief: the one that costs you the most. Everything you
+              write stays on your own device and can be deleted at any time.
+            </p>
+            <a class="btn" href="/bevisbanken/"><span class="sv">Öppna Bevisbanken</span><span class="en">Open the Proof Bank</span></a>
+          </div>
+          <div class="qr">
+            <img src="/bevisbanken-demo/qr-bevisbanken.png" alt="QR-kod till Bevisbanken" />
+            <small><span class="sv">Skanna med mobilen</span><span class="en">Scan with your phone</span><br />missionphoenix.life/bevisbanken</small>
+          </div>
+        </div>
+
+        <div class="install">
+          <h3 class="sv">Så installeras appen på hemskärmen</h3>
+          <h3 class="en">How to install the app on your home screen</h3>
+          <div class="install-grid">
+            <div class="os">
+              <h4>iPhone / iPad</h4>
+              <ol class="sv">
+                <li>Öppna länken i <strong>Safari</strong>. Det måste vara Safari, Chrome på iPhone kan inte installera</li>
+                <li>Tryck på dela-knappen (fyrkanten med pilen uppåt)</li>
+                <li>Välj <strong>Lägg till på hemskärmen</strong></li>
+              </ol>
+              <ol class="en">
+                <li>Open the link in <strong>Safari</strong>. It has to be Safari; Chrome on iPhone can't install</li>
+                <li>Tap the share button (the square with the arrow pointing up)</li>
+                <li>Choose <strong>Add to Home Screen</strong></li>
+              </ol>
+            </div>
+            <div class="os">
+              <h4>Android</h4>
+              <ol class="sv">
+                <li>Öppna länken i Chrome</li>
+                <li>Tryck på <strong>Installera</strong> i rutan som visas, eller öppna menyn med tre prickar och välj <strong>Lägg till på startskärmen</strong></li>
+              </ol>
+              <ol class="en">
+                <li>Open the link in Chrome</li>
+                <li>Tap <strong>Install</strong> in the prompt, or open the three-dot menu and choose <strong>Add to Home screen</strong></li>
+              </ol>
+            </div>
+            <div class="os">
+              <h4><span class="sv">Dator</span><span class="en">Computer</span></h4>
+              <ol class="sv">
+                <li>Öppna länken i Chrome eller Edge</li>
+                <li>Klicka på <strong>installationsikonen</strong> till höger i adressfältet</li>
+              </ol>
+              <ol class="en">
+                <li>Open the link in Chrome or Edge</li>
+                <li>Click the <strong>install icon</strong> at the right of the address bar</li>
+              </ol>
+            </div>
+          </div>
+          <p class="note sv">
+            iPhone visar ingen egen installationsfråga: stegen görs manuellt via dela-knappen.
+            Installationen är också ett skydd: en app på hemskärmen undantas från Safaris
+            regelbundna rensning av webbplatsdata. Och eftersom all data ligger i appen på
+            enheten gäller: raderas appikonen raderas datan. Kom ihåg säkerhetskopian
+            under fliken Mer.
+          </p>
+          <p class="note en">
+            iPhone shows no install prompt of its own; the steps are done manually via the
+            share button. Installing is also a safeguard: an app on the home screen is exempt
+            from Safari's periodic clearing of website data. And since all data lives in the
+            app on the device: delete the app icon and the data goes with it, so remember the
+            backup under the More tab.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span class="sv">Bevisbanken · En gratis app utvecklad av Michael för Mission Phoenix · Inspirerad av David Bayers arbete med att identifiera och ersätta begränsande övertygelser · Ett självreflektionsverktyg, inte ett psykologiskt test eller en ersättning för behandling.</span>
+      <span class="en">The Proof Bank · A free app developed by Michael for Mission Phoenix · Inspired by David Bayer's work on identifying and replacing limiting beliefs · A self-reflection tool, not a psychological test or a substitute for treatment.</span>
+      <span class="sv">Mockuperna på sidan visar fiktiv exempeldata.</span>
+      <span class="en">The mockups on this page show fictional sample data.</span>
+    </div>
+  </footer>
+
+  <script>
+    function setLang(l) {
+      document.body.classList.toggle('en', l === 'en');
+      document.documentElement.lang = l;
+      document.getElementById('btn-sv').classList.toggle('on', l === 'sv');
+      document.getElementById('btn-en').classList.toggle('on', l === 'en');
+      try { localStorage.setItem('bevis-demo-lang', l); } catch (e) {}
+    }
+    try {
+      var qs = new URLSearchParams(window.location.search).get('lang');
+      var saved = localStorage.getItem('bevis-demo-lang');
+      if (qs === 'en' || qs === 'sv') setLang(qs);
+      else if (saved === 'en') setLang('en');
+    } catch (e) {}
+  </script>
+
+</body>
+</html>

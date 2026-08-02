@@ -1,4 +1,19 @@
+import { useEffect } from 'react';
+
+/**
+ * Ligger på is. Sidan finns kvar för gamla länkar och bokmärken, men den
+ * länkas inte längre från menyn, foten eller sitemapen, och den ska inte
+ * indexeras. Bevisbanken (src/ProofBank.jsx) är sidan som visas i stället.
+ */
 export default function HonestyInventory() {
+  useEffect(() => {
+    const meta = document.head.querySelector('meta[name="robots"]');
+    if (!meta) return undefined;
+    const previous = meta.content;
+    meta.content = 'noindex, follow';
+    return () => { meta.content = previous; };
+  }, []);
+
   return (
     <>
       <style>{`

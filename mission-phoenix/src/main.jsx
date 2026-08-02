@@ -18,6 +18,7 @@ import Story from './Story.jsx';
 import Contact from './Contact.jsx';
 import Support from './Support.jsx';
 import HonestyInventory from './HonestyInventory.jsx';
+import ProofBank from './ProofBank.jsx';
 import Coaching from './Coaching.jsx';
 import CoachingAdmin from './CoachingAdmin.jsx';
 import Portal from './Portal.jsx';
@@ -133,6 +134,9 @@ function App() {
           <Route path="/story" element={<Story />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/proof-bank" element={<ProofBank />} />
+          {/* Ärlighetsinventeringen ligger på is: sidan finns kvar för gamla
+              länkar, men den syns inte i menyn, foten eller sitemapen. */}
           <Route path="/honesty-inventory" element={<HonestyInventory />} />
           <Route path="/coaching" element={<Coaching />} />
           <Route path="/coaching/admin" element={<CoachingAdmin />} />
