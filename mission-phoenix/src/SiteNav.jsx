@@ -23,7 +23,7 @@ export default function SiteNav() {
           <Link to="/archive" className={isActive('/archive') ? 'active' : ''}>Newsletters</Link>
           <Link to="/quiz" className={isActive('/quiz') ? 'active' : ''}>Assessment</Link>
 
-          <Link to="/proof-bank" className={isActive('/proof-bank') ? 'active' : ''}>Bevisbanken</Link>
+          <Link to="/proof-bank" className={isActive('/proof-bank') ? 'active' : ''}>The Proof Bank</Link>
 
           {/* 1. Added your new Coaching package track */}
           <Link to="/coaching" className={isActive('/coaching') ? 'active' : ''}>Coaching</Link>

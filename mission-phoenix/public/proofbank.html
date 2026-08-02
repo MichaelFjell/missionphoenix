@@ -1,17 +1,41 @@
 <!doctype html>
-<html lang="sv">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Bevisbanken (the Proof Bank): a free, private recovery app. Replace the old beliefs your addiction wrote about you with new decisions, and collect dated proof that makes them true." />
-  <meta property="og:title" content="Bevisbanken: how it works" />
+  <meta name="description" content="The Proof Bank: a free, private recovery app. Replace the old beliefs your addiction wrote about you with new decisions, and collect dated proof that makes them true." />
+  <meta property="og:title" content="The Proof Bank: how it works" />
   <meta property="og:description" content="Write the old belief verbatim, phrase the new decision, then collect proof: real events with dates. A morning ritual, a quick catch and a two minute evening check keep the evidence flowing." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://missionphoenix.life/bevisbanken-demo.html" />
-  <meta property="og:image" content="https://missionphoenix.life/bevisbanken-demo/icon.png" />
-  <link rel="canonical" href="https://missionphoenix.life/bevisbanken-demo.html" />
-  <link rel="icon" type="image/png" href="/bevisbanken-demo/icon.png" />
-  <title>Bevisbanken: så fungerar appen</title>
+  <meta property="og:url" content="https://missionphoenix.life/proofbank.html" />
+  <meta property="og:image" content="https://missionphoenix.life/proofbank-assets/icon.png" />
+  <link rel="canonical" href="https://missionphoenix.life/proofbank.html" />
+  <link rel="icon" type="image/png" href="/proofbank-assets/icon.png" />
+  <title>The Proof Bank: how it works</title>
+  <script>
+    // Körs i head så att sidan aldrig blinkar till på fel språk.
+    var TITLES = { en: 'The Proof Bank: how it works', sv: 'Bevisbanken: så fungerar appen' };
+    function setLang(l) {
+      document.documentElement.classList.toggle('sv', l === 'sv');
+      document.documentElement.lang = l;
+      document.title = TITLES[l] || TITLES.en;
+      var sv = document.getElementById('btn-sv');
+      var en = document.getElementById('btn-en');
+      if (sv) sv.classList.toggle('on', l === 'sv');
+      if (en) en.classList.toggle('on', l === 'en');
+      try { localStorage.setItem('proofbank-demo-lang', l); } catch (e) {}
+    }
+    (function () {
+      var chosen = 'en';
+      try {
+        var qs = new URLSearchParams(window.location.search).get('lang');
+        var saved = localStorage.getItem('proofbank-demo-lang');
+        if (qs === 'en' || qs === 'sv') chosen = qs;
+        else if (saved === 'sv') chosen = 'sv';
+      } catch (e) {}
+      setLang(chosen);
+    })();
+  </script>
   <style>
     :root {
       --ground: #faf7f2;
@@ -49,9 +73,9 @@
     }
     .step-eyebrow { color: var(--accent); }
 
-    /* ---- Språkväxlare ---- */
-    body.en .sv { display: none !important; }
-    body:not(.en) .en { display: none !important; }
+    /* ---- Språkväxlare: engelska är standard, svenska sätts på <html> ---- */
+    html.sv .en { display: none !important; }
+    html:not(.sv) .sv { display: none !important; }
     .langbar { display: flex; justify-content: flex-end; padding-top: 18px; }
     .lang {
       display: inline-flex; border: 1px solid var(--line); border-radius: 999px;
@@ -274,8 +298,8 @@
 
   <div class="wrap langbar">
     <div class="lang" role="group" aria-label="Språk / Language">
-      <button id="btn-sv" class="on" onclick="setLang('sv')">SV</button>
-      <button id="btn-en" onclick="setLang('en')">EN</button>
+      <button id="btn-en" class="on" onclick="setLang('en')">EN</button>
+      <button id="btn-sv" onclick="setLang('sv')">SV</button>
     </div>
   </div>
 
@@ -283,7 +307,7 @@
     <div class="wrap hero-grid">
       <div>
         <div class="wordmark">
-          <img src="/bevisbanken-demo/mark.png" alt="" />
+          <img src="/proofbank-assets/mark.png" alt="" />
           <span class="sv">Bevisbanken</span>
           <span class="en">The Proof Bank</span>
         </div>
@@ -331,7 +355,7 @@
       <figure>
         <div class="phone"><div class="speaker"></div><div class="screen">
           <div style="text-align:center; padding: 26px 6px 10px;">
-            <img class="m-mark" src="/bevisbanken-demo/mark.png" alt="" />
+            <img class="m-mark" src="/proofbank-assets/mark.png" alt="" />
             <div class="m-title" style="margin-top:10px;">
               <span class="sv">Bevisbanken</span>
               <span class="en">The Proof Bank</span>
@@ -1021,11 +1045,11 @@ HEALTH AND STRENGTH · 6 proofs
               first belief: the one that costs you the most. Everything you
               write stays on your own device and can be deleted at any time.
             </p>
-            <a class="btn" href="/bevisbanken/"><span class="sv">Öppna Bevisbanken</span><span class="en">Open the Proof Bank</span></a>
+            <a class="btn" href="/proofbank/"><span class="sv">Öppna Bevisbanken</span><span class="en">Open the Proof Bank</span></a>
           </div>
           <div class="qr">
-            <img src="/bevisbanken-demo/qr-bevisbanken.png" alt="QR-kod till Bevisbanken" />
-            <small><span class="sv">Skanna med mobilen</span><span class="en">Scan with your phone</span><br />missionphoenix.life/bevisbanken</small>
+            <img src="/proofbank-assets/qr-proofbank.png" alt="QR code to The Proof Bank" />
+            <small><span class="sv">Skanna med mobilen</span><span class="en">Scan with your phone</span><br />missionphoenix.life/proofbank</small>
           </div>
         </div>
 
@@ -1098,19 +1122,8 @@ HEALTH AND STRENGTH · 6 proofs
   </footer>
 
   <script>
-    function setLang(l) {
-      document.body.classList.toggle('en', l === 'en');
-      document.documentElement.lang = l;
-      document.getElementById('btn-sv').classList.toggle('on', l === 'sv');
-      document.getElementById('btn-en').classList.toggle('on', l === 'en');
-      try { localStorage.setItem('bevis-demo-lang', l); } catch (e) {}
-    }
-    try {
-      var qs = new URLSearchParams(window.location.search).get('lang');
-      var saved = localStorage.getItem('bevis-demo-lang');
-      if (qs === 'en' || qs === 'sv') setLang(qs);
-      else if (saved === 'en') setLang('en');
-    } catch (e) {}
+    // Knapparna finns först nu, så markeringen sätts om när sidan är läst.
+    setLang(document.documentElement.classList.contains('sv') ? 'sv' : 'en');
   </script>
 
 </body>

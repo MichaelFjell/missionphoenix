@@ -28,8 +28,7 @@ export default function ProofBank() {
         .pb-attr{margin-top:36px;font-size:13.5px;line-height:1.7;color:var(--ink-3);}
       `}</style>
       <main className="page narrow">
-        <h1 className="pb-title">Bevisbanken</h1>
-        <div className="pb-sub">The Proof Bank</div>
+        <h1 className="pb-title">The Proof Bank</h1>
         <div className="pb-sep"></div>
 
         <div className="pb-body">
@@ -146,17 +145,17 @@ export default function ProofBank() {
           <li><strong>Two languages.</strong> Available in English and Swedish.</li>
         </ul>
 
-        <a className="pb-cta" href="/bevisbanken-demo.html?lang=en">
+        <a className="pb-cta" href="/proofbank.html">
           <div className="pb-cta-lab">See how it works</div>
           <div className="pb-cta-sub">Step-by-step guide, screenshots and installation instructions</div>
         </a>
         <p className="pb-alt">
-          Already know it? <a href="/bevisbanken/">Open Bevisbanken &rarr;</a>
+          Already know it? <a href="/proofbank/">Open The Proof Bank &rarr;</a>
         </p>
 
         <p className="pb-attr">
-          Bevisbanken is inspired by David Bayer&apos;s work on identifying and
-          replacing limiting beliefs. It is a self-reflection tool, not a
+          The Proof Bank is inspired by David Bayer&apos;s work on identifying
+          and replacing limiting beliefs. It is a self-reflection tool, not a
           psychological test or a substitute for treatment.
         </p>
       </main>

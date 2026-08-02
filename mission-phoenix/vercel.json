@@ -1,7 +1,12 @@
 {
   "redirects": [
     { "source": "/dbkuppgifter", "destination": "/dbkuppgifter/", "permanent": true },
-    { "source": "/bevisbanken", "destination": "/bevisbanken/", "permanent": true }
+    { "source": "/proofbank", "destination": "/proofbank/", "permanent": true },
+    { "source": "/bevisbanken", "destination": "/proofbank/", "permanent": true },
+    { "source": "/bevisbanken/", "destination": "/proofbank/", "permanent": true },
+    { "source": "/bevisbanken/:path*", "destination": "/proofbank/:path*", "permanent": true },
+    { "source": "/bevisbanken-demo.html", "destination": "/proofbank.html", "permanent": true },
+    { "source": "/bevisbanken-demo/:path*", "destination": "/proofbank-assets/:path*", "permanent": true }
   ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }

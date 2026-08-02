@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 /**
  * Ligger på is. Sidan finns kvar för gamla länkar och bokmärken, men den
  * länkas inte längre från menyn, foten eller sitemapen, och den ska inte
- * indexeras. Bevisbanken (src/ProofBank.jsx) är sidan som visas i stället.
+ * indexeras. The Proof Bank (src/ProofBank.jsx) är sidan som visas i stället.
  */
 export default function HonestyInventory() {
   useEffect(() => {
@@ -98,7 +98,7 @@ export default function HonestyInventory() {
           </p>
         </div>
 
-        <h2 className="hi-h2"><small>App two</small>Bevisbanken: the Proof Bank</h2>
+        <h2 className="hi-h2"><small>App two</small>The Proof Bank</h2>
         <div className="hi-body">
           <p>
             The deeper and more demanding of the two, built on David Bayer&apos;s
@@ -233,7 +233,7 @@ export default function HonestyInventory() {
           Already know them? <a href="/inventory/">Open the Honesty Inventory &rarr;</a>
         </p>
         <p className="hi-alt">
-          <a href="/bevisbanken/">Open the Proof Bank &rarr;</a>
+          <a href="/proofbank/">Open the Proof Bank &rarr;</a>
         </p>
 
         <p className="hi-attr">
