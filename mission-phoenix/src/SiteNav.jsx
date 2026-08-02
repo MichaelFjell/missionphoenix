@@ -20,7 +20,7 @@ export default function SiteNav() {
           <span>Mission Phoenix</span>
         </Link>
         <div className="links">
-          <Link to="/archive" className={isActive('/archive') ? 'active' : ''}>Newsletters</Link>
+          <a href="https://www.youtube.com/@FenixMichael" target="_blank" rel="noopener noreferrer">YouTube</a>
           <Link to="/quiz" className={isActive('/quiz') ? 'active' : ''}>Assessment</Link>
 
           <Link to="/proof-bank" className={isActive('/proof-bank') ? 'active' : ''}>The Proof Bank</Link>

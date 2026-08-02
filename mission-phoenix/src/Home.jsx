@@ -1,79 +1,36 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase, isSupabaseConfigured } from './supabase.js';
 
-function NewsletterSignup() {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState(null); // 'success', 'error', 'loading'
-  const [msg, setMsg] = useState('');
+const YOUTUBE_CHANNEL = 'https://www.youtube.com/@FenixMichael';
+const INTRO_VIDEO_ID = '6tSsU98H4hE';
+const INTRO_VIDEO_TITLE = 'Introduction to Mission Phoenix';
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    setStatus('loading');
+// Click-to-play: nothing loads from YouTube until the visitor asks for it.
+function IntroVideo() {
+  const [playing, setPlaying] = useState(false);
 
-    // Save to Supabase
-    if (isSupabaseConfigured()) {
-      const { error } = await supabase
-        .from('newsletter_subscribers')
-        .insert({ email: email.trim().toLowerCase() });
-
-      if (error) {
-        if (error.code === '23505') {
-          setStatus('success');
-          setMsg("You're already subscribed!");
-          return;
-        }
-        console.error('Newsletter signup error:', error);
-        setStatus('error');
-        setMsg('Something went wrong. Try again.');
-        return;
-      }
-    }
-
-    // Send to Buttondown if API key is set
-    const buttondownKey = import.meta.env.VITE_BUTTONDOWN_API_KEY;
-    if (buttondownKey) {
-      try {
-        await fetch('https://api.buttondown.com/v1/subscribers', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Token ${buttondownKey}` },
-          body: JSON.stringify({ email_address: email.trim().toLowerCase() }),
-        });
-      } catch (err) {
-        console.error('Buttondown error:', err);
-      }
-    }
-
-    setStatus('success');
-    setMsg('Check your email and confirm your subscription to start receiving the newsletter.');
-    setEmail('');
-  };
-
-  if (status === 'success') {
+  if (playing) {
     return (
-      <div style={{ padding: '14px', background: 'var(--copper-soft)', borderRadius: '10px', color: 'var(--copper)', fontWeight: 600, fontSize: '14px' }}>
-        ✓ {msg}
+      <div className="vid-frame">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${INTRO_VIDEO_ID}?autoplay=1&rel=0`}
+          title={INTRO_VIDEO_TITLE}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
       </div>
     );
   }
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="nl-form">
-        <input
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          placeholder="you@example.com"
-          required
-        />
-        <button className="btn primary" type="submit" disabled={status === 'loading'}>
-          {status === 'loading' ? '...' : 'Subscribe'}
-        </button>
-      </form>
-      {status === 'error' && <div style={{ fontSize: '12px', color: '#b82030', marginTop: '8px' }}>{msg}</div>}
-    </>
+    <div className="vid-frame">
+      <button type="button" className="vid-play" onClick={() => setPlaying(true)} aria-label={`Play: ${INTRO_VIDEO_TITLE}`}>
+        <img src="/intro-thumb.jpg" alt="" width="800" height="450" />
+        <span className="pb">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" /></svg>
+        </span>
+      </button>
+    </div>
   );
 }
 
@@ -89,15 +46,22 @@ export default function Home() {
         .home-hero .cta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
         .hero-side{display:flex;flex-direction:column;gap:16px;}
         .side-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;position:relative;overflow:hidden;}
-        .side-card.nl::before{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--copper-soft),transparent 70%);}
+        .side-card.vid::before{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--copper-soft),transparent 70%);}
         .side-card .sec-title{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--copper);margin-bottom:14px;display:flex;align-items:center;gap:10px;position:relative;}
         .side-card .sec-title::before{display:none;}
         main.home-page > .sec-title::before{display:none;}
         .side-card h2{font-size:22px;font-weight:800;letter-spacing:-0.015em;line-height:1.2;margin-bottom:8px;position:relative;}
         .side-card p.sm{font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:16px;position:relative;}
-        .nl-form{display:flex;gap:8px;position:relative;}
-        .nl-form input{flex:1;padding:12px 14px;border-radius:10px;border:1px solid var(--line-2);background:var(--bg);font-family:inherit;font-size:14px;color:var(--ink);outline:none;}
-        .nl-form input:focus{border-color:var(--copper);background:var(--card);}
+        .vid-frame{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;border:1px solid var(--line);}
+        .vid-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+        .vid-play{display:block;width:100%;height:100%;padding:0;border:0;background:none;cursor:pointer;}
+        .vid-play img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s;}
+        /* Bottom-right, so the play button never covers the thumbnail headline. */
+        .vid-play .pb{position:absolute;right:12px;bottom:12px;width:52px;height:52px;border-radius:50%;background:var(--copper);color:var(--on-accent);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px -8px rgba(0,0,0,0.7);transition:transform .25s,background .25s;}
+        .vid-play .pb svg{width:26px;height:26px;margin-left:3px;}
+        .vid-play:hover img{transform:scale(1.03);}
+        .vid-play:hover .pb{transform:scale(1.09);background:var(--copper-2);}
+        .vid-play:focus-visible{outline:2px solid var(--copper);outline-offset:3px;}
         .side-card .note{font-size:11.5px;color:var(--ink-3);margin-top:10px;position:relative;}
         .side-card .note a{color:var(--copper);font-weight:600;}
         .discord-row{display:flex;align-items:center;gap:14px;}
@@ -142,12 +106,14 @@ export default function Home() {
           </div>
 
           <aside className="hero-side">
-            <div className="side-card nl">
-              <div className="sec-title">Weekly dispatch</div>
-              <h2>Honest words about breaking free.</h2>
-              <p className="sm">Hand-written by Michael, once a week. No AI-slop. Unsubscribe any time.</p>
-              <NewsletterSignup />
-              <div className="note">One email per week. <Link to="/archive">Read past newsletters →</Link></div>
+            <div className="side-card vid">
+              <div className="sec-title">Start here</div>
+              <h2>Who I am, and why this exists.</h2>
+              <p className="sm">A short introduction to me and to Mission Phoenix, in my own words.</p>
+              <IntroVideo />
+              <div className="note">
+                <a href={YOUTUBE_CHANNEL} target="_blank" rel="noopener noreferrer">Mission Phoenix on YouTube →</a>
+              </div>
             </div>
 
             <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer" className="side-card discord-row">

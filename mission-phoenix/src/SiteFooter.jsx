@@ -18,6 +18,7 @@ export default function SiteFooter() {
           <Link to="/coaching">Coaching</Link>
           <Link to="/tracker">Recovery tracker</Link>
           <Link to="/community">Community</Link>
+          <a href="https://www.youtube.com/@FenixMichael" target="_blank" rel="noopener noreferrer">YouTube</a>
           <Link to="/archive">Newsletter archive</Link>
         </div>
         <div className="foot-col">
