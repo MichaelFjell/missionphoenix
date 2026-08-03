@@ -83,6 +83,7 @@ export default function Home() {
         .home-tool{margin-top:28px;padding:20px 24px;background:var(--card);border:1px solid var(--line);border-radius:16px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
         .home-tool:hover{border-color:var(--copper);}
         .home-tool .ci{width:40px;height:40px;border-radius:10px;background:var(--ink);color:var(--card);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+        .home-tool .ci svg{width:20px;height:20px;}
         .home-tool .tx{flex:1;min-width:260px;}
         .home-tool .tx .t{font-size:14px;font-weight:700;letter-spacing:0.5px;color:var(--ink);}
         .home-tool .tx .rec{font-size:10.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--copper);margin-bottom:2px;}
@@ -149,6 +150,16 @@ export default function Home() {
             <div className="foot"><span className="m">Anonymous</span><span className="arr">→</span></div>
           </Link>
         </section>
+
+        <Link to="/archive" className="home-tool">
+          <div className="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/></svg></div>
+          <div className="tx">
+            <div className="rec">Archive</div>
+            <div className="t">Newsletter archive</div>
+            <p>The weekly newsletter has ended and been replaced by videos on YouTube, but every letter that went out is still here to read.</p>
+          </div>
+          <div className="arr">Read →</div>
+        </Link>
 
         <a href="https://getcoldturkey.com/" target="_blank" rel="noopener noreferrer" className="home-tool">
           <div className="ci">❄</div>
