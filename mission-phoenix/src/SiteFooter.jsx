@@ -16,7 +16,6 @@ export default function SiteFooter() {
           <Link to="/quiz">Self-assessment</Link>
           <Link to="/proof-bank">The Proof Bank</Link>
           <Link to="/coaching">Coaching</Link>
-          <Link to="/tracker">Recovery tracker</Link>
           <Link to="/community">Community</Link>
           <a href="https://www.youtube.com/@FenixMichael" target="_blank" rel="noopener noreferrer">YouTube</a>
           <Link to="/archive">Newsletter archive</Link>
@@ -29,8 +28,8 @@ export default function SiteFooter() {
         </div>
         <div className="foot-col">
           <h4>Account</h4>
-          <Link to="/tracker">Log in</Link>
-          <Link to="/tracker">Create account</Link>
+          <Link to="/portal">Client portal</Link>
+          <Link to="/coaching">Book coaching</Link>
           <Link to="/contact">Get help</Link>
         </div>
       </div>

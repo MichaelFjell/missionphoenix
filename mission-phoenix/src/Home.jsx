@@ -136,11 +136,11 @@ export default function Home() {
             <p>5 questions. Research-backed facts. No data stored. A wake-up call that takes 2 minutes.</p>
             <div className="foot"><span className="m">2 minutes · anonymous</span><span className="arr">→</span></div>
           </Link>
-          <Link to="/tracker" className="tile">
-            <div className="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 20h16M6 20V13M11 20V9M16 20V15M20 20V6"/></svg></div>
-            <h3>Recovery Tracker</h3>
-            <p>Track your streak. Build daily habits. See your progress. Join others fighting the same battle.</p>
-            <div className="foot"><span className="m">Private · daily</span><span className="arr">→</span></div>
+          <Link to="/proof-bank" className="tile">
+            <div className="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h11a1 1 0 011 1v16H7a1 1 0 01-1-1z"/><path d="M6 17h12"/><path d="M9.5 9.3l1.9 1.9L15 7.6"/></svg></div>
+            <h3>The Proof Bank</h3>
+            <p>Rewrite the beliefs your addiction wrote about you, and collect real proof that the new ones are true.</p>
+            <div className="foot"><span className="m">Free · private</span><span className="arr">→</span></div>
           </Link>
           <Link to="https://discord.com/invite/tXnBUSbq92" className="tile">
             <div className="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M14 19c0-2 2-3.5 4-3.5s4 1.5 4 3.5"/></svg></div>
