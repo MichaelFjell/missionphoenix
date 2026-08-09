@@ -3,7 +3,7 @@
 // RAISED_USD is the running total. Update this one number as donations come in
 // and the counter, the bar and the "still needed" figure all follow.
 const GOAL_USD = 1200;
-const RAISED_USD = 0;
+const RAISED_USD = 30;
 
 const usd = (n) => '$' + n.toLocaleString('en-US');
 
