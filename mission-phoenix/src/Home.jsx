@@ -70,6 +70,25 @@ export default function Home() {
         .discord-row .dtxt .t{font-size:14.5px;font-weight:700;letter-spacing:-0.01em;}
         .discord-row .dtxt .s{font-size:12.5px;color:var(--ink-3);margin-top:2px;}
         .discord-row .go{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--copper);text-transform:uppercase;}
+        .grp-call{display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin:0 0 34px;padding:24px 28px;border-radius:20px;background:var(--copper-soft);border:1px solid var(--copper);transition:all .25s;}
+        .grp-call:hover{border-color:var(--copper-2);transform:translateY(-2px);box-shadow:0 14px 34px -20px rgba(163,70,32,0.5);}
+        .grp-when{flex-shrink:0;width:104px;padding:14px 10px;border-radius:16px;background:var(--copper);color:var(--on-accent);text-align:center;}
+        .grp-when .d{font-size:10.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;opacity:.85;}
+        .grp-when .h{font-size:24px;font-weight:800;letter-spacing:-0.02em;line-height:1.15;margin-top:3px;}
+        .grp-when .z{font-size:10.5px;font-weight:700;letter-spacing:1.5px;opacity:.85;}
+        .grp-tx{flex:1;min-width:260px;}
+        .grp-tx .rec{font-size:10.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--copper);margin-bottom:4px;}
+        .grp-tx h3{font-size:18px;font-weight:800;letter-spacing:-0.015em;margin-bottom:6px;}
+        .grp-tx p{font-size:13.5px;line-height:1.55;color:var(--ink-2);}
+        .grp-tx p + p{margin-top:6px;}
+        .grp-call .go{flex-shrink:0;padding:11px 20px;border-radius:999px;background:var(--copper);color:var(--on-accent);font-size:13px;font-weight:700;letter-spacing:0.3px;white-space:nowrap;}
+        .grp-call:hover .go{background:var(--copper-2);}
+        @media (max-width:640px){
+          .grp-call{padding:20px;gap:16px;}
+          .grp-when{width:100%;display:flex;align-items:baseline;justify-content:center;gap:8px;padding:10px 12px;}
+          .grp-when .h{margin-top:0;}
+          .grp-call .go{width:100%;text-align:center;}
+        }
         .home-features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px;}
         .tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 24px 22px;transition:all .25s;display:block;}
         .tile:hover{border-color:var(--copper);transform:translateY(-3px);box-shadow:0 12px 32px -18px rgba(163,70,32,0.35);}
@@ -127,6 +146,21 @@ export default function Home() {
             </a>
           </aside>
         </section>
+
+        <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer" className="grp-call">
+          <div className="grp-when">
+            <div className="d">Sundays</div>
+            <div className="h">10 AM</div>
+            <div className="z">EST</div>
+          </div>
+          <div className="grp-tx">
+            <div className="rec">Free weekly group call</div>
+            <h3>Video support group, run by Michael</h3>
+            <p>Every Sunday at 10:00 AM EST / 4:00 PM GMT+2. Join the Discord community for the Zoom link and more information.</p>
+            <p>Highly recommended for all porn addicts, active or sober, because of how important it is for your nervous system to heal in group and community settings.</p>
+          </div>
+          <div className="go">Join on Discord →</div>
+        </a>
 
         <div className="sec-title" style={{ marginBottom: '14px' }}>What's here</div>
 
