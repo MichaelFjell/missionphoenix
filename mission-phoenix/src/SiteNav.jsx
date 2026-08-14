@@ -25,10 +25,7 @@ export default function SiteNav() {
 
           <Link to="/proof-bank" className={isActive('/proof-bank') ? 'active' : ''}>The Proof Bank</Link>
 
-          {/* 1. Added your new Coaching package track */}
-          <Link to="/coaching" className={isActive('/coaching') ? 'active' : ''}>Coaching</Link>
-          
-          {/* 2. Direct external link to Discord */}
+          {/* Direct external link to Discord */}
           <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer">Community</a>
           
           <Link to="/about" className={isActive('/about') ? 'active' : ''}>About</Link>
