@@ -36,6 +36,10 @@ export default function About() {
           
         </div>
 
+        <div className="about-more">
+          <Link to="/story">A longer version of my life story can be found here →</Link>
+        </div>
+
       </main>
     </>
   );
