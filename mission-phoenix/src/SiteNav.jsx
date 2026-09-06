@@ -30,7 +30,7 @@ export default function SiteNav() {
           
           <Link to="/about" className={isActive('/about') ? 'active' : ''}>About</Link>
           <Link to="/contact" className={isActive('/contact') ? 'active' : ''}>Contact</Link>
-          <Link to="/support" className={isActive('/support') ? 'active' : ''}>Donate</Link>
+          <Link to="/support" className={`donate-btn${isActive('/support') ? ' active' : ''}`}>Donate</Link>
           
           {user && profile && (
             <span className="user-area">

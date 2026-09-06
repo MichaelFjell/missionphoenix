@@ -7,6 +7,9 @@
   --line:var(--mp-line-2); --line-2:var(--mp-line-3);
   --copper:var(--mp-accent); --copper-2:var(--mp-accent-hi); --copper-soft:var(--mp-accent-soft);
   --on-accent:var(--mp-on-accent);
+  --donate:var(--mp-donate); --donate-2:var(--mp-donate-hi);
+  --donate-ring:var(--mp-donate-ring); --donate-glow:var(--mp-donate-glow);
+  --on-donate:var(--mp-on-donate);
 }
 html,body,#root{background:var(--bg);color:var(--ink);font-family:'Manrope',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100%;}
 body{min-height:100vh;}
@@ -24,10 +27,12 @@ nav.site{position:sticky;top:0;z-index:20;background:var(--mp-nav-bg);backdrop-f
 .links a:hover,.links a.active{color:var(--copper);}
 .links a.active{position:relative;}
 .links a.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:var(--copper);border-radius:2px;}
-.donate-btn{padding:9px 18px;background:var(--copper);color:var(--on-accent)!important;border-radius:999px;font-weight:600;font-size:13px!important;}
-.donate-btn:hover{background:var(--copper-2);}
-.donate-btn.active{background:var(--copper-2);}
-.donate-btn.active::after{display:none;}
+/* Donate sits in its own gold, one step brighter than the site accent, with a
+   soft halo so it reads as the one call to action in the nav. */
+.links a.donate-btn{padding:9px 20px;background:var(--donate);color:var(--on-donate)!important;border-radius:999px;font-weight:700;font-size:13px!important;letter-spacing:0.4px;box-shadow:0 0 0 4px var(--donate-ring),0 2px 12px var(--donate-glow);transition:background .18s,box-shadow .18s,transform .18s;}
+.links a.donate-btn:hover{background:var(--donate-2);color:var(--on-donate)!important;transform:translateY(-1px);box-shadow:0 0 0 5px var(--donate-ring),0 5px 18px var(--donate-glow);}
+.links a.donate-btn.active{background:var(--donate-2);}
+.links a.donate-btn.active::after{display:none;}
 .user-area{display:flex;align-items:center;gap:12px;padding-left:16px;border-left:1px solid var(--line);margin-left:4px;}
 .user-area .u-name{font-size:13px;font-weight:700;color:var(--copper);letter-spacing:0.3px;}
 .logout-btn{font-size:11px;font-weight:700;letter-spacing:2px;padding:6px 12px;background:transparent;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-3);cursor:pointer;text-transform:uppercase;}

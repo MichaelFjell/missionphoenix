@@ -27,6 +27,14 @@
 
   --mp-on-accent: #fbf5e8;
   --mp-nav-bg: rgba(244,236,221,0.92);
+
+  /* Donate gold. Deliberately its own colour rather than the accent, so the
+     Donate button reads yellow in every theme (the accent is rust here). */
+  --mp-donate:      #d68c12;
+  --mp-donate-hi:   #c07a07;
+  --mp-donate-ring: rgba(214,140,18,0.20);
+  --mp-donate-glow: rgba(214,140,18,0.30);
+  --mp-on-donate:   #2a1608;
 }
 
 :root[data-theme="oxblood"] {
@@ -51,6 +59,12 @@
 
   --mp-on-accent: #170c0c;
   --mp-nav-bg: rgba(23,12,12,0.92);
+
+  --mp-donate:      #f5c23f;
+  --mp-donate-hi:   #ffd463;
+  --mp-donate-ring: rgba(245,194,63,0.18);
+  --mp-donate-glow: rgba(245,194,63,0.38);
+  --mp-on-donate:   #170c0c;
 }
 
 :root[data-theme="ember"] {
@@ -75,6 +89,12 @@
 
   --mp-on-accent: #0d0907;
   --mp-nav-bg: rgba(22,17,14,0.92);
+
+  --mp-donate:      #f2b83c;
+  --mp-donate-hi:   #ffca5c;
+  --mp-donate-ring: rgba(242,184,60,0.18);
+  --mp-donate-glow: rgba(242,184,60,0.38);
+  --mp-on-donate:   #0d0907;
 }
 
 :root[data-theme="slate"] {
@@ -99,4 +119,10 @@
 
   --mp-on-accent: #141921;
   --mp-nav-bg: rgba(20,25,33,0.92);
+
+  --mp-donate:      #f4c14a;
+  --mp-donate-hi:   #ffd268;
+  --mp-donate-ring: rgba(244,193,74,0.18);
+  --mp-donate-glow: rgba(244,193,74,0.38);
+  --mp-on-donate:   #141921;
 }
