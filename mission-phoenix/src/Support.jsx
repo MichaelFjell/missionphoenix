@@ -1,26 +1,16 @@
-// ---- Therapist certification fund ----------------------------------------
-// GOAL_USD is the full cost of the KBT/ACT therapist certification at Humanova:
-// four semesters at roughly 35,000 SEK each, 140,000 SEK in total.
+// ---- Laptop fund ---------------------------------------------------------
+// GOAL_USD is the full cost of the replacement laptop.
 // RAISED_USD is the running total. Update this one number as donations come in
 // and the counter, the bar and the "still needed" figure all follow.
-const GOAL_USD = 14000;
+const GOAL_USD = 1200;
 const RAISED_USD = 30;
 
-const GOAL_SEK = 140000;
-const SEMESTER_SEK = 35000;
-const SEMESTER_USD = 3500;
-const SEMESTERS = 4;
-
 const usd = (n) => '$' + n.toLocaleString('en-US');
-const sek = (n) => n.toLocaleString('en-US').replace(/,/g, ' ') + ' SEK';
 
 export default function Support() {
   const raised = Math.max(0, Math.min(RAISED_USD, GOAL_USD));
   const pct = Math.round((raised / GOAL_USD) * 100);
   const left = GOAL_USD - raised;
-  // With a goal this size a small sum rounds to 0%, which reads as nothing at
-  // all. Show "<1%" instead so early donations are still visibly counted.
-  const pctLabel = raised > 0 && pct < 1 ? '<1%' : `${pct}%`;
 
   return (
     <>
@@ -32,8 +22,7 @@ export default function Support() {
 
         .sp-goal{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:32px;margin:32px 0;}
         .sp-goal-lab{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--copper);margin-bottom:10px;}
-        .sp-goal-title{font-size:clamp(20px,3vw,25px);font-weight:800;line-height:1.3;margin-bottom:10px;}
-        .sp-goal-sub{font-size:14px;line-height:1.7;color:var(--ink-3);margin-bottom:22px;}
+        .sp-goal-title{font-size:clamp(20px,3vw,25px);font-weight:800;line-height:1.3;margin-bottom:22px;}
         .sp-nums{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px;}
         .sp-raised{font-size:clamp(28px,5vw,36px);font-weight:800;color:var(--copper);line-height:1;}
         .sp-of{font-size:15px;color:var(--ink-3);font-weight:600;}
@@ -57,8 +46,7 @@ export default function Support() {
 
         <div className="sp-goal">
           <div className="sp-goal-lab">Current goal</div>
-          <div className="sp-goal-title">A KBT and ACT therapist certification through Humanova</div>
-          <div className="sp-goal-sub">{SEMESTERS} semesters at roughly {sek(SEMESTER_SEK)} each. {sek(GOAL_SEK)} in total, about {usd(GOAL_USD)}.</div>
+          <div className="sp-goal-title">A new laptop for Mission Phoenix</div>
           <div className="sp-nums">
             <span className="sp-raised">{usd(raised)}</span>
             <span className="sp-of">raised of {usd(GOAL_USD)}</span>
@@ -69,27 +57,24 @@ export default function Support() {
             aria-valuenow={pct}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label={`Therapist certification fund: ${usd(raised)} raised of ${usd(GOAL_USD)}`}
+            aria-label={`Laptop fund: ${usd(raised)} raised of ${usd(GOAL_USD)}`}
           >
             <div className="sp-bar-fill" style={{ width: `${pct}%` }}></div>
           </div>
           <div className="sp-meta">
-            <span><b>{pctLabel}</b> funded</span>
+            <span><b>{pct}%</b> funded</span>
             <span><b>{usd(left)}</b> still needed</span>
           </div>
         </div>
 
-        <h2 className="sp-h2">Why a therapist certification</h2>
-        <p className="sp-lead">I go around to schools and talk to young people about the harms of pornography and how easily it turns into an addiction. I also work as a therapist with people who are already deep in it. Both halves of that are the mission, and neither one is going anywhere.</p>
-        <p className="sp-lead">This certification is about depth. The more I sit with people in the worst of it, the clearer it becomes how much more I could give them with proper training behind the work I am already doing.</p>
-        <p className="sp-lead"><strong>Humanova</strong> trains therapists in <strong>KBT</strong>, cognitive behavioural therapy, and <strong>ACT</strong>, acceptance and commitment therapy. Those are the two methods that hold up against compulsive behaviour and addiction. Formal training in both would sharpen every session I already hold and let me reach further, and help more people, than I can on experience and lived story alone.</p>
-        <p className="sp-lead">Every contribution that comes in through Ko-fi goes into the certification fund until the {usd(GOAL_USD)} is covered. Each {sek(SEMESTER_SEK)}, roughly {usd(SEMESTER_USD)}, pays for one full semester.</p>
+        <h2 className="sp-h2">Why a laptop</h2>
+        <p className="sp-lead">My laptop is the tool I do all of this work on. The screen is broken and the rest of the computer is in poor condition</p>
+        <p className="sp-lead">Every contribution that comes in through Ko-fi goes into the laptop fund until the {usd(GOAL_USD)} is covered</p>
 
         <h2 className="sp-h2">Why support matters right now</h2>
         <p className="sp-lead">I am currently on <strong>skuldsanering</strong>, the Swedish debt relief programme, sometimes translated as debt sanitization. It runs for another four years, until 2030, when all of my debts will finally be cleared.</p>
-        <p className="sp-lead">For those four years I live on what Sweden calls <strong>existensminimum</strong>, the existential minimum. In practice that means two things: I cannot take a loan of any size, and I cannot save. The monthly budget is set so low that everything above the bare minimum goes to my creditors, so there is nothing left over at the end of the month to put aside. Paying for an education or a certification myself, or saving up for it semester by semester, simply is not possible during this period.</p>
-        <p className="sp-lead">So that is where I stand. My days go to the mission, in schools, in session, in group, building these tools, while living on the absolute minimum. The one thing I cannot do on my own is fund the training that would deepen that work. That is what this goal is for.</p>
-        <p className="sp-note">To be clear about where the money goes: donations made now are for the therapist certification and nothing else, until the goal is reached.</p>
+        <p className="sp-lead">For those four years I live on what Sweden calls <strong>existensminimum</strong>, the existential minimum. In practice that means two things: I cannot take a loan of any size, and I cannot save. The monthly budget is set so low that everything above the bare minimum goes to my creditors, so there is nothing left over at the end of the month to put aside. Buying a laptop myself, or saving up for one slowly, simply is not possible during this period.</p>
+        <p className="sp-note">To be clear about where the money goes: donations made now are for the laptop and nothing else, until the goal is reached.</p>
 
         <a href="https://ko-fi.com/missionphoenix" target="_blank" rel="noopener noreferrer" className="sp-donate">
           <div className="sp-lab">Donate via Ko-Fi</div>
