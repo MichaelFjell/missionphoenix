@@ -25,6 +25,9 @@ export default function SiteNav() {
 
           <Link to="/proof-bank" className={isActive('/proof-bank') ? 'active' : ''}>The Proof Bank</Link>
 
+          {/* The letters are the written heart of the site, so they get a permanent spot here */}
+          <Link to="/archive" className={isActive('/archive') ? 'active' : ''}>Letters</Link>
+
           {/* Direct external link to Discord */}
           <a href="https://discord.com/invite/tXnBUSbq92" target="_blank" rel="noopener noreferrer">Community</a>
           
