@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { newsletters, newsletterCount } from './newsletters.js';
 
 const YOUTUBE_CHANNEL = 'https://www.youtube.com/@FenixMichael';
 const INTRO_VIDEO_ID = 'aBPCyU4CkSc';
@@ -89,6 +90,31 @@ export default function Home() {
           .grp-when .h{margin-top:0;}
           .grp-call .go{width:100%;text-align:center;}
         }
+        /* The letters are the deepest writing on the site, so the archive gets a
+           full-width band and the biggest button on the page, not a quiet row. */
+        .arc-band{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;margin:0 0 34px;padding:38px 40px;border-radius:24px;background:linear-gradient(135deg,var(--copper-soft),transparent 65%),var(--card);border:1px solid var(--copper);position:relative;overflow:hidden;}
+        .arc-band::before{content:"";position:absolute;top:-90px;right:-70px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,var(--copper-soft),transparent 70%);pointer-events:none;}
+        .arc-band .bl{position:relative;}
+        .arc-band .rec{font-size:10.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--copper);margin-bottom:10px;}
+        .arc-band h2{font-size:clamp(26px,3.4vw,38px);font-weight:800;line-height:1.1;letter-spacing:-0.02em;margin-bottom:14px;}
+        .arc-band h2 em{font-style:normal;color:var(--copper);}
+        .arc-band p{font-size:15px;line-height:1.65;color:var(--ink-2);max-width:460px;margin-bottom:24px;}
+        .arc-big{display:inline-flex;align-items:center;gap:12px;padding:20px 38px;border-radius:999px;background:var(--copper);color:var(--on-accent);font-size:18px;font-weight:800;letter-spacing:-0.01em;box-shadow:0 14px 34px -14px rgba(163,70,32,0.75);transition:background .2s,transform .2s,box-shadow .2s;}
+        .arc-big:hover{background:var(--copper-2);transform:translateY(-2px);box-shadow:0 18px 40px -14px rgba(163,70,32,0.85);}
+        .arc-big .n{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;padding:0 9px;border-radius:999px;background:rgba(0,0,0,0.18);font-size:14px;font-weight:800;}
+        .arc-band .free{font-size:12.5px;color:var(--ink-3);margin:12px 0 0;}
+        .arc-latest{position:relative;display:flex;flex-direction:column;gap:8px;}
+        .arc-latest .lab{font-size:10.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink-3);margin-bottom:2px;}
+        .arc-latest a{display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:var(--card);border:1px solid var(--line);transition:all .2s;}
+        .arc-latest a:hover{border-color:var(--copper);transform:translateX(3px);}
+        .arc-latest .d{font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--copper);white-space:nowrap;}
+        .arc-latest .t{flex:1;font-size:13.5px;line-height:1.45;font-weight:600;color:var(--ink);}
+        .arc-latest .all{align-self:flex-start;margin-top:4px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--copper);padding:0;border:0;background:none;}
+        .arc-latest .all:hover{transform:none;border:0;color:var(--copper-2);}
+        @media (max-width:920px){
+          .arc-band{grid-template-columns:1fr;gap:28px;padding:28px 24px;}
+          .arc-big{width:100%;justify-content:center;font-size:17px;padding:18px 24px;}
+        }
         .home-features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px;}
         .tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 24px 22px;transition:all .25s;display:block;}
         .tile:hover{border-color:var(--copper);transform:translateY(-3px);box-shadow:0 12px 32px -18px rgba(163,70,32,0.35);}
@@ -122,6 +148,7 @@ export default function Home() {
             <div className="cta">
               <Link to="/quiz" className="btn primary">Am I at risk? →</Link>
               <Link to="/about" className="btn ghost">Read Michael's story</Link>
+              <Link to="/archive" className="btn ghost">Read the letters</Link>
             </div>
           </div>
 
@@ -162,6 +189,26 @@ export default function Home() {
           <div className="go">Join on Discord →</div>
         </a>
 
+        <section className="arc-band">
+          <div className="bl">
+            <div className="rec">Newsletter archive</div>
+            <h2>{newsletterCount} letters on addiction, honesty and <em>coming back</em>.</h2>
+            <p>Everything I worked through in writing before the weekly videos took over: shame, secrets, relapse, purpose, faith, rebuilding self esteem. The newsletter has ended, but every single letter is still here.</p>
+            <Link to="/archive" className="arc-big">Read the letters<span className="n">{newsletterCount}</span></Link>
+            <p className="free">Free to read · no signup · opens the full archive</p>
+          </div>
+          <div className="arc-latest">
+            <div className="lab">Start with one of these</div>
+            {newsletters.slice(0, 4).map((n) => (
+              <a key={n.url} href={n.url} target="_blank" rel="noopener noreferrer">
+                <span className="d">{n.date}</span>
+                <span className="t">{n.title}</span>
+              </a>
+            ))}
+            <Link to="/archive" className="all">All {newsletterCount} letters →</Link>
+          </div>
+        </section>
+
         <div className="sec-title" style={{ marginBottom: '14px' }}>What's here</div>
 
         <section className="home-features">
@@ -184,16 +231,6 @@ export default function Home() {
             <div className="foot"><span className="m">Anonymous</span><span className="arr">→</span></div>
           </Link>
         </section>
-
-        <Link to="/archive" className="home-tool">
-          <div className="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/></svg></div>
-          <div className="tx">
-            <div className="rec">Archive</div>
-            <div className="t">Newsletter archive</div>
-            <p>The weekly newsletter has ended and been replaced by videos on YouTube, but every letter that went out is still here to read.</p>
-          </div>
-          <div className="arr">Read →</div>
-        </Link>
 
         <a href="https://getcoldturkey.com/" target="_blank" rel="noopener noreferrer" className="home-tool">
           <div className="ci">❄</div>
