@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
-  <meta name="description" content="Guide till DBK Uppgifter – den digitala arbetsboken för Vägvalsprogrammet: så fungerar appen, steg för steg." />
-  <title>DBK Uppgifter – så fungerar appen</title>
+  <meta name="description" content="Guide till DBK Uppgifter, den digitala arbetsboken för Vägvalsprogrammet: så fungerar appen, steg för steg." />
+  <title>DBK Uppgifter: så fungerar appen</title>
   <style>
     :root {
       --ground: #faf7f2;
@@ -221,8 +221,8 @@
         </div>
       </div>
       <figure>
-        <div class="phone"><img src="dbkuppgifter-demo/01-hem.png" alt="Hemskärmen med de tre arbetsböckerna och förlopp per bok" /></div>
-        <figcaption>Hemskärmen: tre böcker, förloppet syns direkt</figcaption>
+        <div class="phone"><img src="dbkuppgifter-demo/01-hem.png" alt="Hemskärmen med Fortsätt där du var, kvällen och veckan samt de tre arbetsböckerna med förlopp" /></div>
+        <figcaption>Hemskärmen: fortsätt där du var, och allt förlopp på ett ställe</figcaption>
       </figure>
     </div>
   </header>
@@ -230,20 +230,23 @@
   <section class="steps">
     <div class="wrap">
       <h2>Så fungerar appen</h2>
-      <p class="intro">Sex nedslag, från bokmenyn till utskriften. Skärmdumparna visar fiktiv exempeldata.</p>
+      <p class="intro">Sju nedslag, från bokmenyn till verktygslådan. Skärmdumparna visar fiktiv exempeldata.</p>
 
       <div class="flow">
         <div>
           <p class="eyebrow step-eyebrow">1 · Boken som meny</p>
           <h3>Välj uppgiften du arbetar med</h3>
           <p>
-            Varje bok visar sina uppgifter i den ordning de har i pärmen.
-            Arbetsboken är indelad i faserna Fångad i tvånget, Ur tvånget
-            och Fri från tvånget samt Parprocessen, med förlopp per fas.
+            Varje bok visar sina uppgifter i den ordning de har i pärmen,
+            som en resa där nästa steg är markerat. Arbetsboken är
+            indelad i faserna Fångad i tvånget, Ur tvånget och Fri från
+            tvånget samt Parprocessen, med förlopp per fas.
           </p>
           <p class="detail">
             Statusen sköter sig själv: en uppgift blir Pågående så fort du
-            börjat skriva och Klar när du markerar den som klar.
+            börjat skriva och Klar när du markerar den som klar. Ett tryck
+            på siffrorna för Klara, Pågående eller Kvar filtrerar listan,
+            och sökknappen uppe till höger hittar ord i alla tre böckerna.
           </p>
           <div class="statuses" aria-hidden="true">
             <span class="status">Ej påbörjad</span>
@@ -270,8 +273,11 @@
             höger står det stilla lilla kvittot: Sparad.
           </p>
           <p class="detail">
-            Inget skickas iväg och inget går förlorat om samtalet ringer
-            mitt i en mening.
+            Långa uppgifter har numrerade delar som bockas av när de fyllts
+            i, och fälten växer med texten. När en uppgift är klar för
+            redovisning firar appen det, och lite extra när ett helt avsnitt
+            är klart. Inget skickas iväg och inget går förlorat om
+            samtalet ringer mitt i en mening.
           </p>
         </div>
         <div class="phone-row">
@@ -320,6 +326,10 @@
             behöver hjälp med. Varje kväll blir en egen post, och historiken
             samlas dag för dag under formuläret.
           </p>
+          <p class="detail">
+            Prickar visar de senaste fjorton kvällarna, och när alla nio
+            rader är ifyllda säger appen godnatt.
+          </p>
         </div>
         <div class="phone-row">
           <figure>
@@ -350,13 +360,40 @@
 
       <div class="flow">
         <div>
-          <p class="eyebrow step-eyebrow">6 · Två språk, två lägen</p>
+          <p class="eyebrow step-eyebrow">6 · Verktygslådan</p>
+          <h3>Stöd i vardagen, direkt i appen</h3>
+          <p>
+            Under Verktyg finns dejtingplanen, tips om blockerare och två
+            verktyg som används direkt i appen. Fem konkreta saker är en
+            grundningsövning med ett tryck per sak du ser omkring dig, och
+            Ring ut! har en egen ringlista där ett tryck ringer upp.
+          </p>
+          <p class="detail">
+            Ringlistan sparas på enheten och följer med i säkerhetskopian
+            och den krypterade synken.
+          </p>
+        </div>
+        <div class="phone-row">
+          <figure>
+            <div class="phone"><img src="dbkuppgifter-demo/11-verktyg.png" alt="Ring ut! med en ringlista där varje person har en Ring-knapp" /></div>
+            <figcaption>Ringlistan, ett tryck bort</figcaption>
+          </figure>
+          <figure>
+            <div class="phone"><img src="dbkuppgifter-demo/12-ovning.png" alt="Övningen Fem konkreta saker med tre av fem saker markerade" /></div>
+            <figcaption>Fem konkreta saker som övning</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div>
+          <p class="eyebrow step-eyebrow">7 · Två språk, två lägen</p>
           <h3>Svenska och engelska, ljust och mörkt</h3>
           <p>
             Språket växlas med knappen uppe till höger eller under
             Inställningar. Svaren är gemensamma: det du skrivit finns kvar
             när du byter språk. Utseendet följer systemet eller väljs fast,
-            ljust eller mörkt.
+            ljust eller mörkt. Animationer och firanden kan stängas av.
           </p>
           <p class="detail">
             Under Inställningar finns också säkerhetskopieringen (exportera
@@ -446,7 +483,7 @@
             <div class="os">
               <h4>iPhone / iPad</h4>
               <ol>
-                <li>Öppna länken i <strong>Safari</strong> – det måste vara Safari, Chrome på iPhone kan inte installera</li>
+                <li>Öppna länken i <strong>Safari</strong>. Det måste vara Safari, Chrome på iPhone kan inte installera</li>
                 <li>Tryck på dela-knappen (fyrkanten med pilen uppåt)</li>
                 <li>Välj <strong>Lägg till på hemskärmen</strong></li>
               </ol>
@@ -455,7 +492,7 @@
               <h4>Android</h4>
               <ol>
                 <li>Öppna länken i Chrome</li>
-                <li>Tryck på <strong>Installera</strong> i rutan som visas – eller öppna menyn med tre prickar och välj <strong>Lägg till på startskärmen</strong></li>
+                <li>Tryck på <strong>Installera</strong> i rutan som visas, eller öppna menyn med tre prickar och välj <strong>Lägg till på startskärmen</strong></li>
               </ol>
             </div>
             <div class="os">
@@ -467,10 +504,10 @@
             </div>
           </div>
           <p class="note">
-            iPhone visar ingen egen installationsfråga – stegen görs manuellt via dela-knappen.
+            iPhone visar ingen egen installationsfråga: stegen görs manuellt via dela-knappen.
             Installationen är också ett skydd: en app på hemskärmen undantas från Safaris
             regelbundna rensning av webbplatsdata. Och eftersom all data ligger i appen på
-            enheten gäller: raderas appikonen raderas datan – kom ihåg säkerhetskopian
+            enheten gäller: raderas appikonen raderas datan, så kom ihåg säkerhetskopian
             under Inställningar.
           </p>
         </div>
